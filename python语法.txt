@@ -1,0 +1,42 @@
+搭建环境：
+	1、安装python3
+		更新软件包列表并安装必要软件
+			sudo apt update
+			sudo apt install software-properties-common
+		消息来源列表中添加PAN消息
+			sudo add-apt-repository ppa:deadsnakes/ppa
+		安装python3.7
+			sudo apt install python3.7
+	2、配置python3的环境
+		安装pip3
+			apt-get install python3-pip
+		安装urllib3
+			pip3 install urllib3
+		安装requests
+			pip3 install requests
+		安装curl
+			apt install curl
+			
+
+循环的用法：
+	for循环：in前面只能是一个参数，不能像go语言那样使用两个参数。
+		for line in lines:
+			print(line)
+	
+正则表达式：
+	search与match匹配两种，前者好用些。
+	search：
+		pattern:搜索值
+		text:被搜索的字符串
+		re.search(pattern, text).group()
+		
+		当text为句子时，好像不能用group，不然会一直报错。
+		
+		
+python模拟curl请求数据
+	1、在Ubuntu中直接输入 curl http://192.168.226.130:8080/job/gitlab-test_wechat/lastBuild/api/xml --user chengpeng:dandelion
+		可获取该网址对应的数据
+	2、在python中模拟curl请求，获取相同的数据
+		    tmpres = os.popen('curl %s' % last_build).readlines()
+			print("tmpres:", tmpres)
+		
