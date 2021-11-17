@@ -1,0 +1,39 @@
+frozenset({'Performance Attributes'}) 0.30781129156999226
+frozenset({'Functionality & Behavior'}) 0.07733952049497293
+frozenset({'Usage Practice'}) 0.2451662799690642
+frozenset({'Alternatives'}) 0.2652745552977572
+frozenset({'Implementation or Internal Aspects'}) 0.08507347254447023
+frozenset({'Purpose & Rationale'}) 0.07192575406032482
+frozenset({'Miscellaneous'}) 0.048723897911832945
+frozenset({'Environment'}) 0.019334880123743233
+frozenset({'References'}) 0.01237432327919567
+frozenset({'Directives'}) 0.0015467904098994587
+frozenset({'Alternatives', 'Implementation or Internal Aspects'}) 0.0038669760247486465
+frozenset({'Performance Attributes', 'Functionality & Behavior'}) 0.02165506573859242
+frozenset({'Functionality & Behavior', 'Alternatives'}) 0.0030935808197989174
+frozenset({'Usage Practice', 'Alternatives'}) 0.020108275328692964
+frozenset({'Performance Attributes', 'Implementation or Internal Aspects'}) 0.007733952049497293
+frozenset({'Performance Attributes', 'Alternatives'}) 0.008507347254447023
+frozenset({'Purpose & Rationale', 'Implementation or Internal Aspects'}) 0.014694508894044857
+frozenset({'Environment', 'Usage Practice'}) 0.0030935808197989174
+frozenset({'Functionality & Behavior', 'Implementation or Internal Aspects'}) 0.008507347254447023
+frozenset({'Environment', 'Alternatives'}) 0.002320185614849188
+frozenset({'Environment', 'Performance Attributes'}) 0.006187161639597835
+frozenset({'Performance Attributes', 'Purpose & Rationale'}) 0.0038669760247486465
+frozenset({'Purpose & Rationale', 'Alternatives'}) 0.0007733952049497294
+frozenset({'Usage Practice', 'Purpose & Rationale'}) 0.0007733952049497294
+frozenset({'References', 'Usage Practice'}) 0.002320185614849188
+frozenset({'Usage Practice', 'Implementation or Internal Aspects'}) 0.002320185614849188
+frozenset({'Purpose & Rationale', 'Functionality & Behavior'}) 0.004640371229698376
+frozenset({'Usage Practice', 'Performance Attributes'}) 0.014694508894044857
+frozenset({'Usage Practice', 'Functionality & Behavior'}) 0.0030935808197989174
+frozenset({'References', 'Alternatives'}) 0.0015467904098994587
+frozenset({'Environment', 'Implementation or Internal Aspects'}) 0.0007733952049497294
+frozenset({'Environment', 'Functionality & Behavior'}) 0.0007733952049497294
+frozenset({'References', 'Functionality & Behavior'}) 0.0007733952049497294
+frozenset({'Directives', 'Functionality & Behavior'}) 0.0007733952049497294
+frozenset({'Directives', 'Purpose & Rationale'}) 0.0007733952049497294
+frozenset({'Performance Attributes', 'Implementation or Internal Aspects', 'Alternatives'}) 0.0007733952049497294
+frozenset({'Performance Attributes', 'Purpose & Rationale', 'Implementation or Internal Aspects'}) 0.0007733952049497294
+frozenset({'Purpose & Rationale', 'Functionality & Behavior', 'Implementation or Internal Aspects'}) 0.0007733952049497294
+frozenset({'Usage Practice', 'Functionality & Behavior', 'Performance Attributes'}) 0.0007733952049497294

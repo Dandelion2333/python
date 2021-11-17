@@ -1,0 +1,1774 @@
+project,desc,knowledge
+gensim,"for better performance and to store the entire object state,",usage practice
+gensim,"""""""treat a wikipedia articles dump as a read-only, streamed, memory-efficient corpus",functionality desc
+gensim,"If the number of terms, documents and non-zero elements is known, you can pass
+    them here as parameters and a (much) more memory efficient code path will be taken.
+
+    ","usage practice, impl details"
+gensim,"if provided, a slightly more memory-efficient code path is taken",impl details
+gensim,"this is more efficient that sorting a vector and then taking the greatest values, especially",comparison with alternatives
+gensim,"Numpy can in some settings turn the term IDs into floats, these will be converted back into
+            integers in inference, which incurs a performance hit. ","impl details, perf attributes"
+gensim,you may use this argument instead of `sentences` to get performance boost,usage practice
+gensim,you may use this argument instead of `sentences` to get performance boost,usage practice
+gensim,whether or not the fast cython implementation of the internal training methods is available,impl details
+gensim,you may use this argument instead of `sentences` to get performance boost,usage practice
+gensim,"fastest method - 'u_mass', 'c_uci' also known as `c_pmi`",perf attributes
+gensim,(such types may result in much slower bulk operations,impl details
+gensim,"Note that you should specify total_sentences; we'll run into problems if you ask to
+        score more than this number of sentences but it is inefficient to set the value too high.
+
+        ",usage practice
+gensim,"`workers` = use this many worker threads to train the model (=faster training with multicore machines).
+
+        ",functionality desc
+gensim,"tags may be one or more unicode string tokens, but typical practice (which will also be the most memory-efficient)",usage practice
+gensim,their tags can be either str tokens or ints (faster),"perf attributes, directives"
+gensim,you may use this argument instead of `documents` to get performance boost,usage practice
+gensim,you may use this argument instead of `documents` to get performance boost,usage practice
+gensim,you may use this argument instead of `documents` to get performance boost,usage practice
+gensim,"doc-vector training; if 0, only trains doc-vectors (faster)","functionality desc, perf attributes"
+gensim,use these many worker threads to train the model (=faster training with multicore machines),functionality desc
+gensim,you may use this argument instead of `documents` to get performance boost,usage practice
+gensim,"**Make sure you have a C compiler before installing Gensim, to use the optimized doc2vec routines** (70x speedup","impl details, environment"
+gensim,"its faster, but does not enable you to continue","perf attributes, functionality desc"
+gensim,you may use this argument instead of `sentences` to get performance boost,usage practice
+gensim,use these many worker threads to train the model (=faster training with multicore machines),functionality desc
+gensim,you may use this argument instead of `sentences` to get performance boost,usage practice
+gensim,This module contains a fast native C implementation of Fasttext with Python interfaces. It is **not** only a wrapper,impl details
+gensim,such types may result in much slower bulk operations or incompatibility with optimized routines,impl details
+gensim,"Numpy can in some settings
+            turn the term IDs into floats, these will be converted back into integers in inference, which incurs a
+            performance hit. ","impl details, perf attributes"
+gensim,hyper-parameter that controls how much we will slow down the first steps the first few iterations,functionality desc
+gensim,"fastest method - 'u_mass', 'c_uci' also known as `c_pmi`",perf attributes
+gensim,hyper-parameter that controls how much we will slow down the first steps the first few iterations,functionality desc
+gensim,whether distributed computing should be used to accelerate training,functionality desc
+gensim,"For a faster implementation of LDA (parallelized for multicore machines), see also :mod:`gensim.models.ldamulticore`.","impl details, comparison with alternatives"
+gensim,"#. Is **distributed**: makes use of a cluster of machines, if available, to speed up model estimation.","usage practice, environment"
+gensim,"Numpy can in some settings
+            turn the term IDs into floats, these will be converted back into integers in inference, which incurs a
+            performance hit. ","impl details, perf attributes"
+gensim,"however that for
+            hyper-threaded CPUs, this estimation returns a too high number -- set `workers`
+            directly to the number of your **real** cores (not hyperthreads) minus one, for optimal performance.
+        ",usage practice
+gensim,hyper-parameter that controls how much we will slow down the first steps the first few iterations,functionality desc
+gensim,"""""""Online Latent Dirichlet Allocation (LDA) in Python, using all CPU cores to parallelize and speed up model training.",functionality desc
+gensim,"Wall-clock `performance on the English Wikipedia <http://radimrehurek.com/gensim/wiki.html>`_ (2G corpus positions,",perf attributes
+gensim,replacing or improving the performance of this would greatly speed things up,misc
+gensim,this is by far the slowest function in the whole algorithm,perf attributes
+gensim,"Increasing the number of power iterations improves accuracy,
+        but lowers performance.
+    ",perf attributes
+gensim,"The corpus may be larger than RAM (iterator of vectors), if `corpus` is a `scipy.sparse.csc` instead,
+    it is assumed the whole corpus fits into core memory and a different (more efficient) code path is chosen.
+    ",impl details
+gensim,"increasing the number of power iterations improves accuracy, but lowers performance",perf attributes
+gensim,Implements fast truncated SVD (Singular Value Decomposition). The SVD decomposition can be updated with new observations,functionality desc
+gensim,"at any time, for an online, incremental, memory-efficient training.",functionality desc
+gensim,Wall-clock `performance on the English Wikipedia <http://radimrehurek.com/gensim/wiki.html>`_,perf attributes
+gensim,   *slower*.,environment
+gensim,"Implementation of the efficient incremental algorithm of Renbo Zhao, Vincent Y. F. Tan et al.",functionality desc
+gensim,The NMF should be used whenever one needs extremely fast and memory optimized topic model.,usage practice
+gensim,"Notes
+        -----
+        'npmi' is more robust when dealing with common words that form part of common bigrams, and
+        ranges from -1 to 1, but is slower to calculate than the default. ",perf attributes
+gensim,"Phraser` will be much smaller and somewhat
+        faster than using the full :class:`~gensim.models.phrases.",comparison with alternatives
+gensim,    >>> bigram = Phraser(phrases)  # construct faster model (this is only an wrapper),functionality desc
+gensim,slower Python versions in their place.,functionality desc
+gensim,you may use this argument instead of `sentences` to get performance boost,usage practice
+gensim,"Note that you should specify `total_sentences`; you'll run into problems if you ask to
+        score more than this number of sentences but it is inefficient to set the value too high.
+
+        ",usage practice
+gensim,use these many worker threads to train the model (=faster training with multicore machines),functionality desc
+gensim,you may use this argument instead of `sentences` to get performance boost,usage practice
+gensim,"(70x speedup compared to plain NumPy implementation, https://rare-technologies.com/parallelizing-word2vec-in-python/).","perf attributes, comparison with alternatives"
+gensim,resulting in a much smaller and faster object that can be mmapped for lightning,"purpose & rationale, impl details"
+gensim,fast loading and sharing the vectors in RAM between processes:,"functionality desc, impl details"
+gensim,to trim unneeded model state = use much less RAM and allow fast loading and memory sharing (mmap).,"functionality desc, impl details"
+gensim,"Python wrapper around word representation learning from FastText, a library for efficient learning",functionality desc
+gensim,"learning offset, set to higher values to slow down learning on early iterations of the algorithm",functionality desc
+gensim,">>> # uses the faster, batch queries internally and **is ideal for all-vs-all pairwise similarities**:",impl details
+gensim,"converted to a matrix, for faster blas calls","impl details, purpose & rationale"
+gensim,"Once the index is built, you can perform efficient queries like ""Tell me how similar is this query document to each",functionality desc
+gensim,"The benefit of this batch (aka ""chunked"") querying is a much better performance.","purpose & rationale, usage practice"
+gensim,"uses the faster, batch queries internally and **is ideal for all-vs-all pairwise similarities**:","functionality desc, impl details"
+gensim,"If you don't care about distances larger than a known threshold, a more
+        efficient code path can be taken. ",impl details
+gensim,"If you don't care about similarities smaller than a known threshold, a
+        more efficient code path can be taken. ",impl details
+gensim,org/wiki/mmap>`_ the large arrays for efficient,purpose & rationale
+gensim,calculating the size of a slicedcorpus is expensive when using a slice as the corpus has,usage practice
+numpy,"starting from numpy
+   1.4, if one needs arrays of strings, it is recommended to use arrays of
+   `dtype` `object_`, `string_` or `unicode_`, and use the free functions
+   in the `numpy.char` module for fast vectorized string operations.
+
+",usage practice
+numpy,"docstring:     
+efficient multi-dimensional iterator object to iterate over arrays.
+",functionality desc
+numpy,"`empty`, unlike `zeros`, does not set the array values to zero,
+and may therefore be marginally faster.  ","functionality desc,perf attributes"
+numpy,"a highly efficient way of reading binary data with a known data-type,
+as well as parsing simply formatted text files.  ",functionality desc
+numpy,"it may be marginally faster than
+the functions that do set the array values.
+
+",comparison with alternatives
+numpy,this is a performance feature.,purpose & rationale
+numpy,specify `count` to improve performance.  ,usage practice
+numpy,"this list is saved in a normalized form that is suited for
+    fast calculations of valid days.
+",impl details
+numpy,"none)
+
+a business day calendar object that efficiently stores information
+defining valid days for the busday family of functions.
+
+",functionality desc
+numpy,"this list is
+    saved in a normalized form that is suited for fast calculations
+    of valid days.
+
+",impl details
+numpy,"the initial calculation of these parameters is expensive and negatively
+impacts import times.  ",perf attributes
+numpy,"the `vectorize` function is provided primarily for convenience, not for
+performance.",purpose & rationale
+numpy,"however, to implement the cache, the
+original function must be wrapped which will slow down subsequent
+calls, so only do this if your function is expensive.
+
+","directives,usage practice"
+numpy,"the new keyword argument interface and `excluded` argument support
+further degrades performance.
+
+",functionality desc
+numpy,"New code (not concerned with numarray compatibility) should use
+       arrays of type `string_` or `unicode_` and use the free functions
+       in :mod:`numpy.char <numpy.core.defchararray>` for fast
+       vectorized string operations instead.
+
+    ",usage practice
+numpy,   in the `numpy.char` module for fast vectorized string operations.,usage practice
+numpy,# greedy `einsum` (faster optimal path approximation): ~160ms,perf attributes
+numpy,"* chained array operations, in efficient calculation order, :py:func:`numpy",functionality desc
+numpy,"For a contraction with three or more operands this
+    can greatly increase the computational efficiency at the cost of a larger
+    memory footprint during computation.
+
+    ","perf attributes, purpose & rationale"
+numpy,"In some cases 'optimal'
+    will return the superlative path through a more expensive, exhaustive search.
+    ","impl details, functionality desc"
+numpy,"for more complicated contractions, speed ups",usage practice
+numpy,performance improvements can be,"perf attributes, usage practice"
+numpy,theoretical speedup:  1000,perf attributes
+numpy,theoretical speedup:  2,perf attributes
+numpy,"Consequently,
+    partitioning along the last axis is faster and uses less space than
+    partitioning along any other axis.
+
+    ","usage practice, comparison with alternatives"
+numpy,"Consequently, sorting along
+    the last axis is faster and uses less space than sorting along
+    any other axis.
+
+    ","usage practice, comparison with alternatives"
+numpy,"The various selection algorithms are characterized by their average
+    speed, worst case performance, work space size, and whether they are
+    stable. ",concepts
+numpy,"The various sorting algorithms are characterized by their average speed,
+    worst case performance, work space size, and whether they are stable. ",concepts
+numpy,"for this reason, it is equivalent to (but faster than) the following use","comparison with alternatives, usage practice"
+numpy,"shape[0]`` is 2, ``maximum(a[0], a[1])`` is faster than","usage practice, comparison with alternatives"
+numpy,"shape[0]`` is 2, ``minimum(a[0], a[1])`` is faster than","usage practice, comparison with alternatives"
+numpy,this function is a faster version of the builtin python `bisect,impl details
+numpy,>>> # a slower but equivalent way of computing the same,usage practice
+numpy,"`binary_repr` is equivalent to using `base_repr` with base 2, but about 25x
+    faster.
+
+    ","comparison with alternatives, usage practice"
+numpy,binary_repr : faster version of `base_repr` for base 2,comparison with alternatives
+numpy,since multiplication is more efficient (faster),purpose & rationale
+numpy,"Use list of
+        tuples rather than list of lists for faster processing.
+
+    ",usage practice
+numpy,"it can be slow.
+
+        ",perf attributes
+numpy,"For efficient memory alignment, ``np.longdouble`` is usually stored","purpose & rationale, impl details"
+numpy,"padded with zero bits, either to 96 or 128 bits. Which is more efficient",environment
+numpy,"efficient algorithm implementations. There are, however, cases where",impl details
+numpy,broadcasting is a bad idea because it leads to inefficient use of memory,"usage practice, perf attributes"
+numpy,memory and computationally efficient as possible.,"impl details, perf attributes"
+numpy,The code in the second example is more efficient than that in the first,"comparison with alternatives, impl details"
+numpy,"       Fast element-wise operations, called a :term:`ufunc`, operate on arrays.",functionality desc
+numpy,       Universal function.  A fast element-wise array operation.  Examples include,functionality desc
+numpy,       it becomes necessary to use lower level languages to do fast,purpose & rationale
+numpy,inefficient as a new temporary array is created after the first index,"comparison with alternatives, impl details"
+numpy,arrays and thus greatly improve performance.,"functionality desc, purpose & rationale"
+numpy,"convention. For large images, reordering data is potentially expensive, and","usage practice, perf attributes"
+numpy,"potential performance penalties. It's common to access the data sequentially,",purpose & rationale
+numpy,basic operations are rendered inefficient because of data order or that getting,impl details
+numpy,compilers would pad a C-struct. Aligned structures can give a performance,purpose & rationale
+numpy,    and more efficient alternative for users who wish to convert structured,comparison with alternatives
+numpy,Aliases for functions which may be accelerated by Scipy.,functionality desc
+numpy,Scipy_ can be built to use accelerated or otherwise improved libraries,functionality desc
+numpy,developers to transparently support these accelerated functions when,"functionality desc, purpose & rationale"
+numpy,"The symmetry is highest when `n` is a power of 2, and
+    the transform is therefore most efficient for these sizes.
+
+    ","perf attributes, usage practice"
+numpy,transform (dft) of a real-valued array by means of an efficient algorithm,functionality desc
+numpy,"FFT (Fast Fourier Transform) refers to a way the discrete Fourier
+    Transform (DFT) can be calculated efficiently, by using symmetries in the
+    calculated terms.  ",concepts
+numpy,"part because of a very fast algorithm for computing it, called the Fast",concepts
+numpy,filtering.  The computational efficiency of the FFT means that it can,"functionality desc, impl details"
+numpy,"If True, the input arrays are both assumed to be unique, which
+        can speed up the calculation.  ",perf attributes
+numpy,"If True, the input arrays are both assumed to be unique, which
+        can speed up the calculation.  ",perf attributes
+numpy,"If True, the input arrays are both assumed to be unique, which
+        can speed up the calculation.  ",perf attributes
+numpy,"If True, the input arrays are both assumed to be unique, which
+        can speed up the calculation.  ",perf attributes
+numpy,"If True, the input arrays are both assumed to be unique, which
+        can speed up the calculation.  ",perf attributes
+numpy,"``np.in1d(a, b, invert=True)`` is equivalent
+        to (but is faster than) ``np.invert(in1d(a, b))``.
+
+        ",comparison with alternatives
+numpy,"isin(a, b, invert=true)`` is equivalent to (but faster",comparison with alternatives
+numpy,      we allow them to be written directly to disk for efficiency.,purpose & rationale
+numpy,"the `searchsorted` call is marginally faster, as it does not do any",comparison with alternatives
+numpy,"Provides good
+            all around performance.
+
+        ",perf attributes
+numpy,the simplest and fastest estimator,perf attributes
+numpy,"This functionality can be obtained via `diag_indices`, but internally
+    this version uses a much faster implementation that never constructs the
+    indices and uses simple slicing.
+
+    ",impl details
+numpy,this function aims to be a fast reader for simply formatted files,"purpose & rationale, functionality desc"
+numpy,this is equivalent to (but faster than) the following use of `ndindex` and,comparison with alternatives
+numpy,this is equivalent to (but faster than) the following use of `ndindex` and,comparison with alternatives
+numpy,this is equivalent to (but faster than) the following use of `ndindex` and,comparison with alternatives
+numpy,"Depending on the shapes of the matrices,
+    this can speed up the multiplication a lot.
+
+    ","perf attributes, purpose & rationale"
+numpy,"If True, `M` is assumed to be Hermitian (symmetric if real-valued),
+        enabling a more efficient method for finding singular values.
+        ",impl details
+numpy,the cholesky decomposition is often used as a fast way of solving,usage practice
+numpy,"
+    Compute the dot product of two or more arrays in a single function call,
+    while automatically selecting the fastest evaluation order.
+
+    ",functionality desc
+numpy,"This is a
+            performance feature. ",purpose & rationale
+numpy,this is a performance feature,purpose & rationale
+pandas,significantly faster than numpy,comparison with alternatives
+pandas,"Some methods require casting the ExtensionArray to an ndarray of Python
+    objects with ``self.astype(object)``, which may be expensive. ",perf attributes
+pandas,"When
+    performance is a concern, we highly recommend overriding the following
+    methods:
+
+    * fillna
+    * dropna
+    * unique
+    * factorize / _values_for_factorize
+    * argsort / ",usage practice
+pandas,abcmeta' for performance reasons,purpose & rationale
+pandas,"an ndarray would be expensive, an extensionarray may be",purpose & rationale
+pandas,"still, a more efficient",misc
+pandas,"the remaining methods implemented on this class should be performant,","perf attributes, impl details"
+pandas,"This constructor is useful if you already have codes and
+        categories/dtype and so do not need the (computation intensive)
+        factorization step, which is usually done on the constructor.
+
+        ",usage practice
+pandas,"This method can be used to perform more than one action of adding,
+        removing, and reordering simultaneously and is therefore faster than
+        performing the individual steps via the more specialised methods.
+
+        ","comparison with alternatives, usage practice"
+pandas,"For extension types, ``to_numpy()`` *may* require copying data and
+        coercing the result to a NumPy type (possibly object), which may be
+        expensive. ","impl details, perf attributes"
+pandas,"- None         : tries to use ``numexpr``, falls back to ``python``
+        - ``'numexpr'``: This default engine evaluates pandas objects using
+                         numexpr for large speed ups in complex expressions
+                         with large","purpose & rationale, functionality desc"
+pandas,"See the
+        :ref:`enhancing performance <enhancingperf.eval>` documentation for
+        more details.
+    ",ref
+pandas,see the :ref:`enhancing performance <enhancingperf,ref
+pandas,Offer fast expression evaluation through numexpr,functionality desc
+pandas,abcmeta' for performance reasons,purpose & rationale
+pandas,"If you are just applying a NumPy reduction function this will
+              achieve much better performance.
+        ",usage practice
+pandas,"In most cases 'block' is recommended, since it's more memory
+            efficient.
+
+        ","usage practice, perf attributes"
+pandas,"Iteratively appending rows to a DataFrame can be more computationally
+        intensive than a single concatenate. ",usage practice
+pandas,"Note that a vectorized version of `func` often exists, which will
+        be much faster. ",usage practice
+pandas,"This may require copying data and coercing values, which may be
+        expensive.
+
+        ","impl details, perf attributes"
+pandas,"This method is equivalent to
+        ``df.sort_values(columns, ascending=False).head(n)``, but more
+        performant.
+
+        ",comparison with alternatives
+pandas,"This method is equivalent to
+        ``df.sort_values(columns, ascending=True).head(n)``, but more
+        performant.
+
+        ",comparison with alternatives
+pandas,"To preserve dtypes while iterating over the rows, it is better
+           to use :meth:`itertuples` which returns namedtuples of the values
+           and which is generally faster than ``iterrows``.
+
+        ","comparison with alternatives, usage practice"
+pandas,categorical : memory-efficient array for string values with,functionality desc
+pandas,for detailed examples see :ref:`enhancing performance with eval,ref
+pandas,iteratively appending rows to a dataframe can be more computationally,usage practice
+pandas,less efficient:,usage practice
+pandas,more efficient:,usage practice
+pandas,setting to false will improve the performance of this,perf attributes
+pandas,the sparse dataframe allows for a more efficient storage,purpose & rationale
+pandas,use a categorical for efficient storage of an object-dtype column with,usage practice
+pandas,"This is not
+        recommended as it is inefficient compared to using ``numexpr`` as the
+        engine.
+
+        ",usage practice
+pandas,efficiently join multiple dataframe objects by index at once by,functionality desc
+pandas,An efficient 2D container for potentially mixed-type time series or other,functionality desc
+pandas,"While ``Index`` objects are copied when ``deep=True``, the underlying
+        numpy array is not copied for performance reasons. ",purpose & rationale
+pandas,fast writing/reading,functionality desc
+pandas,get better performance by turning this off,perf attributes
+pandas,"while the `slice_shift` is faster than `shift`, you may pay for it","comparison with alternatives, usage practice"
+pandas,fast lookup of value from 1-dimensional ndarray,functionality desc
+pandas,fast lookup of value from 1-dimensional ndarray,functionality desc
+pandas,"more flexible, faster check like ``is`` but that works through views",functionality desc
+pandas,fast lookup of value from 1-dimensional ndarray,functionality desc
+pandas,a bit of a hack to accelerate unioning a collection of indexes,"purpose & rationale, functionality desc"
+pandas,fast lookup of value from 1-dimensional ndarray,functionality desc
+pandas,faster than index,comparison with alternatives
+pandas,may be much faster,comparison with alternatives
+pandas,this could be potentially expensive on large multiindex objects,perf attributes
+pandas,fast lookup of value from 1-dimensional ndarray,functionality desc
+pandas,fast lookup of value from 1-dimensional ndarray,functionality desc
+pandas,faster than index,comparison with alternatives
+pandas,may be much faster,comparison with alternatives
+pandas,iat : fast integer location scalar accessor,functionality desc
+pandas,"This can
+        be very expensive relative to the actual data concatenation
+    sort : boolean, default None
+        Sort non-concatenation axis if it is not already aligned when `join`
+        is 'outer'. ",perf attributes
+pandas,faster than ``,comparison with alternatives
+pandas,faster than ``,comparison with alternatives
+pandas,iteratively appending to a series can be more computationally intensive,usage practice
+pandas,"It is currently not
+        particularly efficient (and potentially very expensive) but is provided
+        for API compatibility with DataFrame
+
+        Returns
+        ",purpose & rationale
+pandas,efficient but is provided for api compatibility with series,purpose & rationale
+pandas,"If True and no `format` is given, attempt to infer the format of the
+        datetime strings, and if it can be inferred, switch to a faster
+        method of parsing them. ","functionality desc, impl details"
+pandas,"If all
+        strings are in the same format, this will speed up conversion.
+    ",perf attributes
+pandas,passing infer_datetime_format=true can often-times speedup a parsing,perf attributes
+pandas,default (false) is to use fast but,"functionality desc, impl details"
+pandas,fast writing/reading,functionality desc
+pandas,current implementation is not efficient.,"impl details, perf attributes"
+pandas,* this method is faster for generating weekdays than dateutil,"comparison with alternatives, functionality desc"
+scipy,"this algorithm can be slow, particularly on large datasets [2]_",purpose & rationale
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"Disabling may give a performance gain, but may result in problems
+        (crashes, non-termination) if the inputs do contain infinities or NaNs.
+        ","functionality desc, perf attributes"
+scipy,"It is about 20 times slower than the C version.
+
+    ",comparison with alternatives
+scipy,"This function is slower than the C version but works for
+    all input types.  ",comparison with alternatives
+scipy,"If the data is both real and
+    symmetrical, the `dct` can again double the efficiency, by generating
+    half of the spectrum from half of the signal.
+
+    ","perf attributes, functionality desc"
+scipy,"This function is most efficient when `n` is a power of two, and least
+    efficient when `n` is prime.
+
+    ",perf attributes
+scipy,"This function is most efficient when `n` is a power of two, and least
+    efficient when `n` is prime.
+
+    ",perf attributes
+scipy,"this function is most efficient when `n` is a power of two, and least",perf attributes
+scipy,"this function is most efficient when `n` is a power of two, and least",perf attributes
+scipy,to increase efficiency,"usage practice, functionality desc"
+scipy,">> a = np.random.randn(min_len)
+    >>> b = fftpack.fft(a)
+
+    Zero-padding to the next 5-smooth length reduces computation time to
+    211 us, a speedup of 630 times:
+
+    ","usage practice, perf attributes"
+scipy,"scipy's fftpack has efficient functions for radix {2, 3, 4, 5}, so this",functionality desc
+scipy,"the type 1 dct is equivalent to the fft (though faster) for real,",comparison with alternatives
+scipy,speed up the computations [4]_,usage practice
+scipy,vectorized implementation allows a faster approximation of the jacobian,purpose & rationale
+scipy,"If the Jacobian has only few non-zero
+        elements in *each* row, providing the sparsity structure will greatly
+        speed up the computations [10]_. A zero entry means that a corresponding
+        element in the Jacobian is always zero. ",usage practice
+scipy,vectorized implementation allows a faster approximation of the jacobian,purpose & rationale
+scipy,vectorized implementation allows a faster approximation of the jacobian,purpose & rationale
+scipy,"If the Jacobian has only few non-zero
+        elements in *each* row, providing the sparsity structure will greatly
+        speed up the computations [2]_. A zero entry means that a corresponding
+        element in the Jacobian is always zero. ",usage practice
+scipy,vectorized implementation allows a faster approximation of the jacobian,purpose & rationale
+scipy,"true if `dfun` defines derivatives down columns (faster),",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"range(n))
+
+    Note that this is an inefficient (if straightforward) way to
+    evaluate B-splines --- this spline class does it in an equivalent,
+    but much more efficient way.
+
+    ","usage practice, comparison with alternatives"
+scipy,note that this is an inefficient (if straightforward) way to,usage practice
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"Contrary to LinearNDInterpolator and NearestNDInterpolator, this class
+    avoids expensive triangulation of the input data by taking advantage of the
+    regular grid structure.
+
+    ",impl details
+scipy,much faster 2d interpolation if your input data is on a grid,functionality desc
+scipy,"""""""product of a list of numbers; ~40x faster vs np",comparison with alternatives
+scipy,construction of the interpolating polynomial is a relatively expensive,concepts
+scipy,construction of the interpolation weights is a relatively slow process,concepts
+scipy,"In addition, the NetCDF file header contains the position of the data in
+    the file, so access can be done in an efficient manner without loading
+    unnecessary data into memory. ",impl details
+scipy,allow overwriting data in ``a`` (may enhance performance),"perf attributes,functionality desc"
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,whether to overwrite data in a (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in b (may improve performance),"perf attributes,functionality desc"
+scipy,a faster estimate for the condition number in the 1-norm,misc
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"However it requires
+    the linear solution of a system with dimension :math:`M^2` so that
+    performance degrades rapidly for even moderately sized matrices.
+
+    ","perf attributes, functionality desc"
+scipy,"However, ``'gelsy'`` can be slightly
+        faster on many problems.  ",perf attributes
+scipy,"It is
+        generally slow but uses less memory.
+
+        ",perf attributes
+scipy,allow overwriting data in `a` (may enhance performance),"perf attributes,functionality desc"
+scipy,allow overwriting data in `b` (may enhance performance),"perf attributes,functionality desc"
+scipy,allow overwriting data in `b` (may enhance performance),"perf attributes,functionality desc"
+scipy,allow overwriting data in a (may enhance performance),"perf attributes,functionality desc"
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,discard data in `a` (may enhance performance),"perf attributes,functionality desc"
+scipy,discard data in `a` (may improve performance),"perf attributes,functionality desc"
+scipy,discard data in `ab` (may enhance performance),"perf attributes,functionality desc"
+scipy,discard data in `ab` (may enhance performance),"perf attributes,functionality desc"
+scipy,discard data in `b` (may enhance performance),"perf attributes,functionality desc"
+scipy,discard data in `b` (may enhance performance),"perf attributes,functionality desc"
+scipy,discard data in `b` (may enhance performance),"perf attributes,functionality desc"
+scipy,"for a large vector `c`, this is *much* faster than",comparison with alternatives
+scipy,it might increase the space efficiency,perf attributes
+scipy,"the solution is computed using levinson-durbin recursion, which is faster",impl details
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,discard data in a_band (may enhance performance),"perf attributes,functionality desc"
+scipy,discard data in a_band (may enhance performance),"perf attributes,functionality desc"
+scipy,"use divide and conquer algorithm (faster but expensive in memory,","perf attributes,usage practice"
+scipy,"use divide and conquer algorithm (faster but expensive in memory,","perf attributes,usage practice"
+scipy,whether to overwrite `a`; may improve performance,"perf attributes,functionality desc"
+scipy,whether to overwrite `a`; may improve performance,"perf attributes,functionality desc"
+scipy,whether to overwrite `b`; may improve performance,"perf attributes,functionality desc"
+scipy,whether to overwrite data in `a` (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in `a` (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in `b` (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in `b` (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in a (may improve performance),"perf attributes,functionality desc"
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,discard data in ab (may enhance performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in `a` (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in a (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in b (may improve performance),"perf attributes,functionality desc"
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,whether to overwrite data in a (may improve performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in a (may increase performance),"perf attributes,functionality desc"
+scipy,whether to overwrite data in b (may increase performance),"perf attributes,functionality desc"
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,this might be faster,perf attributes
+scipy,whether data in a is overwritten (may improve performance),"perf attributes,functionality desc"
+scipy,whether data in a is overwritten (may improve performance),"perf attributes,functionality desc"
+scipy,whether data in a is overwritten (may improve performance),"perf attributes,functionality desc"
+scipy,whether data in c is overwritten (may improve performance),"perf attributes,functionality desc"
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,whether to overwrite data in a (may improve performance),"perf attributes,functionality desc"
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,"disabling may give a performance gain, but may result in problems",perf attributes
+scipy,whether to overwrite `a`; may improve performance,"perf attributes,functionality desc"
+scipy,whether to overwrite `a`; may improve performance,"perf attributes,functionality desc"
+scipy,whether to use the more efficient divide-and-conquer approach,functionality desc
+scipy,"x_lange.typecode
+    'z'
+
+    Several LAPACK routines work best when its internal WORK array has
+    the optimal size (big enough for fast computation and small enough to
+    avoid waste of memory). ","impl details, purpose & rationale"
+scipy,"If the input matrix is known to be diagonalizable, then relying on the
+    eigendecomposition is likely to be faster. ",usage practice
+scipy,"When `scale` is None, multiplying a vector by the matrix returned by
+    `dft` is mathematically equivalent to (but much less efficient than)
+    the calculation performed by `scipy.fftpack.fft`.
+
+    ",comparison with alternatives
+scipy,"coefficients, but this version is much faster than `exact=true`",perf attributes
+scipy,"richard harter [2]_, and has a guaranteed o(n) performance, `n` being",perf attributes
+scipy,"richard harter [2]_, and has a guaranteed o(n) performance, `n` being",perf attributes
+scipy,"A more
+              efficient algorithm is then used that exploits the separability
+              of the problem.
+            ",impl details
+scipy,"This function employs a slow brute force algorithm, see also the
+    function distance_transform_cdt for more efficient taxicab and
+    chessboard algorithms.
+
+    ","impl details, ref"
+scipy,"array_like, optional
+        Structuring element used in the computation; large-size elements
+        make computations faster but may miss holes separated from the
+        background by thin regions. ","perf attributes,functionality desc"
+scipy,"this function employs a slow brute force algorithm, see also the","impl details, ref"
+scipy,"  efficiency and convenience, the input and output arrays of the fitting",purpose & rationale
+scipy,"Also, this time we
+    will use gradient information to significantly speed up the search.
+
+    ",usage practice
+scipy,this global minimization method has been shown to be extremely efficient,concepts
+scipy,"If the Jacobian has
+        only few non-zero elements in *each* row, providing the sparsity
+        structure will greatly speed up the computations. ","perf attributes, usage practice"
+scipy,"Several potential improvements can be made here: additional presolve
+    checks outlined in [8]_ should be implemented, the presolve routine should
+    be run multiple times (until no further simplifications can be made), and
+    more of the efficiency improvements from [5]_ should be implemented in the
+    redundancy removal routines.
+
+    ",misc
+scipy,"This algorithm
+    should be reasonably reliable and fast for small problems.
+
+    ",perf attributes
+scipy,this algorithm is intended to provide a faster,"purpose & rationale, functionality desc"
+scipy,"Usually the most
+              efficient method for small unconstrained problems.
+
+        ",perf attributes
+scipy,"_, it is very robust and
+    efficient with a lot of smart tricks. ","impl details, perf attributes"
+scipy,jacobian to significantly speed up this process,usage practice
+scipy,structure will greatly speed up the computations [curtis]_,usage practice
+scipy,"If 'auto', the
+        tolerance will be adjusted based on the optimality of the current
+        iterate, which can speed up the optimization process, but is not always
+        reliable.
+    ","perf attributes, functionality desc"
+scipy,the ``sobol`` method is faster in terms of sampling point,perf attributes
+scipy,the search space (and therefore performance) is decreased by o(n!),perf attributes
+scipy,"bool, optional
+        Specify whether the Jacobian function computes derivatives down
+        the columns (faster, because there is no transpose operation).
+    ","perf attributes, functionality desc"
+scipy,"bool, optional
+        non-zero to specify that the Jacobian function computes derivatives
+        down the columns (faster, because there is no transpose operation).
+    ","perf attributes, functionality desc"
+scipy,"In practice it can have poor
+    performance in high-dimensional problems and is not robust to
+    minimizing complicated functions. ","perf attributes,usage practice,functionality desc"
+scipy,but it will usually be slower than an algorithm that uses first or,comparison with alternatives
+scipy,the brute force approach is inefficient because the number of grid points,"perf attributes,purpose & rationale"
+scipy,"The above is the equivalent of solving for each value in ``(x, a)``
+    separately in a for-loop, just faster:
+
+    ","usage practice, comparison with alternatives"
+scipy,algorithm 748 with ``k=2`` is asymptotically the most efficient,concepts
+scipy,generally as fast as the brent routines,"concepts, comparison with alternatives"
+scipy,"ridders' method is faster than bisection, but not","concepts, comparison with alternatives"
+scipy,slow but sure,perf attributes
+scipy,"In most cases
+      this order is the fastest one because faster operations are applied first
+      to reduce the number of peaks that need to be evaluated later.
+    ",impl details
+scipy,searching for the peak's bases can be slow for large `x` with periodic,impl details
+scipy,this parameter can speed up the calculation (see notes),perf attributes
+scipy,"For long FIR filters, the FFT approach can have lower error and be much
+    faster than the equivalent direct polynomial calculation.
+
+    ",comparison with alternatives
+scipy,`worn` is fast to compute via fft (i,usage practice
+scipy,faster computations (see notes),"usage practice, perf attributes"
+scipy,in faster computations (see notes of `freqz`),"usage practice, perf attributes"
+scipy,using a number that is fast for fft computations can result,"usage practice, perf attributes"
+scipy,using a number that is fast for fft computations can result in,"usage practice, perf attributes"
+scipy,"`worN` is fast to compute via FFT (i.e.,
+       `next_fast_len(worN) <scipy.fftpack.next_fast_len>` equals `worN`).
+    ",usage practice
+scipy,"for most efficient behavior, this should be a power of 2 plus 1",usage practice
+scipy,"Changing the value of properties that are not directly part of the current
+    system representation (such as the `zeros` of a `StateSpace` system) is
+    very inefficient and may lead to numerical inaccuracies. ",usage practice
+scipy,"Changing the value of properties that are not directly part of the current
+    system representation (such as the `zeros` of a `StateSpace` system) is
+    very inefficient and may lead to numerical inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `StateSpace` system representation (such as `zeros` or `poles`) is very
+    inefficient and may lead to numerical inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `TransferFunction` system representation (such as the `A`, `B`, `C`, `D`
+    state-space matrices) is very inefficient and may lead to numerical
+    inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `ZerosPolesGain` system representation (such as the `A`, `B`, `C`, `D`
+    state-space matrices) is very inefficient and may lead to numerical
+    inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `StateSpace` system representation (such as `zeros` or `poles`) is very
+    inefficient and may lead to numerical inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `StateSpace` system representation (such as `zeros` or `poles`) is very
+    inefficient and may lead to numerical inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `TransferFunction` system representation (such as the `A`, `B`, `C`, `D`
+    state-space matrices) is very inefficient and may lead to numerical
+    inaccuracies.
+
+    ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `TransferFunction` system representation (such as the `A`, `B`, `C`, `D`
+    state-space matrices) is very inefficient and may lead to numerical
+    inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `ZerosPolesGain` system representation (such as the `A`, `B`, `C`, `D`
+    state-space matrices) is very inefficient and may lead to numerical
+    inaccuracies.  ",usage practice
+scipy,"Changing the value of properties that are not part of the
+    `ZerosPolesGain` system representation (such as the `A`, `B`, `C`, `D`
+    state-space matrices) is very inefficient and may lead to numerical
+    inaccuracies.  ",usage practice
+scipy,"As noted, `resample` uses FFT transformations, which can be very
+    slow if the number of input or output samples is large and prime;
+    see `scipy.fftpack.fft`.
+
+    ",perf attributes
+scipy,"As of v0.19, `convolve` automatically chooses this method or the direct
+    method based on an estimation of which is faster.
+
+    ",functionality desc
+scipy,"In practice, we found that this function estimates the faster method up to
+    a multiplicative factor of 5 (i.e., the estimated method is *at most* 5
+    times slower than the fastest method). ",functionality desc
+scipy,"The `convolve2d` function allows for other types of image boundaries,
+    but is far slower.
+
+    ","perf attributes, functionality desc"
+scipy,"This is generally much faster than `convolve` for large arrays (n > ~500),
+    but can be slower when only a few output values are needed, and can only
+    output float arrays (int or object array inputs will be cast to float).
+
+    ","perf attributes, comparison with alternatives,functionality desc"
+scipy,"`.
+        ``auto``
+           Automatically chooses direct or Fourier method based on an estimate
+           of which is faster (default).  ",functionality desc
+scipy,"``auto``
+           Automatically chooses direct or Fourier method based on an estimate
+           of which is faster (default).  ",functionality desc
+scipy,"in practice, we found that this function estimates the faster method up to",functionality desc
+scipy,"this is generally much faster than `convolve` for large arrays (n > ~500),","perf attributes, comparison with alternatives"
+scipy,this polyphase method will likely be faster than the fourier method,comparison with alternatives
+scipy,"By default, `convolve` and `correlate` use ``method='auto'``, which calls
+    `choose_conv_method` to choose the fastest method using pre-computed
+    values (`choose_conv_method` can also measure real-world timing with a
+    keyword argument). ",functionality desc
+scipy,"measure : bool, optional
+        If True, run and time the convolution of `in1` and `in2` with both
+        methods and return the fastest. ",functionality desc
+scipy,"alternatively, the slower",usage practice
+scipy,"The time domain window is then generated using the IFFT, so
+    power-of-two `M` are the fastest to generate, and prime number `M` are
+    the slowest.
+
+    ",functionality desc
+scipy,"power-of-two `m` are the fastest to generate, and prime number `m` are",functionality desc
+scipy,considerably more efficient than csr and csc for many sparse arithmetic,"concepts, comparison with alternatives"
+scipy,#NAME?,functionality desc
+scipy,#NAME?,functionality desc
+scipy,"Advantages of the COO format
+        - facilitates fast conversion among sparse formats
+        - permits duplicate entries (see example)
+        - very fast conversion to and from CSR/CSC formats
+
+    ",functionality desc
+scipy,csc format for fast arithmetic and matrix vector operations,usage practice
+scipy,this facilitates efficient,purpose & rationale
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,#NAME?,functionality desc
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,#NAME?,functionality desc
+scipy,#NAME?,functionality desc
+scipy,#NAME?,functionality desc
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,allows for efficient o(1) access of individual elements,functionality desc
+scipy,this is an efficient structure for constructing sparse,functionality desc
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,#NAME?,"functionality desc, usage practice"
+scipy,"Advantages of the LIL format
+        - supports flexible slicing
+        - changes to the matrix sparsity structure are efficient
+
+    Disadvantages of the LIL format
+        - arithmetic operations LIL + LIL are slow (consider CSR or CSC)
+        - slow column slicing (consider CSC)
+        - slow matrix vector products (consider CSR or CSC)
+
+    ","functionality desc, usage practice"
+scipy,"Note that inserting a single item can take linear time in the worst case;
+    to construct a matrix efficiently, make sure the items are pre-sorted by
+    index, per row.
+
+    ",usage practice
+scipy,csc format for fast arithmetic and matrix vector operations,usage practice
+scipy,"If the
+    resulting X is dense, the construction of this sparse result will be
+    relatively expensive.  ",perf attributes
+scipy,"bool, optional
+        Allow overwriting data in `b`.
+        Enabling gives a performance gain. ",functionality desc
+scipy,"bool, optional
+        Allow overwriting data in `b`.
+        Enabling gives a performance gain. ",functionality desc
+scipy,"If small eigenvalues are
+        desired, consider using shift-invert mode for better performance.
+    ",usage practice
+scipy,"If small eigenvalues are
+        desired, consider using shift-invert mode for better performance.
+    ",usage practice
+scipy,"This is a naive implementation using ARPACK as an eigensolver
+    on A.H * A or A * A.H, depending on which one is more efficient.
+
+    ",impl details
+scipy,"able to represent such matrices efficiently. First, we need a compact way to",functionality desc
+scipy,"However, note that if you want to use the additional vectors to
+        accelerate solving multiple similar problems, larger values may
+        be beneficial.
+    ",usage practice
+scipy,"If the inverse of `A` is expected
+    to be non-sparse, it will likely be faster to convert `A` to dense and use
+    scipy.linalg.inv.
+
+    ",usage practice
+scipy,Same as `upcast` but taking dtype.char as input (faster).,"functionality desc, comparison with alternatives"
+scipy,"Instead, the optimized C version is more
+       efficient, and we call it using the following syntax.",usage practice
+scipy,"Instead, the optimized C version is more
+       efficient, and we call it using the following syntax::
+
+         dm = cdist(XA, XB, 'sokalsneath')
+
+    ",usage practice
+scipy,although worst-case performance is ``o(m * o)``,perf attributes
+scipy,"the best case performance is o(m), which",perf attributes
+scipy,"\choose 2}` times, which
+       is inefficient. ",usage practice
+scipy,distances over a large collection of vectors is inefficient for these,perf attributes
+scipy,"``v``.  As in the case of numerical vectors, ``pdist`` is more efficient for","perf attributes, functionality desc"
+scipy,"For large dimensions (20 is already large) do not expect this to run
+    significantly faster than brute force. ","perf attributes,comparison with alternatives"
+scipy,"for efficiency, this function computes the l**p distance but does","purpose & rationale, impl details"
+scipy,"it can also be queried, with a substantial gain in efficiency,",usage practice
+scipy,"these do use a reasonably efficient algorithm,",impl details
+scipy,"correct, but potentially slow defaults exist for the remaining",usage practice
+scipy,"increasing `maxcount` and/or `chunksize` may improve the result, but may
+        also make zipf very slow.
+
+        ",perf attributes
+scipy,"The implementation computes `n` times the median of a vector of size `n`
+    which can be slow for large vectors. ",impl details
+scipy,there are more efficient algorithms,misc
+scipy,and it's significantly faster,perf attributes
+scipy,exponentiation by squares [1]_ for efficiency,purpose & rationale
+sklearn,"0.19
+
+    working_memory : int, optional
+        If set, scikit-learn will attempt to limit the size of temporary arrays
+        to this number of MiB (per job when parallelised), often saving both
+        computation time and memory on expensive operations that can be
+        performed in chunks. ","purpose & rationale, functionality desc"
+sklearn,"scikit-learn will attempt to limit the size of temporary arrays
+        to this number of MiB (per job when parallelised), often saving both
+        computation time and memory on expensive operations that can be
+        performed in chunks. ","purpose & rationale, functionality desc"
+sklearn,"True
+        If copy is False, the affinity matrix is modified inplace by the
+        algorithm, for memory efficiency
+
+    verbose : ","purpose & rationale, functionality desc"
+sklearn,"If 'arpack', use
+        :func:`scipy.sparse.linalg.svds`, which is more accurate, but
+        possibly slower in some cases.
+
+    ","perf attributes, functionality desc"
+sklearn,"If 'arpack', uses
+        `scipy.sparse.linalg.svds`, which is more accurate, but
+        possibly slower in some cases.
+
+    ","perf attributes, functionality desc"
+sklearn,"If 'randomized', use
+        :func:`sklearn.utils.extmath.randomized_svd`, which may be faster
+        for large matrices. ","perf attributes, functionality desc"
+sklearn,"If 'randomized', uses
+        `sklearn.utils.extmath.randomized_svd`, which may be faster
+        for large matrices. ","perf attributes, functionality desc"
+sklearn,"whether to use mini-batch k-means, which is faster but may get","perf attributes, functionality desc"
+sklearn,"whether to use mini-batch k-means, which is faster but may get","perf attributes, functionality desc"
+sklearn,"it is a memory-efficient, online-learning algorithm provided as an",functionality desc
+sklearn,"10k) MiniBatchKMeans is
+        probably much faster than the default batch implementation.
+
+    ","comparison with alternatives, perf attributes"
+sklearn,": selects initial cluster centers for k-mean
+        clustering in a smart way to speed up convergence. ",functionality desc
+sklearn,"None)
+
+    init : {'k-means++', 'random', or ndarray, or a callable}, optional
+        Method for initialization, default to 'k-means++':
+
+        'k-means++' : selects initial cluster centers for k-mean
+        clustering in a smart way to speed up convergence. ",functionality desc
+sklearn,c-contiguous which may cause a significant slowdown,"impl details, perf attributes"
+sklearn,c-contiguous which may cause a significant slowdown,"impl details, perf attributes"
+sklearn,"in practice, the k-means algorithm is very fast (one of the fastest",concepts
+sklearn,"init : {'k-means++', 'random' or an ndarray}, default: 'k-means++'
+        Method for initialization, defaults to 'k-means++':
+
+        'k-means++' : selects initial cluster centers for k-mean
+        clustering in a smart way to speed up convergence. ",functionality desc
+sklearn,precompute distances (faster but takes more memory),perf attributes
+sklearn,precompute distances (faster but takes more memory),perf attributes
+sklearn,"the ""elkan"" variation is more efficient by using the triangle","perf attributes, functionality desc"
+sklearn,"the ""elkan"" variation is more efficient by using the triangle","perf attributes, functionality desc"
+sklearn,"This early stopping heuristics is
+        closer to the one used for the batch variant of the algorithms
+        but induces a slight computational and memory overhead over the
+        inertia heuristic.
+
+        ",functionality desc
+sklearn,"Raising this value decreases the number of seeds found, which
+        makes mean_shift computationally cheaper.
+
+    ","perf attributes, functionality desc"
+sklearn,"Smaller values lead
+        to more seeding (which is computationally more expensive). ","perf attributes, functionality desc"
+sklearn,note that the estimate_bandwidth function is much less scalable than the,"comparison with alternatives, usage practice"
+sklearn,"to speed up the algorithm, accept only those bins with at least","functionality desc, purpose & rationale"
+sklearn,"to speed up the algorithm, accept only those bins with at least","functionality desc, purpose & rationale"
+sklearn,"This works for Scipy's metrics, but is less
+        efficient than passing the metric name as a string. ","perf attributes, usage practice"
+sklearn,"This works for Scipy's metrics, but is less
+        efficient than passing the metric name as a string. ","perf attributes, usage practice"
+sklearn,"it can be faster on very large, sparse problems,",perf attributes
+sklearn,"it can be faster on very large, sparse problems,",perf attributes
+sklearn,"Used in spectral
+    clustering, this method tends to be faster and more robust to random
+    initialization than k-means.
+
+    ","perf attributes,comparison with alternatives"
+sklearn,"however, a faster api-compatible loader is also available at:","misc, ref"
+sklearn,parsing a text based source can be expensive,concepts
+sklearn,this implementation is written in cython and is reasonably fast,impl details
+sklearn,"joblib, successive runs will be fast (less than 200ms).","perf attributes, impl details"
+sklearn,"Equals the inverse of the covariance but computed with
+        the matrix inversion lemma for efficiency.
+
+        ",purpose & rationale
+sklearn,"This can improve the
+        performance of downstream classifiers.
+
+    ",purpose & rationale
+sklearn,"This can improve the
+        performance of downstream classifiers.
+
+    ",purpose & rationale
+sklearn,"This can improve the
+        performance of downstream classifiers.
+
+    ",purpose & rationale
+sklearn,lars will be faster if,perf attributes
+sklearn,lars will be faster if,perf attributes
+sklearn,"lasso_lars will be faster if
+        the estimated components are sparse.
+        ",perf attributes
+sklearn,"lasso_lars will be faster if
+        the estimated components are sparse.
+        ",perf attributes
+sklearn,"lasso_lars will be faster if
+        the estimated components are sparse.
+        ",perf attributes
+sklearn,"lasso_lars will be faster if
+        the estimated components are sparse.
+        ",perf attributes
+sklearn,"lasso_lars will be faster if
+        the estimated components are sparse.
+        ",perf attributes
+sklearn,"lasso_lars will be faster if
+        the estimated components are sparse.
+        ",perf attributes
+sklearn,"If 'lapack' use standard SVD from
+        scipy.linalg, if 'randomized' use fast ``randomized_svd`` function.
+        ",functionality desc
+sklearn,this extra assumption makes probabilistic pca faster as it can be,concepts
+sklearn,"""""""fastica: a fast algorithm for independent component analysis",functionality desc
+sklearn,"""""""perform fast independent component analysis",functionality desc
+sklearn,faster for fortran-ordered input,purpose & rationale
+sklearn,memory efficient than a pca,comparison with alternatives
+sklearn,the computational overhead of each svd is,perf attributes
+sklearn,"If n_components is much less than
+        the number of training samples, arpack may be more efficient
+        than the dense eigensolver.
+
+    ",comparison with alternatives
+sklearn,"(generally faster, less accurate alternative to nndsvda",comparison with alternatives
+sklearn,"(generally faster, less accurate alternative to nndsvda",comparison with alternatives
+sklearn,"Note that values different from 'frobenius'
+        (or 2) and 'kullback-leibler' (or 1) lead to significantly slower
+        fits. ",perf attributes
+sklearn,"Note that values different from 'frobenius'
+        (or 2) and 'kullback-leibler' (or 1) lead to significantly slower
+        fits. ",perf attributes
+sklearn,this is more efficient than calling fit followed by transform,"purpose & rationale, comparison with alternatives"
+sklearn,"In general, if the data size is large, the online update will be much
+        faster than the batch update.
+
+        ","perf attributes, usage practice,comparison with alternatives"
+sklearn,"svd_solver : string {'auto', 'full', 'arpack', 'randomized'}
+        auto :
+            the solver is selected by a default policy based on `X.shape` and
+            `n_components`: if the input data is larger than 500x500 and the
+            number of components to extract is lower than 80% of the smallest
+            dimension of the data, then the more efficient 'randomized'
+            method is enabled. ",functionality desc
+sklearn,lars will be faster if,perf attributes
+sklearn,lars will be faster if,perf attributes
+sklearn,"t * x), whichever is more efficient",functionality desc
+sklearn,"this estimator supports two algorithms: a fast randomized svd solver, and",functionality desc
+sklearn,the 'lsqr' solver is an efficient algorithm that only works for,functionality desc
+sklearn,"Sparse matrices are also supported, use sparse
+            ``csc_matrix`` for maximum efficiency.
+
+        ",usage practice
+sklearn,"Sparse matrices are also supported, use sparse
+            ``csc_matrix`` for maximum efficiency.
+
+        ",usage practice
+sklearn,"Sparse matrices are also supported, use sparse
+            ``csr_matrix`` for maximum efficiency.
+
+        ",usage practice
+sklearn,"Sparse matrices are also supported, use sparse
+            ``csr_matrix`` for maximum efficiency.
+
+        ",usage practice
+sklearn,"Use ``dtype=np.float32`` for
+            maximum efficiency.
+
+        ",usage practice
+sklearn,whether to presort the data to speed up the finding of best splits in,functionality desc
+sklearn,whether to presort the data to speed up the finding of best splits in,functionality desc
+sklearn,"Sparse matrices are also supported, use sparse
+            ``csc_matrix`` for maximum efficiency.
+
+        ",usage practice
+sklearn,"Sparse matrices are also supported, use sparse
+            ``csc_matrix`` for maximum efficiency.
+
+        ",usage practice
+sklearn,"This warning is used to notify the user that BLAS was not used for dot
+    operation and hence the efficiency may be affected.
+
+    ",functionality desc
+sklearn,this warning notifies the user that the efficiency may not be optimal due,functionality desc
+sklearn,"""""""warning used to notify the user of inefficient computation",functionality desc
+sklearn,"ascii' is a fast method that only works on characters that have
+        an direct ASCII mapping.
+        ",functionality desc
+sklearn,"ascii' is a fast method that only works on characters that have
+        an direct ASCII mapping.
+        ",functionality desc
+sklearn,"ascii' is a fast method that only works on characters that have
+        an direct ASCII mapping.
+        ",functionality desc
+sklearn,"unicode' is a slightly slower method that works on any characters.
+        ",functionality desc
+sklearn,"unicode' is a slightly slower method that works on any characters.
+        ",functionality desc
+sklearn,"unicode' is a slightly slower method that works on any characters.
+        ",functionality desc
+sklearn,"This strategy has several advantages:
+
+    - it is very low memory scalable to large datasets as there is no need to
+      store a vocabulary dictionary in memory
+
+    - it is fast to pickle and un-pickle as it holds no state besides the
+      constructor parameters
+
+    - it can be used in a streaming (partial fit) or parallel pipeline as there
+      is no state computed during fit.
+
+    ",impl details
+sklearn,"This strategy has several advantages:
+
+    - it is very low memory scalable to large datasets as there is no need to
+      store a vocabulary dictionary in memory
+
+    - it is fast to pickle and un-pickle as it holds no state besides the
+      constructor parameters
+
+    - it can be used in a streaming (partial fit) or parallel pipeline as there
+      is no state computed during fit.
+
+    ",impl details
+sklearn,"Warning: the python-level loop and join operations make this
+    implementation 20 times slower than the strip_accents_ascii basic
+    normalization.
+
+    ",impl details
+sklearn,"See ``scipy.stats.f_oneway`` that should give the same results while
+    being less efficient.
+
+    ",comparison with alternatives
+sklearn,"Note that values of nu not in
+        [0.5, 1.5, 2.5, inf] incur a considerably higher computational cost
+        (appr. ","functionality desc,perf attributes"
+sklearn,"- 'brute' is supported for any estimator, but is more
+          computationally intensive.
+
+        ","perf attributes, functionality desc"
+sklearn,"- 'brute' is supported for any estimator, but is more
+          computationally intensive.
+
+        ","perf attributes, functionality desc"
+sklearn,"`basegradientboosting`, but is more efficient in terms of speed","perf attributes, functionality desc"
+sklearn,"`basegradientboosting`, but is more efficient in terms of speed","perf attributes, functionality desc"
+sklearn,"and thus slower than svr, which learns a sparse model for epsilon > 0, at",comparison with alternatives
+sklearn,krr model can be done in closed-form and is typically faster for,"perf attributes, functionality desc"
+sklearn,"This will only provide
+        speedup for n_targets > 1 and sufficient large problems.
+        ",perf attributes
+sklearn,l1-regularized models can be much more memory- and storage-efficient,perf attributes
+sklearn,"Note that in certain cases, the Lars solver may be significantly
+    faster to implement this functionality. ","impl details, perf attributes"
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,it is more efficient than the lassocv if only a small number of,comparison with alternatives
+sklearn,"setting ``fit_path`` to ``false`` will lead to a speedup, especially",perf attributes
+sklearn,"setting ``fit_path`` to ``false`` will lead to a speedup, especially",perf attributes
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,whether to use a precomputed gram matrix to speed up,functionality desc
+sklearn,- 'liblinear' might be slower in logisticregressioncv because it does,"perf attributes, functionality desc"
+sklearn,"- For small datasets, 'liblinear' is a good choice, whereas 'sag' and
+          'saga' are faster for large ones.
+        - ",usage practice
+sklearn,"- For small datasets, 'liblinear' is a good choice, whereas 'sag' and
+          'saga' are faster for large ones.
+        - ",usage practice
+sklearn,"This is an implementation that uses the result of the previous model
+    to speed up computations along the set of solutions, making it faster
+    than sequentially calling LogisticRegression for the different parameters.
+    ",impl details
+sklearn,"Use C-ordered arrays or CSR matrices containing 64-bit
+    floats for optimal performance; any other input format will be converted
+    (and copied).
+
+    ",usage practice
+sklearn,note that 'sag' and 'saga' fast convergence is only guaranteed on,usage practice
+sklearn,note that 'sag' and 'saga' fast convergence is only guaranteed on,usage practice
+sklearn,"note that there will be no speedup with liblinear solver, since it does","functionality desc, perf attributes"
+sklearn,the value should be precomputed to speed up cross validation,directives
+sklearn,improves performance when `n_targets` or `n_samples` is,perf attributes
+sklearn,improves performance when n_targets,perf attributes
+sklearn,whether to use a precomputed gram and xy matrix to speed up,functionality desc
+sklearn,rejecting samples with this function is computationally costlier than,comparison with alternatives
+sklearn,#NAME?,functionality desc
+sklearn,#NAME?,functionality desc
+sklearn,"Both methods
+          use an iterative procedure, and are often faster than other solvers
+          when both n_samples and n_features are large. ","comparison with alternatives, impl details"
+sklearn,"Both methods also use an
+          iterative procedure, and are often faster than other solvers when
+          both n_samples and n_features are large. ","comparison with alternatives, impl details"
+sklearn,"Both methods also use an
+          iterative procedure, and are often faster than other solvers when
+          both n_samples and n_features are large. ","comparison with alternatives, impl details"
+sklearn,"Note that 'sag' and
+          'saga' fast convergence is only guaranteed on features with
+          approximately the same scale. ",usage practice
+sklearn,"Note that 'sag' and
+          'saga' fast convergence is only guaranteed on features with
+          approximately the same scale. ",usage practice
+sklearn,"Note that 'sag' and
+          'saga' fast convergence is only guaranteed on features with
+          approximately the same scale. ",usage practice
+sklearn,efficient leave-one-out cross-validation,functionality desc
+sklearn,efficient leave-one-out cross-validation,functionality desc
+sklearn,it is the fastest and uses an iterative,"functionality desc,perf attributes"
+sklearn,"The value should be precomputed
+        to speed up cross validation.
+
+    ",directives
+sklearn,important note: 'sag' solver converges faster on columns that are on the,functionality desc
+sklearn,"A lower number leads to a higher breakdown
+        point and a low efficiency while a high number leads to a low
+        breakdown point and a high efficiency. ","perf attributes, functionality desc"
+sklearn,"A lower number leads to a higher breakdown
+        point and a low efficiency while a high number leads to a low
+        breakdown point and a high efficiency. ","perf attributes, functionality desc"
+sklearn,"Any value of n_subsamples between the
+    number of features and samples leads to an estimator with a compromise
+    between robustness and efficiency. ",perf attributes
+sklearn,auto' : attempt to choose the most efficient solver,functionality desc
+sklearn,"it can be faster on very large, sparse problems,",perf attributes
+sklearn,"it can be faster on very large, sparse problems,",perf attributes
+sklearn,"This will suppress some
+    noise and speed up the computation of pairwise distances between
+    samples. ",usage practice
+sklearn,"will run on the slower, but exact, algorithm in o(n^2) time",perf attributes
+sklearn,be mindful that this function is an order of magnitude slower than other,comparison with alternatives
+sklearn,"(which are
+    valid scipy.spatial.distance metrics), the scikit-learn implementation
+    will be used, which is faster and has support for sparse matrices (except
+    for 'cityblock'). ",impl details
+sklearn,"This is mostly equivalent to calling:
+
+        pairwise_distances(X, Y=Y, metric=metric).argmin(axis=axis)
+
+    but uses much less memory, and is faster for large arrays.
+
+    ",comparison with alternatives
+sklearn,"This works for Scipy's metrics, but is less
+        efficient than passing the metric name as a string.
+
+        ",comparison with alternatives
+sklearn,"This works for Scipy's metrics, but is less
+        efficient than passing the metric name as a string.
+
+        ",comparison with alternatives
+sklearn,"but uses much less memory, and is faster for large arrays.
+
+    ",comparison with alternatives
+sklearn,"first, it is computationally efficient when dealing with sparse data",purpose & rationale
+sklearn,"for efficiency reasons, the euclidean distance between a pair of row","purpose & rationale, impl details"
+sklearn,"Storing the
+        precision matrices instead of the covariance matrices makes it more
+        efficient to compute the log-likelihood of new samples at test time.
+        ",purpose & rationale
+sklearn,"Storing the precision matrices instead of the covariance matrices makes
+        it more efficient to compute the log-likelihood of new samples at test
+        time. ",purpose & rationale
+sklearn,this can speed up,purpose & rationale
+sklearn,"Storing the
+        precision matrices instead of the covariance matrices makes it more
+        efficient to compute the log-likelihood of new samples at test time.
+        ",purpose & rationale
+sklearn,"Storing the precision matrices instead of the covariance matrices makes
+        it more efficient to compute the log-likelihood of new samples at test
+        time. ",purpose & rationale
+sklearn,this can speed up,purpose & rationale
+sklearn,"However computing the scores on the training set can be computationally
+        expensive and is not strictly required to select the parameters that
+        yield the best generalization performance.
+
+
+    ",usage practice
+sklearn,"However computing the scores on the training set can be computationally
+        expensive and is not strictly required to select the parameters that
+        yield the best generalization performance.
+
+
+    ",usage practice
+sklearn,"However computing the scores on the training set can be computationally
+        expensive and is not strictly required to select the parameters that
+        yield the best generalization performance.
+
+    ",usage practice
+sklearn,"However computing the scores on the training set can be computationally
+        expensive and is not strictly required to select the parameters that
+        yield the best generalization performance.
+
+    ",usage practice
+sklearn,"Use this for lightweight and
+              fast-running jobs, to avoid delays due to on-demand
+              spawning of the jobs
+
+            - An int, giving the exact number of total jobs that are
+              spawned
+
+            ",usage practice
+sklearn,"Use this for lightweight and
+              fast-running jobs, to avoid delays due to on-demand
+              spawning of the jobs
+
+            - An int, giving the exact number of total jobs that are
+              spawned
+
+            ",usage practice
+sklearn,however computing the scores on the training set can be computationally,usage practice
+sklearn,however computing the scores on the training set can be computationally,usage practice
+sklearn,this is done for efficiency,purpose & rationale
+sklearn,this is done for efficiency,purpose & rationale
+sklearn,"for example, a less computationally intensive alternative to",comparison with alternatives
+sklearn,"False
+        If the estimator supports incremental learning, this will be
+        used to speed up fitting for different training set sizes.
+
+    ","functionality desc, purpose & rationale"
+sklearn,"However computing the scores on the training set can be computationally
+        expensive and is not strictly required to select the parameters that
+        yield the best generalization performance.
+
+    ",usage practice
+sklearn,"However computing the scores on the training set can be computationally
+        expensive and is not strictly required to select the parameters that
+        yield the best generalization performance.
+
+    ",usage practice
+sklearn,"Use this for lightweight and
+              fast-running jobs, to avoid delays due to on-demand
+              spawning of the jobs
+
+            - An int, giving the exact number of total jobs that are
+              spawned
+
+            ",usage practice
+sklearn,"Use this for lightweight and
+              fast-running jobs, to avoid delays due to on-demand
+              spawning of the jobs
+
+            - An int, giving the exact number of total jobs that are
+              spawned
+
+            ",usage practice
+sklearn,"Use this for lightweight and
+              fast-running jobs, to avoid delays due to on-demand
+              spawning of the jobs
+
+            - An int, giving the exact number of total jobs that are
+              spawned
+
+            ",usage practice
+sklearn,however computing the scores on the training set can be computationally,usage practice
+sklearn,performance,"ref, impl details"
+sklearn,in addition to its computational efficiency (only `n_classes`,purpose & rationale
+sklearn,"this method is usually slower than one-vs-the-rest, due to its
+    O(n_classes^2) complexity. ","perf attributes, comparison with alternatives"
+sklearn,should be used when memory is inefficient to train all data,directives
+sklearn,multiclass estimators in the hope that their accuracy or runtime performance,usage practice
+sklearn,"When individual estimators are fast to train or predict
+        using `n_jobs>1` can result in slower performance due
+        to the overhead of spawning processes.
+
+    ","perf attributes, functionality desc"
+sklearn,when individual estimators are fast to train or predict,"perf attributes, functionality desc"
+sklearn,"this method has some performance and numerical stability overhead,","usage practice, perf attributes"
+sklearn,this method has some performance overhead hence it is better to call,"usage practice, perf attributes"
+sklearn,"for efficiency, `radius_neighbors` returns arrays of objects, where",purpose & rationale
+sklearn,"A larger tolerance will
+        generally lead to faster execution.  ",perf attributes
+sklearn,"A larger tolerance will
+        generally lead to faster execution.  ",perf attributes
+sklearn,"This works for Scipy's metrics, but is less
+        efficient than passing the metric name as a string.
+
+        ",comparison with alternatives
+sklearn,"This works for Scipy's metrics, but is less
+        efficient than passing the metric name as a string.
+
+        ",comparison with alternatives
+sklearn,"for small datasets, however, 'lbfgs' can converge faster and perform",perf attributes
+sklearn,"for small datasets, however, 'lbfgs' can converge faster and perform",perf attributes
+sklearn,f' order is faster to,perf attributes
+sklearn,"F' order is faster to
+        compute, but may slow down subsequent estimators.
+
+        ",perf attributes
+sklearn,"scale : performs standardization that is faster, but less robust",functionality desc
+sklearn,sparsity to speed up polynomial feature expansions of csr matrices,"ref, impl details"
+sklearn,"standardscaler : perform standardization that is faster, but less robust",functionality desc
+sklearn,"subsample : int, optional (default=1e5)
+        Maximum number of samples used to estimate the quantiles for
+        computational efficiency. ","functionality desc, purpose & rationale"
+sklearn,"subsample : int, optional (default=1e5)
+        Maximum number of samples used to estimate the quantiles for
+        computational efficiency. ","functionality desc, purpose & rationale"
+sklearn,"used, which is much faster than the method used on csc input","ref, impl details"
+sklearn,"Sparse random matrix is an alternative to dense random
+    projection matrix that guarantees similar embedding quality while being
+    much more memory efficient and allowing faster computation of the
+    projected data.
+
+    ","functionality desc, comparison with alternatives"
+sklearn,be very small and it will be more cpu and memory efficient to,purpose & rationale
+sklearn,Random Projections are a simple and computationally efficient way to,functionality desc
+sklearn,The main theoretical result behind the efficiency of random projection is the,concepts
+sklearn,"expensive, at approximately O(N^3) where N is the number of (labeled and",perf attributes
+sklearn,  size O(k*N) which will run much faster. See the documentation for SVMs for,"functionality desc, perf attributes"
+sklearn,"This must be enabled prior
+        to calling `fit`, and will slow down that method.
+
+    ","perf attributes, directives"
+sklearn,"This must be enabled prior
+        to calling `fit`, and will slow down that method.
+
+    ","perf attributes, directives"
+sklearn,"While `crammer_singer` is interesting from a theoretical perspective
+        as it is consistent, it is seldom used in practice as it rarely leads
+        to better accuracy and is more expensive to compute.
+        ","perf attributes, usage practice"
+sklearn,scalable linear support vector machine for classification,functionality desc
+sklearn,scalable linear support vector machine for classification using,functionality desc
+sklearn,scalable linear support vector machine for regression,functionality desc
+sklearn,"For the default settings of a decision tree on large
+        datasets, setting this to true may slow down the training process.
+        ",perf attributes
+sklearn,"For the default settings of a decision tree on large
+        datasets, setting this to true may slow down the training process.
+        ",perf attributes
+sklearn,"When using either a smaller dataset or a restricted depth, this may
+        speed up the training.
+
+    ",perf attributes
+sklearn,"When using either a smaller dataset or a restricted depth, this may
+        speed up the training.
+
+    ",perf attributes
+sklearn,``order='c'`` for maximum efficiency,usage practice
+sklearn,whether to presort the data to speed up the finding of best splits in,functionality desc
+sklearn,whether to presort the data to speed up the finding of best splits in,functionality desc
+sklearn,"In order to
+    obtain further speed up, `n_iter` can be set <=2 (at the cost of
+    loss of precision).
+
+    ",usage practice
+sklearn,"This algorithm finds a (usually very good) approximate truncated
+    singular value decomposition using randomization to speed up the
+    computations. ","functionality desc, impl details, purpose & rationale"
+sklearn,implementation of randomized svd tend to be a little faster in that,"impl details, purpose & rationale"
+sklearn,it is particularly fast on large matrices on which,"perf attributes, usage practice"
+sklearn,": 0.18
+
+    power_iteration_normalizer : 'auto' (default), 'QR', 'LU', 'none'
+        Whether the power iterations are normalized with step-by-step
+        QR factorization (the slowest but most accurate), 'none'
+        (the fastest but numerically unstable when `n_iter` is large, e.g.
+        typically 5 or larger), or 'LU' factorization (numerically stable
+        but can lose slightly in accuracy). ","perf attributes,functionality desc"
+sklearn,faster than norm(x) ** 2,comparison with alternatives
+sklearn,"n_iter : integer
+        Number of power iterations used to stabilize the result
+
+    power_iteration_normalizer : 'auto' (default), 'QR', 'LU', 'none'
+        Whether the power iterations are normalized with step-by-step
+        QR factorization (the slowest but most accurate), 'none'
+        (the fastest but numerically unstable when `n_iter` is large, e.g.
+        typically 5 or larger), or 'LU' factorization (numerically stable
+        but can lose slightly in accuracy). ","perf attributes,functionality desc"
+sklearn,"qr factorization (the slowest but most accurate), 'none'","perf attributes,functionality desc"
+sklearn,product. If the function call is very expensive (e.g. for logistic,functionality desc
+tensorflow,"""""""Efficient ImageNet input pipeline using tf.data.Dataset.""""""",functionality desc
+tensorflow,   an embedding_lookups are used to efficiently perform the sparse matrix,"impl details, purpose & rationale"
+tensorflow,"""""""Variant of the Adam optimizer that handles sparse updates more efficiently.",functionality desc
+tensorflow,implementation is more memory efficient.,"comparison with alternatives, impl details"
+tensorflow,backpropagation. This typically provides a significant speedup compared to,comparison with alternatives
+tensorflow,measurable slowdown of the `callable`'s performance,perf attributes
+tensorflow,"However, by fusing the two transformations together, the
+  implementation can be more efficient. ",purpose & rationale
+tensorflow,the following is an example of an efficient,usage practice
+tensorflow,"Grouping together elements that have similar lengths reduces the total
+  fraction of padding in a batch which increases training step efficiency.
+
+  ",purpose & rationale
+tensorflow,"Furthermore, the `sloppy` argument can be used to
+  improve performance, by relaxing the requirement that the outputs are produced
+  in a deterministic order, and allowing the implementation to skip over nested
+  datasets whose elements are not readily available when requested.
+
+  ","impl details, perf attributes"
+tensorflow,the following is an example of an efficient,usage practice
+tensorflow,"`Iterator.get_next()` adds ops to
+    the graph, and executing each op allocates resources (including threads); as
+    a consequence, invoking it in every iteration of a training loop causes
+    slowdown and eventual resource exhaustion. ",usage practice
+tensorflow,"""""""combine multiple `reduce_to` calls into one for faster execution","purpose & rationale, functionality desc"
+tensorflow,"This
+    independence assumption allows more efficient computation as compared to
+    `GradientTape.jacobian`. ",purpose & rationale
+tensorflow,this function is essentially an efficient,impl details
+tensorflow,    indicator column but with an efficient implementation.,"functionality desc, impl details"
+tensorflow,"this might be inefficient, however, if many of ids","perf attributes,usage practice"
+tensorflow,    indicator column but with an efficient implementation.,"functionality desc, impl details"
+tensorflow,note that this may hide performance problems as there is no notification,"perf attributes, functionality desc"
+tensorflow,"This method behaves differently than self.session(): for performance reasons
+    `cached_session` will by default reuse the same session within the same
+    test. ",purpose & rationale
+tensorflow,faster to compute than sigmoid activation,comparison with alternatives
+tensorflow,": tensor `(samples, )` containing the sequence length for
+          each batch item in `y_pred`.
+      greedy: perform much faster best-path search if `true`.
+          ",functionality desc
+tensorflow,"True` is a bit more
+          efficient because it avoids transposes at the beginning and end of the
+          RNN calculation. ","perf attributes, functionality desc"
+tensorflow,faster than sigmoid,comparison with alternatives
+tensorflow,"Note that writing too frequently to TensorBoard
+          can slow down your training.
+
+  ",usage practice
+tensorflow,"the generator is run in parallel to the model, for efficiency",purpose & rationale
+tensorflow,"""""""fast gru implementation backed by cudnn",functionality desc
+tensorflow,"""""""fast lstm implementation backed by cudnn",functionality desc
+tensorflow,"Depending on the inputs, layer parameters, hardware, and
+          `tf.executing_eagerly()` one implementation can be dramatically faster
+          (e.g. 50X) than another.
+
+          ","perf attributes, comparison with alternatives, environment"
+tensorflow,"Depending on the inputs, layer parameters, hardware, and
+          `tf.executing_eagerly()` one implementation can be dramatically faster
+          (e.g. 50X) than another.
+
+          ","perf attributes, comparison with alternatives, environment"
+tensorflow,"It is recommended to benchmark both in the setting of interest to pick
+          the most efficient one (in terms of speed and memory usage).
+
+          ",usage practice
+tensorflow,"It is recommended to benchmark both in the setting of interest to pick
+          the most efficient one (in terms of speed and memory usage).
+
+          ",usage practice
+tensorflow,it is memory-efficient but performs a lot of (small) ops,"perf attributes, functionality desc"
+tensorflow,it is memory-efficient but performs a lot of (small) ops,"perf attributes, functionality desc"
+tensorflow,"fused: if `None` or `True`, use a faster, fused implementation if possible.
+      ",functionality desc
+tensorflow,"fused: if `true`, use a faster, fused implementation, or raise a valueerror",functionality desc
+tensorflow,"if `none`, use the faster",functionality desc
+tensorflow,"These modes will
+          have different performance profiles on different hardware and
+          for different applications.
+  ",environment
+tensorflow,"These modes will
+          have different performance profiles on different hardware and
+          for different applications.
+      ",environment
+tensorflow,"These modes will
+          have different performance profiles on different hardware and
+          for different applications.
+      ",environment
+tensorflow,"These modes will
+          have different performance profiles on different hardware and
+          for different applications.
+      ",environment
+tensorflow,"True` is a bit more
+          efficient because it avoids transposes at the beginning and end of the
+          RNN calculation. ","perf attributes, functionality desc"
+tensorflow,"Unrolling can speed-up a RNN,
+          although it tends to be more memory-intensive.
+          ",perf attributes
+tensorflow,"Unrolling can speed-up a RNN,
+          although it tends to be more memory-intensive.
+          ",perf attributes
+tensorflow,"Unrolling can speed-up a RNN,
+          although it tends to be more memory-intensive.
+          ",perf attributes
+tensorflow,"Unrolling can speed-up a RNN,
+          although it tends to be more memory-intensive.
+          ",perf attributes
+tensorflow,cudnnlstm` for better performance on gpu,usage practice
+tensorflow,efficient stacked rnn,impl details
+tensorflow,note that this cell is not optimized for performance on gpu,impl details
+tensorflow,used to implement efficient stacked rnns,purpose & rationale
+tensorflow,the task of an enqueuer is to use parallelism to speed up preprocessing,purpose & rationale
+tensorflow,this induces quasi-linear speedup on up to 8 gpus,perf attributes
+tensorflow,"fused: if `none` or `true`, use a faster, fused implementation if possible","impl details, functionality desc"
+tensorflow,"fused: if `none` or `true`, use a faster, fused implementation if possible","impl details, functionality desc"
+tensorflow,"`parallel_stack` will copy pieces of the input into the output as they become
+  available, in some situations this can provide a performance benefit.
+
+  ","functionality desc, perf attributes"
+tensorflow,in `numpy` transposes are memory-efficient constant time operations as they,concepts
+tensorflow,in `numpy` transposes are memory-efficient constant time operations as they,concepts
+tensorflow,# inefficient!,usage practice
+tensorflow,"A sampler can be used to sample from a subset of the original
+      range in order to speed up the whole computation through parallelism. ",concepts
+tensorflow,"shard: A sampler can be used to sample from a subset of the original range
+      in order to speed up the whole computation through parallelism. ",concepts
+tensorflow,"however, it is slower than `clip_by_norm()` because all the parameters must be","comparison with alternatives, functionality desc"
+tensorflow,current tf.cond implementation once it reaches feature and performance parity.,"purpose & rationale, functionality desc"
+tensorflow,"` (but
+  that decoder is faster for this special case).
+
+  ",comparison with alternatives
+tensorflow,"` (but
+  that decoder is faster for this special case).
+
+  ",comparison with alternatives
+tensorflow,a sparsetensor will be significantly faster,usage practice
+tensorflow,efficient implementation on tpu,functionality desc
+tensorflow,"if supplied, enable a faster, memory",functionality desc
+tensorflow,there is some memory/performance overhead to switching from the default,"perf attributes, impl details"
+tensorflow,using `time_major = true` (default) is a bit more efficient because it,"functionality desc, perf attributes"
+tensorflow,"This may be useful for multiple reasons, including providing
+  a more efficient or numerically stable gradient for a sequence of operations.
+
+  ",purpose & rationale
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"When `True` distribution
+    parameters are checked for validity despite possibly degrading runtime
+    performance. ","functionality desc, perf attributes"
+tensorflow,"The recommendation would be to
+  debug without defun but switch to defun to get performance benefits of
+  running map_fn in parallel.
+
+  ",usage practice
+tensorflow,"You can still get the
+  performance benefits of running a function in parallel by using the
+  `tf.contrib.eager.defun` decorator,
+
+  ```python
+  # Assume the function being used in map_fn is fn.
+  ",usage practice
+tensorflow,"9 is the highest compression level, generating
+  the smallest output, but is slower.
+
+  ","perf attributes, functionality desc"
+tensorflow,if true use a slower but nicer upscaling of the,functionality desc
+tensorflow,if true use a slower but nicer upscaling of the,functionality desc
+tensorflow,"it is equivalent to a combination of decode and crop, but much faster by only","functionality desc, comparison with alternatives"
+tensorflow,quality of the compression from 0 to 100 (higher is better and slower),perf attributes
+tensorflow,this is much faster than,comparison with alternatives
+tensorflow,this is much faster than,comparison with alternatives
+tensorflow,"this op only parses the image header, so it is much faster than decodejpeg","functionality desc, comparison with alternatives"
+tensorflow,**note**: the gradient computation on gpu is faster for large matrices but,concepts
+tensorflow,case it might be faster to use the cpu,usage practice
+tensorflow,this function is faster and numerically stabler than `bessel_i0(x)`,comparison with alternatives
+tensorflow,this function is faster and numerically stabler than `bessel_i1(x)`,comparison with alternatives
+tensorflow,#### performance,misc
+tensorflow,#### performance contract,misc
+tensorflow,"since this is a high-performance library, attention should be paid to detail,",misc
+tensorflow,"# equivalent, but inefficient method",comparison with alternatives
+tensorflow,class docstrings should contain an explanation of computational complexity,directives
+tensorflow,"""""""Add one or more `LinearOperators` efficiently.""""""",functionality desc
+tensorflow,#### performance,misc
+tensorflow,the performance of `linearoperatorblockdiag` on any operation is equal to,perf attributes
+tensorflow,#### performance,misc
+tensorflow,#### performance,misc
+tensorflow,#### performance,misc
+tensorflow,#### performance,misc
+tensorflow,the performance of `linearoperatorcomposition` on any operation is equal to,perf attributes
+tensorflow,#### performance,misc
+tensorflow,#### performance,misc
+tensorflow,`linearoperatorfullmatrix` has exactly the same performance as would be,perf attributes
+tensorflow,### performance,misc
+tensorflow,### performance,misc
+tensorflow,#### performance,misc
+tensorflow,the performance of `linearoperatorkronecker` on any operation is equal to,perf attributes
+tensorflow,### performance,misc
+tensorflow,#### performance,misc
+tensorflow,"Otherwise, only the
+      singular values will be computed, which can be significantly faster.
+    ","functionality desc, perf attributes"
+tensorflow,"This path is
+  typically 6-7 times slower than the fast path. ",impl details
+tensorflow,"Intended for use in gradient code which might deal with `IndexedSlices`
+  objects, which are easy to multiply by a scalar but more expensive to
+  multiply with arbitrary tensors.
+
+  ",purpose & rationale
+tensorflow,"if one or both of the inputs contain a lot of zeros, a more efficient",usage practice
+tensorflow,"if one or both of the matrices contain a lot of zeros, a more efficient",usage practice
+tensorflow,this is more efficient than using separate `tf,comparison with alternatives
+tensorflow,this is more efficient than using separate `tf,comparison with alternatives
+tensorflow,"If false, a constant
+      term is dropped in favor of more efficient optimization.
+    ","purpose & rationale, functionality desc"
+tensorflow,this is a faster way to train a softmax classifier over a huge number of,purpose & rationale
+tensorflow,"* This op expects unscaled logits, since it performs a `softmax`
+  on `logits` internally for efficiency.  ",impl details
+tensorflow,"This op expects unscaled logits, since it performs a `softmax`
+on `logits` internally for efficiency.  ",impl details
+tensorflow,"This op expects unscaled logits, since it performs a `softmax`
+on `logits` internally for efficiency.  ",impl details
+tensorflow,one might see performance advantages by batching `example` protos with,usage practice
+tensorflow,performance choice.  It however also has an impact on:,purpose & rationale
+tensorflow,# Or fetch the variables in parallel to speed up large matmuls:,usage practice
+tensorflow,"This allows training RNNs
+      which would typically not fit on a single GPU, with very minimal (or no)
+      performance penalty.
+    ",purpose & rationale
+tensorflow,"This allows training RNNs
+    which would typically not fit on a single GPU, with very minimal (or no)
+    performance penalty.
+  ",purpose & rationale
+tensorflow,"This allows training RNNs
+    which would typically not fit on a single GPU, with very minimal (or no)
+    performance penalty.
+  ",purpose & rationale
+tensorflow,so it's more for performance than correctness,purpose & rationale
+tensorflow,using `time_major = true` is a bit more efficient because it avoids,"functionality desc, perf attributes"
+tensorflow,using `time_major = true` is a bit more efficient because it avoids,"functionality desc, perf attributes"
+tensorflow,"This method of calculation does not compute the RNN steps past the maximum
+sequence length of the minibatch (thus saving computational time),
+and properly propagates the state at an example's sequence length
+to the final state output.
+
+",functionality desc
+tensorflow,better performance on cpu,usage practice
+tensorflow,better performance on cpu,usage practice
+tensorflow,"cudnngru` for better performance on gpu, or",usage practice
+tensorflow,"cudnnlstm` for better performance on gpu, or",usage practice
+tensorflow,"cudnnlstm` for better performance on gpu, or",usage practice
+tensorflow,cudnnrnntanh` for better performance on gpu,usage practice
+tensorflow,grublockcellv2` for better performance on cpu,usage practice
+tensorflow,note that this cell is not optimized for performance,impl details
+tensorflow,note that this cell is not optimized for performance,impl details
+tensorflow,note that this cell is not optimized for performance,impl details
+tensorflow,note that this cell is not optimized for performance,impl details
+tensorflow,"Unstable sort is not yet implemented,
+      but will eventually be the default for performance reasons. ",purpose & rationale
+tensorflow,"this is a valid option for `ndims = 1`, but less efficient than",comparison with alternatives
+tensorflow,"This is a valid option for `ndims = 1`, but less
+    efficient than this implementation.
+
+    ",comparison with alternatives
+tensorflow,performance parity.,"purpose & rationale, functionality desc"
+tensorflow,there are  semantic differences to  make it more  efficient for,"functionality desc, perf attributes"
+tensorflow,there are  semantic differences to  make it more  efficient for,"functionality desc, perf attributes"
+tensorflow,"""""""Functions used to extract and analyze stacks.  Faster than Python libs.""""""",comparison with alternatives
+tensorflow,TensorFlow is an open source software library for high performance numerical,functionality desc
+tensorflow,A few composite indexes are created (upload_test_benchmarks_index.yaml) for fast,"functionality desc, purpose & rationale"

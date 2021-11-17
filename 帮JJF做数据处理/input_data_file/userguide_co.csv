@@ -1,0 +1,2467 @@
+project,desc,knowledge
+gensim,"{Word2Vec, FastText, Doc2Vec}`** which leads to (much) faster training on machines with many cores.",Performance Attribute
+gensim,"## Motivation
+
+The original implementation of Word2Vec training in Gensim is already super fast (covered in [this blog series](https://rare-technologies.com/word2vec-in-python-part-two-optimizing/), see also [benchmarks against other implementations in Tensorflow, DL4J, and C](https://rare-technologies.com/machine-learning-hardware-benchmarks/)) and flexible, allowing you to train on arbitrary Python streams.",Performance Attribute
+gensim,"We had to jump through [some serious hoops](https://www.youtube.com/watch?v=vU4TlwZzTfU) to make it so, avoiding the Global Interpreter Lock (the dreaded GIL, the main bottleneck for any serious high performance computation in Python).",Implementation Details
+gensim,"After [much](https://github.com/RaRe-Technologies/gensim/pull/2127) [experimentation](https://github.com/RaRe-Technologies/gensim/pull/2048#issuecomment-401494412) and [benchmarking](https://persiyanov.github.io/jekyll/update/2018/05/28/gsoc-first-weeks.html), including some pretty [hardcore outlandish ideas](https://github.com/RaRe-Technologies/gensim/pull/2127#issuecomment-405937741), we figured there's no way around the GIL limitations闂佺偨鍎查弨绨卼 at the level of fine-tuned performance needed here.",Implementation Details
+gensim,"So we decided to introduce a new code path, which has *less flexibility* in favour of *more performance*.",Purpose & Rationale
+gensim,"Training with `corpus_file` yields a **significant performance boost**: for example, in the experiment belows training is 3.7x faster with 32 workers in comparison to training with `sentences` argument.","Performance Attribute, Usage Practice"
+gensim,It even outperforms the original Word2Vec C tool in terms of words/sec processing speed on high-core machines.,Performance Attribute
+gensim,**We see a 1.67x performance boost!,Performance Attribute
+gensim,**A 6.6x speedup!,Performance Attribute
+gensim,Training will be much faster.,Performance Attribute
+gensim,"In case your corpus is generated dynamically, you can either serialize it to disk first with `gensim.utils.save_as_line_sentence` (and then use the fast `corpus_file`), or if that's not possible continue using the existing `sentences` training mode.",Usage Practice
+gensim,"In this way, *gensim* can also be used as a memory-efficient **I/O format conversion tool**: just load a document stream using one format and immediately save it in another format.","Functionality & Behavior, Usage Practice"
+gensim,"## Compatibility with NumPy and SciPy
+
+Gensim also contains [efficient utility functions](http://radimrehurek.com/gensim/matutils.html) to help converting from/to `numpy` matrices:",Functionality & Behavior
+gensim,Word2Vec slightly outperforms FastText on semantic tasks though.,Comparison w/ Alternatives
+gensim,"It uses `similarities.MatrixSimilarity` and `similarities.SparseMatrixSimilarity` internally, so it is still fast, although slightly more complex.","Performance Attribute, Implementation Details"
+gensim,"When in doubt, use `similarities.Similarity`, as it is the most scalable version, and it also supports adding more documents to the index later.",Usage Practice
+gensim,"If you want to get dirty, there are also parameters you can tweak that affect speed vs. memory footprint vs. numerical precision of the LSI algorithm.",Usage Practice
+gensim,"gensim also executes a stochastic multi-pass algorithm from Halko et al. [4] internally, to accelerate in-core part of the computations.",Implementation Details
+gensim,"See also 
+    [Experiments on the English Wikipedia](https://radimrehurek.com/gensim/wiki.html) for further speed-ups by distributing the computation across a cluster of computers.",Ref
+gensim,"This is a very efficient (both memory- and CPU-friendly) approach to approximating TfIdf distances between documents, by throwing in a little randomness.",Functionality & Behavior
+gensim,"gensim uses a fast implementation of online LDA parameter estimation based on [2], modified to run in distributed mode on a cluster of computers.",Implementation Details
+gensim,"gensim uses a fast, online implementation based on [3].",Implementation Details
+gensim,"The intuition behind the method is that we find the minimum ""traveling distance"" between documents, in other words the most efficient way to ""move"" the distribution of document 1 to the distribution of document 2.",Purpose & Rationale
+gensim,"Training times for gensim are slightly lower than the fastText no-ngram model, and significantly lower than the n-gram variant.",Performance Attribute
+gensim,Annoy can find approximate nearest neighbors much faster.,Purpose & Rationale
+gensim,"
+**This speedup factor is by no means constant** and will vary greatly from run to run and is particular to this data set, BLAS setup, Annoy parameters(as tree size increases speedup factor decreases), machine specifications, among other factors.",Performance Attribute
+gensim,"If you are making many queries however, the time it takes to initialize the annoy indexer will be made up for by the incredibly fast retrieval times for queries once the indexer has been initialized
+
+>**Note** : Gensim's 'most_similar' method is using numpy operations in the form of dot product whereas Annoy's method isnt.",Functionality & Behavior
+gensim,* Specified the mini-batch size (`chunksize`) (primarily to speed up training).,Purpose & Rationale
+gensim,"This can of course be quite computationally demanding, so it is recommended that you do this *only* when necessary; that is, wait until you have as much new data as possible to update, rather than updating the model for every new document.",Usage Practice
+gensim,"However, Le and Mikolov in 2014 introduced the <i>Paragraph Vector</i>, which usually outperforms such simple-averaging.",Concept
+gensim,"* Added to that DBOW model are two DM models, one which averages context vectors (`dm_mean`) and one which concatenates them (`dm_concat`, resulting in a much larger, slower, more data-hungry model)",Concept
+gensim,Le and Mikolov notes that combining a paragraph vector from Distributed Bag of Words (DBOW) and Distributed Memory (DM) improves performance.,Usage Practice
+gensim,"Concurrent word-training slows DBOW mode significantly, and offers little improvement (and sometimes a little worsening) of the error rate on this IMDB sentiment-prediction task, but may be appropriate on other tasks, or if you also need word-vectors.",Usage Practice
+gensim,Note that computing n-grams of large dataset can be very computationally intentensive and memory intensive.,Performance Attribute
+gensim,"Increasing chunksize will speed up training, at least as long as the chunk of documents easily fit into memory.",Performance Attribute
+gensim,The code currently runs between 5 to 7 times slower than the original C++ DTM code.,Comparison w/ Alternatives
+gensim,Speeding this up would fix things up!,Performance Attribute
+gensim,"TODO: check memory, check BLAS, see how performance can be improved memory and speed wise.",Misc
+gensim,"When it comes to performance, the C++ is undoubtedly faster, but we can continue to work on ours to make it as fast.",Comparison w/ Alternatives
+gensim,"SVD (another popular matrix factorization method with [super-efficient implementation in Gensim](https://radimrehurek.com/gensim/models/lsimodel.html)), which produces dense negative factors and thus harder-to-interpret topics.","Concept, Implementation Details"
+gensim,"### Main insights
+
+- Gensim NMF is **ridiculously fast** and leaves both LDA and Sklearn far behind in terms of training time and quality on downstream task (F1 score), though coherence is the lowest among all models.","Comparison w/ Alternatives, Performance Attribute"
+gensim,"### Insights
+
+Gensim's online NMF outperforms Sklearn's NMF in terms of speed and RAM consumption:
+
+- **2x** faster.",Comparison w/ Alternatives
+gensim,"Compared to Gensim's LDA, Gensim NMF also gives superior results:
+
+- **3x** faster
+- Coherence is worse than LDA's though.",Comparison w/ Alternatives
+gensim,"As you can see, Gensim's NMF implementation is slower than Sklearn's on **dense** vectors, while achieving comparable quality.",Comparison w/ Alternatives
+gensim,"# Conclusion
+
+Gensim NMF is an extremely fast and memory-optimized model.",Performance Attribute
+gensim,One of the benefits of this separation is that we can easily measure the speed at which a **TermSimilarityIndex** builder class produces term similarities and compare this speed with the speed at which the **SparseTermSimilarityMatrix** director class consumes term similarities.,Purpose & Rationale
+gensim,This allows us to see which of the classes are a bottleneck that slows down the construction of term similarity matrices.,Purpose & Rationale
+gensim,"This in turn increases the consumption speed, since we end up throwing away most of the elements that we consume.",Purpose & Rationale
+gensim,The effects of the dictionary size on the mean term similarity consumption speed are minor to none.,Performance Attribute
+gensim,"Gensim currently supports slow and precise nearest neighbor search, and also approximate nearest neighbor search using [ANNOY][].",Functionality & Behavior
+gensim,Computing a normalized inner product (**normalized**${}={}$True) results in a constant speed decrease.,Performance Attribute
+gensim,So the former is <i>more than twice as fast</i>.,Performance Attribute
+gensim,"Another possible reason for the difference in running times is that the problems converge at different rates, meaning that the error drops slower for some datasets than for others.",Performance Attribute
+gensim,"The ""c_v"" coherence method makes an expensive pass over the corpus, accumulating term occurrence and co-occurrence counts.",Functionality & Behavior
+gensim,"## Training
+`Word2Vec` accepts several parameters that affect both training speed and quality.",Functionality & Behavior
+gensim,"### workers
+`workers`, the last of the major parameters (full list [here](http://radimrehurek.com/gensim/models/word2vec.html#gensim.models.word2vec.Word2Vec)) is for training parallelization, to speed up training:",Functionality & Behavior
+gensim,"Without Cython, you闂佺偨鍎查悰鐒?only be able to use one core because of the [GIL](https://wiki.python.org/moin/GlobalInterpreterLock) (and `word2vec` training will be [miserably slow](http://rare-technologies.com/word2vec-in-python-part-two-optimizing/)).",Usage Practice
+gensim,"### Adding Word2Vec ""model to dict"" method to production pipeline
+Suppose, we still want more performance improvement in production.",Purpose & Rationale
+gensim,"This lets `gensim` know that it can run two jobs on each of the four computers in
+ parallel, so that the computation will be done faster, while also taking up twice
+ as much memory on each machine.","Functionality & Behavior, Purpose & Rationale"
+gensim,"* Efficient implementations for several popular vector space algorithms,
+   including :class:`~gensim.models.word2vec.Word2Vec`, :class:`~gensim.models.doc2vec.Doc2Vec`, :class:`~gensim.models.fasttext.FastText`,
+   TF-IDF, Latent Semantic Analysis (LSI, LSA, see :class:`~gensim.models.lsimodel.LsiModel`),
+   Latent Dirichlet Allocation (LDA, see :class:`~gensim.models.ldamodel.LdaModel`) or Random Projection (see :class:`~gensim.models.rpmodel.RpModel`).",Implementation Details
+gensim,"For a built-in example of an efficient corpus format streamed directly from disk, see
+         the Matrix Market format in :mod:`~gensim.corpora.mmcorpus`.","Implementation Details, Ref"
+gensim,"To save the same Matrix Market document stream in Blei's LDA-C format,
+ 
+ .. sourcecode:: pycon
+ 
+     >>> corpora.BleiCorpus.serialize('/tmp/corpus.lda-c', corpus)
+ 
+ In this way, `gensim` can also be used as a memory-efficient **I/O format conversion tool**:
+ just load a document stream using one format and immediately save it in another format.",Usage Practice
+gensim,"Compatibility with NumPy and SciPy
+ ----------------------------------
+ 
+ Gensim also contains `efficient utility functions <http://radimrehurek.com/gensim/matutils.html>`_
+ to help converting from/to numpy matrices
+ 
+ .. sourcecode:: pycon
+ 
+     >>> import gensim
+     >>> import numpy as np
+     >>> numpy_matrix = np.random.randint(10, size=[5, 2])  # random matrix as an example
+     >>> corpus = gensim.matutils.Dense2Corpus(numpy_matrix)
+     >>> numpy_matrix = gensim.matutils.corpus2dense(corpus, num_terms=number_of_corpus_features)
+ 
+ and from/to `scipy.sparse` matrices
+ 
+ .. sourcecode:: pycon
+ 
+     >>> import scipy.sparse
+     >>> scipy_sparse_matrix = scipy.sparse.random(5, 2)  # random sparse matrix as example
+     >>> corpus = gensim.matutils.Sparse2Corpus(scipy_sparse_matrix)
+     >>> scipy_csc_matrix = gensim.matutils.corpus2csc(corpus)
+ 
+ -------------
+ 
+ For a complete reference (Want to prune the dictionary to a smaller size?",Functionality & Behavior
+gensim,"This both improves efficiency
+    (new representation consumes less resources) and efficacy (marginal data
+    trends are ignored, noise-reduction).",Purpose & Rationale
+gensim,"This is a very efficient (both memory- and
+   CPU-friendly) approach to approximating TfIdf distances between documents, by throwing in a little randomness.",Functionality & Behavior
+gensim,".. sourcecode:: pycon
+ 
+     >>> model = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
+ 
+   `gensim` uses a fast implementation of online LDA parameter estimation based on [2]_,
+   modified to run in :doc:`distributed mode <distributed>` on a cluster of computers.",Implementation Details
+gensim,"* `Hierarchical Dirichlet Process, HDP <http://jmlr.csail.mit.edu/proceedings/papers/v15/wang11a/wang11a.pdf>`_
+   is a non-parametric bayesian method (note the missing number of requested topics):
+ 
+   .. sourcecode:: pycon
+ 
+     >>> model = models.HdpModel(corpus, id2word=dictionary)
+ 
+   `gensim` uses a fast, online implementation based on [3]_.",Implementation Details
+gensim,"It uses :class:`similarities.MatrixSimilarity` and :class:`similarities.SparseMatrixSimilarity` internally,
+   so it is still fast, although slightly more complex.","Implementation Details,Performance Attribute"
+gensim,"When in doubt,
+ use :class:`similarities.Similarity`, as it is the most scalable version, and it also
+ supports adding more documents to the index later.","Functionality & Behavior,Usage Practice"
+gensim,"The difference is that given a
+ reasonably stationary document stream (not much topic drift), the online updates
+ over the smaller chunks (subcorpora) are pretty good in themselves, so that the
+ model estimation converges faster.",Implementation Details
+gensim,"If you need your results faster, consider running :doc:`dist_lda` on a cluster of
+ computers.",Usage Practice
+gensim,"If there is topic drift in the input document stream, LDA will get
+ confused and be increasingly slower at adjusting itself to the new state of affairs.",Functionality & Behavior
+numpy,"Starting from numpy
+    1.4, if one needs arrays of strings, it is recommended to use arrays of
+    `dtype` `object_`, `string_` or `unicode_`, and use the free functions
+    in the `numpy.char` module for fast vectorized string operations.",Usage Practice
+numpy,".. admonition:: Example
+ 
+     >>> np.busday_offset('2012-05', 1, roll='forward', weekmask='Sun')
+     numpy.datetime64('2012-05-13','D')
+ 
+ When performance is important for manipulating many business dates
+ with one particular choice of weekmask and holidays, there is
+ an object :class:`busdaycalendar` which stores the data necessary
+ in an optimized form.","Functionality & Behavior,Implementation Details,Usage Practice"
+numpy,"However, it is
+ faster when ``obj.shape == x.shape``.",Usage Practice
+numpy,"``intp`` is the smallest data type
+   sufficient to safely index any array; for advanced indexing it may be
+   faster than other types.","Usage Practice,Functionality & Behavior"
+numpy,"This is done for access efficiency,
+ reflecting the idea that by default one simply wants to visit each element
+ without concern for a particular ordering.",Purpose & Rationale
+numpy,"While this is simple and convenient, it is not very efficient.",Usage Practice
+numpy,"When writing C code, this is generally fine, however in pure Python code
+ this can cause a significant reduction in performance.",Usage Practice
+numpy,"For completeness, we'll also add the 'external_loop' and 'buffered'
+ flags, as these are what you will typically want for performance
+ reasons.",Purpose & Rationale
+numpy,"This may be slightly
+    faster than calling npy_half_eq(h, NPY_ZERO).",Comparison w/ Alternatives
+numpy,"|
+ +-------------+----------------------------+-----------------------------------+
+ |  cross1d    | ``(3),(3)->(3)``           | cross product where the last      |
+ |             |                            | dimension is frozen and must be 3 |
+ +-------------+----------------------------+-----------------------------------+
+ 
+ .. _frozen:
+ 
+ The last is an instance of freezing a core dimension and can be used to
+ improve ufunc performance
+ 
+ C-API for implementing Elementary Functions
+ -------------------------------------------
+ 
+ The current interface remains unchanged, and ``PyUFunc_FromFuncAndData``
+ can still be used to implement (specialized) ufuncs, consisting of
+ scalar elementary functions.","Functionality & Behavior,Usage Practice"
+numpy,"*   flag NPY_ITER_EXTERNAL_LOOP
+          *     - Inner loop is done outside the iterator for efficiency.","Implementation Details,Purpose & Rationale"
+numpy,"*       This is good for performance when the specific order
+          *       elements are visited is unimportant.",Performance Attribute
+numpy,"*/
+         iter = NpyIter_New(self, NPY_ITER_READONLY|
+                                  NPY_ITER_EXTERNAL_LOOP|
+                                  NPY_ITER_REFS_OK,
+                             NPY_KEEPORDER, NPY_NO_CASTING,
+                             NULL);
+         if (iter == NULL) {
+             return -1;
+         }
+ 
+         /*
+          * The iternext function gets stored in a local variable
+          * so it can be called repeatedly in an efficient manner.","Implementation Details, Purpose & Rationale"
+numpy,"*/
+         if (innerstride == itemsize) {
+             do {
+                 memcpy(dataptrarray[1], dataptrarray[0],
+                                         itemsize * (*innersizeptr));
+             } while (iternext(iter));
+         } else {
+             /* For efficiency, should specialize this based on item size... */
+             npy_intp i;
+             do {
+                 npy_intp size = *innersizeptr;
+                 char *src = dataptrarray[0], *dst = dataptrarray[1];
+                 for(i = 0; i < size; i++, src += innerstride, dst += itemsize) {
+                     memcpy(dst, src, itemsize);
+                 }
+             } while (iternext(iter));
+         }
+ 
+         /* Get the result from the iterator object array */
+         ret = NpyIter_GetOperandArray(iter)[1];
+         Py_INCREF(ret);
+ 
+         if (NpyIter_Deallocate(iter) != NPY_SUCCEED) {
+             Py_DECREF(ret);
+             return NULL;
+         }
+ 
+         return ret;
+     }
+ 
+ 
+ Iterator Data Types
+ ---------------------
+ 
+ The iterator layout is an internal detail, and user code only sees
+ an incomplete struct.",Usage Practice
+numpy,"For
+     efficient iteration, :c:type:`NPY_KEEPORDER` is the best option, and
+     the other orders enforce the particular iteration pattern.",Usage Practice
+numpy,"For
+     efficient iteration, :c:data:`NPY_KEEPORDER` is the best option, and the
+     other orders enforce the particular iteration pattern.",Usage Practice
+numpy,"*WARNING*: For performance reasons, 'iop' is not bounds-checked,
+     it is not confirmed that 'iop' is actually a reduction operand,
+     and it is not confirmed that EXTERNAL_LOOP mode is enabled.","Implementation Details,Purpose & Rationale"
+numpy,"Thus, to
+     get good performance, it is required that the function pointer
+     be saved in a variable rather than retrieved for each loop iteration.","Directives,Purpose & Rationale"
+numpy,"Once the iterator is prepared for iteration (after a reset if
+     :c:data:`NPY_DELAY_BUFALLOC` was used), call this to get the strides
+     which may be used to select a fast inner loop function.",Usage Practice
+numpy,":attr:`nomask` is used internally to speed up computations when the mask
+    is not needed.",Implementation Details
+numpy,"This mechanism is
+ slower than a single loop, but gives more flexibility.",Purpose & Rationale
+numpy,"In particular,
+ :func:`~numpy.genfromtxt` is able to take missing data into account, when
+ other faster and simpler functions like :func:`~numpy.loadtxt` cannot.",Comparison w/ Alternatives
+numpy,"However, it is
+ significantly slower than setting the dtype explicitly.",Comparison w/ Alternatives
+numpy,"It should be emphasized at this point that you may not need the array
+ iterator if your array is already contiguous (using an array iterator
+ will work but will be slower than the fastest code you could write).",Usage Practice
+numpy,"In other words, code like this will probably be
+ faster for you in the contiguous case (assuming doubles).",Usage Practice
+numpy,"As
+ function calls can be time consuming, one way to speed up this kind of
+ algorithm is to write the function so it takes a vector of data and
+ then write the iteration so the function call is performed for an
+ entire dimension of data at a time.",Usage Practice
+numpy,"We can use this to further speed up our code, at the expense of safety
+ (or a manual check prior to entering the loop).",Usage Practice
+numpy,"non-contiguous arrays) and may
+ also run faster depending on the optimization capability of your
+ compiler.",Functionality & Behavior
+numpy,"For example, if a python interpreter is opened in the file containing
+ the spam library or spam has been installed, one can perform the
+ following commands:
+ 
+ >>> import numpy as np
+ >>> import spam
+ >>> spam.logit(0)
+ -inf
+ >>> spam.logit(1)
+ inf
+ >>> spam.logit(0.5)
+ 0.0
+ >>> x = np.linspace(0,1,10)
+ >>> spam.logit(x)
+ TypeError: only length-1 arrays can be converted to Python scalars
+ >>> f = np.vectorize(spam.logit)
+ >>> f(x)
+ array([       -inf, -2.07944154, -1.25276297, -0.69314718, -0.22314355,
+     0.22314355,  0.69314718,  1.25276297,  2.07944154,         inf])
+ 
+ THE RESULTING LOGIT FUNCTION IS NOT FAST!",Performance Attribute
+numpy,This is expensive.,Performance Attribute
+numpy,"When the author compared numpy.vectorize(spam.logit) against the
+ logit ufuncs constructed below, the logit ufuncs were almost exactly
+ 4 times faster.",Comparison w/ Alternatives
+numpy,"These minimize the necessity of
+ growing arrays, an expensive operation.",Purpose & Rationale
+numpy,"There are also
+cases where broadcasting is a bad idea because it leads to inefficient use of
+memory that slows computation.",Performance Attribute
+numpy,"This
+ encapsulates *n*-dimensional arrays of homogeneous data types, with
+ many operations being performed in compiled code for performance.","Implementation Details, Functionality & Behavior, Purpose & Rationale"
+numpy,"Without
+  vectorization, our code would be littered with inefficient and
+  difficult to read ``for`` loops.",Purpose & Rationale
+pandas,"We do require that your array be convertible to a NumPy array, even if
+ this is relatively expensive (as it is for ``Categorical``).",Directives
+pandas,"If developing an ``ExtensionArray`` subclass, for example ``MyExtensionArray``,
+ can simply include ``ExtensionScalarOpsMixin`` as a parent class of ``MyExtensionArray``,
+ and then call the methods :meth:`~MyExtensionArray._add_arithmetic_ops` and/or
+ :meth:`~MyExtensionArray._add_comparison_ops` to hook the operators into
+ your ``MyExtensionArray`` class, as follows:
+ 
+ .. code-block:: python
+ 
+     from pandas.api.extensions import ExtensionArray, ExtensionScalarOpsMixin
+ 
+     class MyExtensionArray(ExtensionArray, ExtensionScalarOpsMixin):
+         pass
+ 
+ 
+     MyExtensionArray._add_arithmetic_ops()
+     MyExtensionArray._add_comparison_ops()
+ 
+ 
+ .. note::
+ 
+    Since ``pandas`` automatically calls the underlying operator on each
+    element one-by-one, this might not be as performant as implementing your own
+    version of the associated operators directly on the ``ExtensionArray``.","Usage Practice,Implementation Details"
+pandas,"Note that his can be an expensive operation when your :class:`DataFrame` has
+ columns with different data types, which comes down to a fundamental difference
+ between pandas and NumPy: **NumPy arrays have one dtype for the entire array,
+ while pandas DataFrames have one dtype per column**.",Usage Practice
+pandas,"For ``df``, our :class:`DataFrame` of all floating-point values,
+ :meth:`DataFrame.to_numpy` is fast and doesn't require copying data.","Functionality & Behavior,Performance Attribute"
+pandas,".. ipython:: python
+ 
+    df.to_numpy()
+ 
+ For ``df2``, the :class:`DataFrame` with multiple dtypes,
+ :meth:`DataFrame.to_numpy` is relatively expensive.",Usage Practice
+pandas,For getting fast access to a scalar (equivalent to the prior method):,Functionality & Behavior
+pandas,"When your DataFrame contains a mixture of data types, :attr:`DataFrame.values` may
+    involve copying data and coercing values to a common dtype, a relatively expensive
+    operation.",Implementation Details
+pandas,"When
+ set to True, the passed function will instead receive an ndarray object, which
+ has positive performance implications if you do not need the indexing
+ functionality.","Functionality & Behavior,Performance Attribute"
+pandas,"While the syntax for this is straightforward albeit verbose, it
+ is a common enough operation that the :meth:`~DataFrame.reindex_like` method is
+ available to make this simpler:
+ 
+ .. ipython:: python
+    :suppress:
+ 
+    df2 = df.reindex(['a', 'b', 'c'], columns=['one', 'two'])
+    df3 = df2 - df2.mean()
+ 
+ 
+ .. ipython:: python
+ 
+    df2
+    df3
+    df.reindex_like(df2)
+ 
+ .. _basics.align:
+ 
+ Aligning objects with each other with ``align``
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ The :meth:`~Series.align` method is the fastest way to simultaneously align two objects.",Functionality & Behavior
+pandas,"This converts the rows to Series objects, which can change the dtypes and has some
+   performance implications.","Functionality & Behavior, Performance Attribute"
+pandas,"This is a lot faster than
+   :meth:`~DataFrame.iterrows`, and is in most cases preferable to use
+   to iterate over the values of a DataFrame.","Comparison w/ Alternatives,Usage Practice"
+pandas,".. warning::
+ 
+   Iterating through pandas objects is generally **slow**.",Usage Practice
+pandas,"See the :ref:`enhancing performance <enhancingperf>` section for some
+     examples of this approach.",Ref
+pandas,"For example,
+ 
+    .. ipython:: python
+ 
+       df_orig = pd.DataFrame([[1, 1.5]], columns=['int', 'float'])
+       df_orig.dtypes
+       row = next(df_orig.iterrows())[1]
+       row
+ 
+    All values in ``row``, returned as a Series, are now upcasted
+    to floats, also the original integer value in column `x`:
+ 
+    .. ipython:: python
+ 
+       row['int'].dtype
+       df_orig['int'].dtype
+ 
+    To preserve dtypes while iterating over the rows, it is better
+    to use :meth:`~DataFrame.itertuples` which returns namedtuples of the values
+    and which is generally much faster than :meth:`~DataFrame.iterrows`.","Comparison w/ Alternatives,Usage Practice"
+pandas,"Therefore,
+ :meth:`~DataFrame.itertuples` preserves the data type of the values
+ and is generally faster as :meth:`~DataFrame.iterrows`.","Comparison w/ Alternatives,Functionality & Behavior"
+pandas,"For a large ``Series`` this can be much
+ faster than sorting the entire Series and calling ``head(n)`` on the result.","Usage Practice,Comparison w/ Alternatives"
+pandas,"|with|_
+ ~~~~~~~~
+ 
+ An expression using a data.frame called ``df`` in R with the columns ``a`` and
+ ``b`` would be evaluated using ``with`` like so:
+ 
+ .. code-block:: r
+ 
+    df <- data.frame(a=rnorm(10), b=rnorm(10))
+    with(df, a + b)
+    df$a + df$b  # same as the previous expression
+ 
+ In ``pandas`` the equivalent expression, using the
+ :meth:`~pandas.DataFrame.eval` method, would be:
+ 
+ .. ipython:: python
+ 
+    df = pd.DataFrame({'a': np.random.randn(10), 'b': np.random.randn(10)})
+    df.eval('a + b')
+    df.a + df.b  # same as the previous expression
+ 
+ In certain cases :meth:`~pandas.DataFrame.eval` will be much faster than
+ evaluation in pure Python.","Usage Practice,Comparison w/ Alternatives"
+pandas,"As a result, supporting efficient indexing and functional
+ routines for ``Series``, ``DataFrame`` and ``Panel`` has contributed to an increasingly fragmented and
+ difficult-to-understand code base.",Purpose & Rationale
+pandas,"When using ndarrays to store 2- and 3-dimensional
+ data, a burden is placed on the user to consider the orientation of the data
+ set when writing functions; axes are considered more or less equivalent (except
+ when C- or Fortran-contiguousness matters for performance).",Implementation Details
+pandas,"For example:
+ 
+ .. ipython:: python
+ 
+  闁縟f.columns  # original MultiIndex
+ 
+    df[['foo','qux']].columns  # sliced
+ 
+ This is done to avoid a recomputation of the levels in order to make slicing
+ highly performant.","Implementation Details,Purpose & Rationale"
+pandas,"It will also
+ return a copy of the data rather than a view:
+ 
+ .. ipython:: python
+ 
+    dfm = pd.DataFrame({'jim': [0, 0, 1, 1],
+                        'joe': ['x', 'x', 'z', 'y'],
+                        'jolie': np.random.rand(4)})
+    dfm = dfm.set_index(['jim', 'joe'])
+    dfm
+ 
+ .. code-block:: ipython
+ 
+    In [4]: dfm.loc[(1, 'z')]
+    PerformanceWarning: indexing past lexsort depth may impact performance.",Usage Practice
+pandas,".. ipython:: python
+ 
+    arr = np.random.randn(10)
+    arr.take([False, False, True, True])
+    arr[[0, 1]]
+ 
+    ser = pd.Series(np.random.randn(10))
+    ser.take([False, False, True, True])
+    ser.iloc[[0, 1]]
+ 
+ Finally, as a small note on performance, because the ``take`` method handles
+ a narrower range of inputs, it can offer performance that is a good deal
+ faster than fancy indexing.","Functionality & Behavior,Comparison w/ Alternatives"
+pandas,"This is a container around a :class:`Categorical`
+ and allows efficient indexing and storage of an index with a large number of duplicated elements.",Functionality & Behavior
+pandas,".. ipython:: python
+   s.index.set_names(['L1', 'L2'], inplace=True)
+   s.sort_index(level='L1')
+   s.sort_index(level='L2')
+On higher dimensional objects, you can sort any of the other axes by level if
+they have a ``MultiIndex``:
+.. ipython:: python
+   df.T.sort_index(level=1, axis=1)
+Indexing will work even if the data are not sorted, but will be rather
+inefficient (and show a ``PerformanceWarning``).","Functionality & Behavior, Performance Attribute"
+pandas,"This has
+     some performance implication if you have a ``Series`` of type string, where lots of elements
+     are repeated (i.e.",Usage Practice
+pandas,"In this case it can be faster to convert the original ``Series``
+     to one of type ``category`` and use ``.str.<method>`` or ``.dt.<property>`` on that.",Usage Practice
+pandas,See also the section on :ref:`merge dtypes<merging.dtypes>` for notes about preserving merge dtypes and performance.,Ref
+pandas,"This is a container around a ``Categorical``
+ and allows efficient indexing and storage of an index with a large number of duplicated elements.",Functionality & Behavior
+pandas,".. ipython:: python
+     :suppress:
+ 
+     for i in range(3):
+         os.remove('file_{}.csv'.format(i))
+ 
+ Parsing date components in multi-columns
+ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+ Parsing date components in multi-columns is faster with a format
+ 
+ .. ipython:: python
+ 
+     i = pd.date_range('20000101', periods=10000)
+     df = pd.DataFrame({'year': i.year, 'month': i.month, 'day': i.day})
+     df.head()
+     %timeit pd.to_datetime(df.year * 10000 + df.month * 100 + df.day, format='%Y%m%d')
+     ds = df.apply(lambda x: ""%04d%02d%02d"" % (x['year'],
+                                               x['month'], x['day']), axis=1)
+     ds.head()
+     %timeit pd.to_datetime(ds)
+ 
+ 
+ Skip row between header and data
+ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+ .. ipython:: python
+ 
+     data = """""";;;;
+      ;;;;
+      ;;;;
+      ;;;;
+      ;;;;
+      ;;;;
+     ;;;;
+      ;;;;
+      ;;;;
+     ;;;;
+     date;Param1;Param2;Param4;Param5
+         ;m闁块柟铏圭吙m闁縨
+     ;;;;
+     01.01.1990 00:00;1;1;2;3
+     01.01.1990 01:00;5;3;4;5
+     01.01.1990 02:00;9;5;6;7
+     01.01.1990 03:00;13;7;8;9
+     01.01.1990 04:00;17;9;10;11
+     01.01.1990 05:00;21;11;12;13
+     """"""
+ 
+ Option 1: pass rows explicitly to skip rows
+ """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+ 
+ .. ipython:: python
+ 
+     from pandas.compat import StringIO
+ 
+     pd.read_csv(StringIO(data), sep=';', skiprows=[11, 12],
+                 index_col=0, parse_dates=True, header=10)
+ 
+ Option 2: read column names and then data
+ """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+ 
+ .. ipython:: python
+ 
+     pd.read_csv(StringIO(data), sep=';', header=10, nrows=10).columns
+     columns = pd.read_csv(StringIO(data), sep=';', header=10, nrows=10).columns
+     pd.read_csv(StringIO(data), sep=';', index_col=0,
+                 header=12, parse_dates=True, names=columns)
+ 
+ 
+ .. _cookbook.sql:
+ 
+ SQL
+ ***
+ 
+ The :ref:`SQL <io.sql>` docs
+ 
+ `Reading from databases with SQL
+ <http://stackoverflow.com/questions/10065051/python-pandas-and-databases-like-mysql>`__
+ 
+ .. _cookbook.excel:
+ 
+ Excel
+ *****
+ 
+ The :ref:`Excel <io.excel>` docs
+ 
+ `Reading from a filelike handle
+ <http://stackoverflow.com/questions/15588713/sheets-of-excel-workbook-from-a-url-into-a-pandas-dataframe>`__
+ 
+ `Modifying formatting in XlsxWriter output
+ <http://pbpython.com/improve-pandas-excel-output.html>`__
+ 
+ .. _cookbook.html:
+ 
+ HTML
+ ****
+ 
+ `Reading HTML tables from a server that cannot handle the default request
+ header <http://stackoverflow.com/a/18939272/564538>`__
+ 
+ .. _cookbook.hdf:
+ 
+ HDFStore
+ ********
+ 
+ The :ref:`HDFStores <io.hdf5>` docs
+ 
+ `Simple Queries with a Timestamp Index
+ <http://stackoverflow.com/questions/13926089/selecting-columns-from-pandas-hdfstore-table>`__
+ 
+ `Managing heterogeneous data using a linked multiple table hierarchy
+ <http://github.com/pandas-dev/pandas/issues/3032>`__
+ 
+ `Merging on-disk tables with millions of rows
+ <http://stackoverflow.com/questions/14614512/merging-two-tables-with-millions-of-rows-in-python/14617925#14617925>`__
+ 
+ `Avoiding inconsistencies when writing to a store from multiple processes/threads
+ <http://stackoverflow.com/a/29014295/2858145>`__
+ 
+ De-duplicating a large store by chunks, essentially a recursive reduction operation.",Usage Practice
+pandas,"Using :func:`pandas.eval` we will speed up a sum by an order of
+ ~2.",Performance Attribute
+pandas,".. ipython:: python
+ 
+    df = pd.DataFrame({'a': np.random.randn(1000),
+                       'b': np.random.randn(1000),
+                       'N': np.random.randint(100, 1000, (1000)),
+                       'x': 'x'})
+    df
+ 
+ Here's the function in pure Python:
+ 
+ .. ipython:: python
+ 
+    def f(x):
+        return x * (x - 1)
+ 
+    def integrate_f(a, b, N):
+        s = 0
+        dx = (b - a) / N
+        for i in range(N):
+            s += f(a + i * dx)
+        return s * dx
+ 
+ We achieve our result by using ``apply`` (row-wise):
+ 
+ .. code-block:: ipython
+ 
+    In [7]: %timeit df.apply(lambda x: integrate_f(x['a'], x['b'], x['N']), axis=1)
+    10 loops, best of 3: 174 ms per loop
+ 
+ But clearly this isn't fast enough for us.",Performance Attribute
+pandas,"It's now over ten times faster than the original python
+ implementation, and we haven't *really* modified the code.",Comparison w/ Alternatives 
+pandas,"So, do not do this:
+ 
+    .. code-block:: python
+ 
+         apply_integrate_f(df['a'], df['b'], df['N'])
+ 
+    But rather, use :meth:`Series.to_numpy` to get the underlying ``ndarray``:
+ 
+    .. code-block:: python
+ 
+         apply_integrate_f(df['a'].to_numpy(),
+                           df['b'].to_numpy(),
+                           df['N'].to_numpy())
+ 
+ .. note::
+ 
+     Loops like this would be *extremely* slow in Python, but in Cython looping
+     over NumPy arrays is *fast*.",Implementation Details 
+pandas,"Even faster, with the caveat that a bug in our Cython code (an off-by-one error,
+for example) might cause a segfault because memory access isn't checked.",Implementation Details 
+pandas,"Consider the following toy example of doubling each observation:
+ 
+ .. code-block:: python
+ 
+    import numba
+ 
+ 
+    def double_every_value_nonumba(x):
+        return x * 2
+ 
+ 
+    @numba.vectorize
+    def double_every_value_withnumba(x):  # noqa E501
+        return x * 2
+ 
+ .. code-block:: ipython
+ 
+    # Custom function without numba
+    In [5]: %timeit df['col1_doubled'] = df.a.apply(double_every_value_nonumba)  # noqa E501
+    1000 loops, best of 3: 797 us per loop
+ 
+    # Standard implementation (faster than a custom function)
+    In [6]: %timeit df['col1_doubled'] = df.a * 2
+    1000 loops, best of 3: 233 us per loop
+ 
+    # Custom function with numba
+    In [7]: %timeit (df['col1_doubled'] = double_every_value_withnumba(df.a.values)
+    1000 loops, best of 3: 145 us per loop
+ 
+ Caveats
+ ~~~~~~~
+ 
+ .. note::
+ 
+     Numba will execute on any function, but can only accelerate certain classes of functions.",Comparison w/ Alternatives 
+pandas,"In fact,
+    :func:`~pandas.eval` is many orders of magnitude slower for
+    smaller expressions/objects than plain ol' Python.",Comparison w/ Alternatives
+pandas,".. note::
+ 
+    The larger the frame and the larger the expression the more speedup you will
+    see from using :func:`~pandas.eval`.",Usage Practice
+pandas,"First let's create a few decent-sized arrays to play with:
+ 
+ .. ipython:: python
+ 
+    nrows, ncols = 20000, 100
+    df1, df2, df3, df4 = [pd.DataFrame(np.random.randn(nrows, ncols)) for _ in range(4)]
+ 
+ 
+ Now let's compare adding them together using plain ol' Python versus
+ :func:`~pandas.eval`:
+ 
+ .. ipython:: python
+ 
+    %timeit df1 + df2 + df3 + df4
+ 
+ .. ipython:: python
+ 
+    %timeit pd.eval('df1 + df2 + df3 + df4')
+ 
+ 
+ Now let's do the same thing but with comparisons:
+ 
+ .. ipython:: python
+ 
+    %timeit (df1 > 0) & (df2 > 0) & (df3 > 0) & (df4 > 0)
+ 
+ .. ipython:: python
+ 
+    %timeit pd.eval('(df1 > 0) & (df2 > 0) & (df3 > 0) & (df4 > 0)')
+ 
+ 
+ :func:`~pandas.eval` also works with unaligned pandas objects:
+ 
+ .. ipython:: python
+ 
+    s = pd.Series(np.random.randn(50))
+    %timeit df1 + df2 + df3 + df4 + s
+ 
+ .. ipython:: python
+ 
+    %timeit pd.eval('df1 + df2 + df3 + df4 + s')
+ 
+ .. note::
+ 
+    Operations such as
+ 
+       .. code-block:: python
+ 
+          1 and 2  # would parse to 1 & 2, but should evaluate to 2
+          3 or 4  # would parse to 3 | 4, but should evaluate to 3
+          ~1  # this is okay, but slower when using eval
+ 
+    should be performed in Python.",Usage Practice
+pandas,"You will achieve **no** performance
+    benefits using :func:`~pandas.eval` with ``engine='python'`` and in fact may
+    incur a performance hit.",Usage Practice
+pandas,"It
+ is a bit slower (not by much) than evaluating the same expression in Python
+ 
+ .. ipython:: python
+ 
+    %timeit df1 + df2 + df3 + df4
+ 
+ .. ipython:: python
+ 
+    %timeit pd.eval('df1 + df2 + df3 + df4', engine='python')
+ 
+ 
+ :func:`pandas.eval` Performance
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ :func:`~pandas.eval` is intended to speed up certain kinds of operations.",Comparison w/ Alternatives
+pandas,"In
+ particular, those operations involving complex expressions with large
+ :class:`~pandas.DataFrame`/:class:`~pandas.Series` objects should see a
+ significant performance benefit.",Usage Practice
+pandas,".. image:: ../_static/eval-perf.png
+ 
+ 
+ .. note::
+ 
+    Operations with smallish objects (around 15k-20k rows) are faster using
+    plain Python:
+ 
+        .. image:: ../_static/eval-perf-small.png
+ 
+ 
+ This plot was created using a ``DataFrame`` with 3 columns each containing
+ floating point values generated using ``numpy.random.randn()``.",Usage Practice
+pandas,"This is optional
+ as it can be expensive to do this deeper introspection.",Purpose & Rationale
+pandas,".. note::
+ 
+    Many kinds of complicated data manipulations can be expressed in terms of
+    GroupBy operations (though can't be guaranteed to be the most
+    efficient).",Usage Practice
+pandas,"Thus, this does not pose any problems:
+ 
+ .. ipython:: python
+ 
+    df.groupby('A').std()
+ 
+ Note that ``df.groupby('A').colname.std().`` is more efficient than
+ ``df.groupby('A').std().colname``, so if the result of an aggregation function
+ is only interesting over one column (here ``colname``), it may be filtered
+ *before* applying the aggregation function.",Comparison w/ Alternatives 
+pandas,".. ipython:: python
+ 
+    s1 = pd.Series(np.random.randn(6), index=list('abcdef'))
+    s1
+    s1.loc['c':]
+    s1.loc['b']
+ 
+ Note that setting works as well:
+ 
+ .. ipython:: python
+ 
+    s1.loc['c':] = 0
+    s1
+ 
+ With a DataFrame:
+ 
+ .. ipython:: python
+ 
+    df1 = pd.DataFrame(np.random.randn(6, 4),
+                       index=list('abcdef'),
+                       columns=list('ABCD'))
+    df1
+    df1.loc[['a', 'b', 'd'], :]
+ 
+ Accessing via label slices:
+ 
+ .. ipython:: python
+ 
+    df1.loc['d':, 'A':'C']
+ 
+ For getting a cross section using a label (equivalent to ``df.xs('a')``):
+ 
+ .. ipython:: python
+ 
+    df1.loc['a']
+ 
+ For getting values with a boolean array:
+ 
+ .. ipython:: python
+ 
+    df1.loc['a'] > 0
+    df1.loc[:, df1.loc['a'] > 0]
+ 
+ For getting a value explicitly (equivalent to deprecated ``df.get_value('a','A')``):
+ 
+ .. ipython:: python
+ 
+    # this is also equivalent to ``df1.at['a','A']``
+    df1.loc['a', 'A']
+ 
+ .. _indexing.slicing_with_labels:
+ 
+ Slicing with labels
+ ~~~~~~~~~~~~~~~~~~~
+ 
+ When using ``.loc`` with slices, if both the start and the stop labels are
+ present in the index, then elements *located* between the two (including them)
+ are returned:
+ 
+ .. ipython:: python
+ 
+    s = pd.Series(list('abcde'), index=[0, 3, 2, 5, 4])
+    s.loc[3:5]
+ 
+ If at least one of the two is absent, but the index is sorted, and can be
+ compared against start and stop labels, then slicing will still work as
+ expected, by selecting labels which *rank* between the two:
+ 
+ .. ipython:: python
+ 
+    s.sort_index()
+    s.sort_index().loc[1:6]
+ 
+ However, if at least one of the two is absent *and* the index is not sorted, an
+ error will be raised (since doing otherwise would be computationally expensive,
+ as well as potentially ambiguous for mixed type indexes).",Purpose & Rationale
+pandas,"If you only want to access a scalar value, the
+ fastest way is to use the ``at`` and ``iat`` methods, which are implemented on
+ all of the data structures.","Usage Practice,Functionality & Behavior,Implementation Details"
+pandas,"Using a boolean vector to index a Series works exactly as in a NumPy ndarray:
+ 
+ .. ipython:: python
+ 
+    s = pd.Series(range(-3, 4))
+    s
+    s[s > 0]
+    s[(s < -1) | (s > 0.5)]
+    s[~(s < 0)]
+ 
+ You may select rows from a DataFrame using a boolean vector the same length as
+ the DataFrame's index (for example, something derived from one of the columns
+ of the DataFrame):
+ 
+ .. ipython:: python
+ 
+    df[df['A'] > 0]
+ 
+ List comprehensions and ``map`` method of Series can also be used to produce
+ more complex criteria:
+ 
+ .. ipython:: python
+ 
+    df2 = pd.DataFrame({'a': ['one', 'one', 'two', 'three', 'two', 'one', 'six'],
+                        'b': ['x', 'y', 'y', 'x', 'y', 'x', 'x'],
+                        'c': np.random.randn(7)})
+ 
+    # only want 'two' or 'three'
+    criterion = df2['a'].map(lambda x: x.startswith('t'))
+ 
+    df2[criterion]
+ 
+    # equivalent but slower
+    df2[[x.startswith('t') for x in df2['a']]]
+ 
+    # Multiple criteria
+    df2[criterion & (df2['b'] == 'x')]
+ 
+ With the choice methods :ref:`Selection by Label <indexing.label>`, :ref:`Selection by Position <indexing.integer>`,
+ and :ref:`Advanced Indexing <advanced>` you may select along more than one axis using boolean vectors combined with other indexing expressions.",Comparison w/ Alternatives
+pandas,".. ipython:: python
+ 
+    df2 = df.copy()
+    df2.where(df2 > 0, df2['A'], axis='index')
+ 
+ This is equivalent to (but faster than) the following.",Comparison w/ Alternatives 
+pandas,".. image:: ../_static/query-perf.png
+ 
+ .. note::
+ 
+    You will only see the performance benefits of using the ``numexpr`` engine
+    with ``DataFrame.query()`` if your frame has more than approximately 200,000
+    rows.",Performance Attribute
+pandas,"Furthermore this order of operations *can* be significantly
+ faster, and allows one to index *both* axes if so desired.",Purpose & Rationale
+pandas,".. csv-table::
+     :header: ""Format Type"", ""Data Description"", ""Reader"", ""Writer""
+     :widths: 30, 100, 60, 60
+     :delim: ;
+ 
+     text;`CSV <https://en.wikipedia.org/wiki/Comma-separated_values>`__;:ref:`read_csv<io.read_csv_table>`;:ref:`to_csv<io.store_in_csv>`
+     text;`JSON <https://www.json.org/>`__;:ref:`read_json<io.json_reader>`;:ref:`to_json<io.json_writer>`
+     text;`HTML <https://en.wikipedia.org/wiki/HTML>`__;:ref:`read_html<io.read_html>`;:ref:`to_html<io.html>`
+     text; Local clipboard;:ref:`read_clipboard<io.clipboard>`;:ref:`to_clipboard<io.clipboard>`
+     binary;`MS Excel <https://en.wikipedia.org/wiki/Microsoft_Excel>`__;:ref:`read_excel<io.excel_reader>`;:ref:`to_excel<io.excel_writer>`
+     binary;`HDF5 Format <https://support.hdfgroup.org/HDF5/whatishdf5.html>`__;:ref:`read_hdf<io.hdf5>`;:ref:`to_hdf<io.hdf5>`
+     binary;`Feather Format <https://github.com/wesm/feather>`__;:ref:`read_feather<io.feather>`;:ref:`to_feather<io.feather>`
+     binary;`Parquet Format <https://parquet.apache.org/>`__;:ref:`read_parquet<io.parquet>`;:ref:`to_parquet<io.parquet>`
+     binary;`Msgpack <https://msgpack.org/index.html>`__;:ref:`read_msgpack<io.msgpack>`;:ref:`to_msgpack<io.msgpack>`
+     binary;`Stata <https://en.wikipedia.org/wiki/Stata>`__;:ref:`read_stata<io.stata_reader>`;:ref:`to_stata<io.stata_writer>`
+     binary;`SAS <https://en.wikipedia.org/wiki/SAS_(software)>`__;:ref:`read_sas<io.sas_reader>`;
+     binary;`Python Pickle Format <https://docs.python.org/3/library/pickle.html>`__;:ref:`read_pickle<io.pickle>`;:ref:`to_pickle<io.pickle>`
+     SQL;`SQL <https://en.wikipedia.org/wiki/SQL>`__;:ref:`read_sql<io.sql>`;:ref:`to_sql<io.sql>`
+     SQL;`Google Big Query <https://en.wikipedia.org/wiki/BigQuery>`__;:ref:`read_gbq<io.bigquery>`;:ref:`to_gbq<io.bigquery>`
+ 
+ :ref:`Here <io.perf>` is an informal performance comparison for some of these IO methods.",Ref
+pandas,"If callable, the callable function will be evaluated against the column names,
+   returning names where the callable function evaluates to True:
+ 
+   .. ipython:: python
+ 
+      from pandas.compat import StringIO, BytesIO
+      data = ('col1,col2,col3\n'
+              'a,b,1\n'
+              'a,b,2\n'
+              'c,d,3')
+      pd.read_csv(StringIO(data))
+      pd.read_csv(StringIO(data), usecols=lambda x: x.upper() in ['COL1', 'COL3'])
+ 
+   Using this parameter results in much faster parsing time and lower memory usage.",Performance Attribute
+pandas,"The C engine is faster while the Python engine is
+   currently more feature-complete.",Comparison w/ Alternatives
+pandas,"Using this
+   option can improve performance because there is no longer any I/O overhead.",Purpose & Rationale
+pandas,"In
+   data without any NAs, passing ``na_filter=False`` can improve the performance
+   of reading a large file.",Usage Practice
+pandas,A fast-path exists for iso8601-formatted dates.,Implementation Details
+pandas,"infer_datetime_format : boolean, default ``False``
+   If ``True`` and parse_dates is enabled for a column, attempt to infer the
+   datetime format to speed up the processing.",Purpose & Rationale
+pandas,"If you can arrange
+    for your data to store datetimes in this format, load times will be
+    significantly faster, ~20x has been observed.",Usage Practice
+pandas,"Note that performance-wise, you should try these methods of parsing dates in order:
+ 
+ 1.",Usage Practice
+pandas,"For optimal performance, this should be vectorized, i.e., it should accept arrays
+    as arguments.",Usage Practice
+pandas,"If set, pandas will attempt
+ to guess the format of your datetime strings, and then use a faster means
+ of parsing the strings.",Functionality & Behavior
+pandas,".. _io.chunking:
+ 
+ Iterating through files chunk by chunk
+ ''''''''''''''''''''''''''''''''''''''
+ 
+ Suppose you wish to iterate through a (potentially very large) file lazily
+ rather than reading the entire file into memory, such as the following:
+ 
+ 
+ .. ipython:: python
+ 
+    print(open('tmp.sv').read())
+    table = pd.read_csv('tmp.sv', sep='|')
+    table
+ 
+ 
+ By specifying a ``chunksize`` to ``read_csv``, the return
+ value will be an iterable object of type ``TextFileReader``:
+ 
+ .. ipython:: python
+ 
+    reader = pd.read_csv('tmp.sv', sep='|', chunksize=4)
+    reader
+ 
+    for chunk in reader:
+        print(chunk)
+ 
+ 
+ Specifying ``iterator=True`` will also return the ``TextFileReader`` object:
+ 
+ .. ipython:: python
+ 
+    reader = pd.read_csv('tmp.sv', sep='|', iterator=True)
+    reader.get_chunk(5)
+ 
+ .. ipython:: python
+    :suppress:
+ 
+    os.remove('tmp.sv')
+    os.remove('tmp2.sv')
+ 
+ Specifying the parser engine
+ ''''''''''''''''''''''''''''
+ 
+ Under the hood pandas uses a fast and efficient parser implemented in C as well
+ as a Python implementation which is currently more feature-complete.",Implementation Details
+pandas,Default (``False``) is to use fast but less precise builtin functionality.,"Functionality & Behavior,Implementation Details"
+pandas,"This can provide speedups if you are deserialising a large amount of numeric
+ data:
+ 
+ .. ipython:: python
+ 
+    randfloats = np.random.uniform(-100, 1000, 10000)
+    randfloats.shape = (1000, 10)
+    dffloats = pd.DataFrame(randfloats, columns=list('ABCDEFGHIJ'))
+ 
+    jsonfloats = dffloats.to_json()
+ 
+ .. ipython:: python
+ 
+    %timeit pd.read_json(jsonfloats)
+ 
+ .. ipython:: python
+ 
+    %timeit pd.read_json(jsonfloats, numpy=True)
+ 
+ The speedup is less noticeable for smaller datasets:
+ 
+ .. ipython:: python
+ 
+    jsonfloats = dffloats.head(100).to_json()
+ 
+ .. ipython:: python
+ 
+    %timeit pd.read_json(jsonfloats)
+ 
+ .. ipython:: python
+ 
+    %timeit pd.read_json(jsonfloats, numpy=True)
+ 
+ .. warning::
+ 
+    Direct NumPy decoding makes a number of assumptions and may fail or produce
+    unexpected output if these assumptions are not satisfied:
+ 
+     - data is numeric.",Performance Attribute
+pandas,"**Issues with** |lxml|_
+ 
+ * Benefits
+ 
+     * |lxml|_ is very fast.",Performance Attribute
+pandas,"* Drawbacks
+ 
+     * The biggest drawback to using |html5lib|_ is that it is slow as
+       molasses.",Performance Attribute
+pandas,".. code-block:: python
+ 
+    # Returns a DataFrame
+    pd.read_excel('path_to_file.xls', sheet_name='Sheet1')
+ 
+ 
+ .. _io.excel.excelfile_class:
+ 
+ ``ExcelFile`` class
+ +++++++++++++++++++
+ 
+ To facilitate working with multiple sheets from the same file, the ``ExcelFile``
+ class can be used to wrap the file and can be passed into ``read_excel``
+ There will be a performance benefit for reading multiple sheets as the file is
+ read into memory only once.","Implementation Details,Performance Attribute"
+pandas,"The primary use-case for an ``ExcelFile`` is parsing multiple sheets with
+ different parameters:
+ 
+ .. code-block:: python
+ 
+     data = {}
+     # For when Sheet1's format differs from Sheet2
+     with pd.ExcelFile('path_to_file.xls') as xls:
+         data['Sheet1'] = pd.read_excel(xls, 'Sheet1', index_col=None,
+                                        na_values=['NA'])
+         data['Sheet2'] = pd.read_excel(xls, 'Sheet2', index_col=1)
+ 
+ Note that if the same parsing parameters are used for all sheets, a list
+ of sheet names can simply be passed to ``read_excel`` with no loss in performance.",Usage Practice
+pandas,".. code-block:: python
+ 
+    with pd.ExcelWriter('path_to_file.xlsx') as writer:
+        df1.to_excel(writer, sheet_name='Sheet1')
+        df2.to_excel(writer, sheet_name='Sheet2')
+ 
+ .. note::
+ 
+     Wringing a little more performance out of ``read_excel``
+     Internally, Excel stores all numeric data as floats.",Implementation Details
+pandas,"You can pass ``convert_float=False`` to disable this behavior, which
+     may give a slight performance improvement.","Functionality & Behavior,Performance Attribute"
+pandas,"This is a lightweight portable binary format, similar
+ to binary JSON, that is highly space efficient, and provides good performance
+ both on the writing (serialization), and reading (deserialization).",Concept
+pandas,".. ipython:: python
+ 
+   pd.read_msgpack(df.to_msgpack() + s.to_msgpack())
+ 
+ .. _io.hdf5:
+ 
+ HDF5 (PyTables)
+ ---------------
+ 
+ ``HDFStore`` is a dict-like object which reads and writes pandas using
+ the high performance HDF5 format using the excellent `PyTables
+ <https://www.pytables.org/>`__ library.",Concept
+pandas,The ``fixed`` format stores offer very fast writing and slightly faster reading than ``table`` stores.,Concept
+pandas,".. ipython:: python
+ 
+    df_dc = df.copy()
+    df_dc['string'] = 'foo'
+    df_dc.loc[df_dc.index[4:6], 'string'] = np.nan
+    df_dc.loc[df_dc.index[7:9], 'string'] = 'bar'
+    df_dc['string2'] = 'cool'
+    df_dc.loc[df_dc.index[1:3], ['B', 'C']] = 1.0
+    df_dc
+ 
+    # on-disk operations
+    store.append('df_dc', df_dc, data_columns=['B', 'C', 'string', 'string2'])
+    store.select('df_dc', where='B > 0')
+ 
+    # getting creative
+    store.select('df_dc', 'B > 0 & C > 0 & string == foo')
+ 
+    # this is in-memory version of this type of selection
+    df_dc[(df_dc.B > 0) & (df_dc.C > 0) & (df_dc.string == 'foo')]
+ 
+    # we have automagically created this index and the B/C/string/string2
+    # columns are stored separately as ``PyTables`` columns
+    store.root.df_dc.table
+ 
+ There is some performance degradation by making lots of columns into
+ `data columns`, so it is up to the user to designate these.",Usage Practice
+pandas,"You can then perform a very fast query
+ on the selector table, yet get lots of data back.",Functionality & Behavior
+pandas,"This method is similar to
+ having a very wide table, but enables more efficient queries.",Functionality & Behavior
+pandas,"Thus
+ deleting can potentially be a very expensive operation depending on the
+ orientation of your data.",Performance Attribute
+pandas,"To get optimal performance, it's
+ worthwhile to have the dimension you are deleting be the first of the
+ ``indexables``.",Usage Practice
+pandas,"On
+ the other hand a delete operation on the ``minor_axis`` will be very
+ expensive.",Performance Attribute
+pandas,"In this case it would almost certainly be faster to rewrite
+ the table using a ``where`` that selects all but the missing data.",Usage Practice
+pandas,"However, the ``category`` dtyped data is
+ stored in a more efficient manner.",Implementation Details
+pandas,"Performance
+ '''''''''''
+ 
+ * ``tables`` format come with a writing performance penalty as compared to
+   ``fixed`` stores.",Comparison w/ Alternatives
+pandas,"Query times can
+   be quite fast, especially on an indexed axis.",Performance Attribute
+pandas,This will optimize read/write performance.,Usage Practice
+pandas,"See
+   `Here <https://stackoverflow.com/questions/14355151/how-to-make-pandas-hdfstore-put-operation-faster/14370190#14370190>`__
+   for more information and some solutions.",Ref
+pandas,"It is designed to make reading and writing data
+ frames efficient, and to make sharing data across data analysis languages easy.",Purpose & Rationale
+pandas,"It is designed to
+ make reading and writing data frames efficient, and to make sharing data across data analysis
+ languages easy.",Purpose & Rationale
+pandas,"Parquet can use a variety of compression techniques to shrink the file size as much as possible
+ while still maintaining good read performance.",Concept
+pandas,"This usually provides better performance for analytic databases
+   like *Presto* and *Redshift*, but has worse performance for
+   traditional SQL backend if the table contains many columns.",Usage Practice
+pandas,"- callable with signature ``(pd_table, conn, keys, data_iter)``:
+   This can be used to implement a more performant insertion method based on
+   specific backend dialect features.",Usage Practice
+pandas,"This can be very expensive relative
+   to the actual data concatenation.",Usage Practice
+pandas,".. note::
+    It is worth noting that :func:`~pandas.concat` (and therefore
+    :func:`~pandas.append`) makes a full copy of the data, and that constantly
+    reusing this function can create a significant performance hit.","Functionality & Behavior,Usage Practice"
+pandas,".. _merging.append.row:
+ 
+ Appending rows to a DataFrame
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ While not especially efficient (since a new object must be created), you can
+ append a single row to a ``DataFrame`` by passing a ``Series`` or dict to
+ ``append``, which returns a new ``DataFrame`` as above.",Usage Practice
+pandas,"Defaults to ``True``, setting to ``False`` will improve performance
+   substantially in many cases.",Functionality & Behavior
+pandas,"Cannot be avoided in many
+   cases but may improve performance / memory usage.",Usage Practice
+pandas,".. note::
+ 
+    Merging on ``category`` dtypes that are the same can be quite performant compared to ``object`` dtype merging.","Usage Practice,Comparison w/ Alternatives"
+pandas,"..  ipython:: python
+ 
+    left = pd.DataFrame({'A': ['A0', 'A1', 'A2'],
+                         'B': ['B0', 'B1', 'B2']},
+                         index=pd.Index(['K0', 'K1', 'K2'], name='key'))
+ 
+    index = pd.MultiIndex.from_tuples([('K0', 'Y0'), ('K1', 'Y1'),
+                                      ('K2', 'Y2'), ('K2', 'Y3')],
+                                       names=['key', 'Y'])
+    right = pd.DataFrame({'C': ['C0', 'C1', 'C2', 'C3'],
+                          'D': ['D0', 'D1', 'D2', 'D3']},
+                          index=index)
+ 
+    result = left.join(right, how='inner')
+ 
+ .. ipython:: python
+    :suppress:
+ 
+    @savefig merging_join_multiindex_inner.png
+    p.plot([left, right], result,
+           labels=['left', 'right'], vertical=False);
+    plt.close('all');
+ 
+ This is equivalent but less verbose and more memory efficient / faster than this.",Comparison w/ Alternatives
+pandas,":meth:`~Series.replace` in Series and :meth:`~DataFrame.replace` in DataFrame provides an efficient yet
+ flexible way to perform such replacements.",Functionality & Behavior
+pandas,For large frames this can be quite slow.,Usage Practice
+pandas,                                                     this can be quite slow.,Performance Attribute 
+pandas,"compute.use_bottleneck                  True         Use the bottleneck library to accelerate
+                                                      computation if it is installed.",Functionality & Behavior
+pandas,"compute.use_numexpr                     True         Use the numexpr library to accelerate
+                                                      computation if it is installed.",Functionality & Behavior
+pandas,".. _options.east_asian_width:
+ 
+ Unicode Formatting
+ ------------------
+ 
+ .. warning::
+ 
+    Enabling this option will affect the performance for printing of DataFrame and Series (about 2 times slower).",Usage Practice
+pandas,".. ipython:: python
+ 
+   dft = pd.DataFrame({""A1970"": {0: ""a"", 1: ""b"", 2: ""c""},
+                       ""A1980"": {0: ""d"", 1: ""e"", 2: ""f""},
+                       ""B1970"": {0: 2.5, 1: 1.2, 2: .7},
+                       ""B1980"": {0: 3.2, 1: 1.3, 2: .1},
+                       ""X"": dict(zip(range(3), np.random.randn(3)))
+                      })
+   dft[""id""] = dft.index
+   dft
+   pd.wide_to_long(dft, [""A"", ""B""], i=""id"", j=""year"")
+ 
+ Combining with stats and GroupBy
+ --------------------------------
+ 
+ It should be no shock that combining ``pivot`` / ``stack`` / ``unstack`` with
+ GroupBy and the basic Series and DataFrame statistical functions can produce
+ some very expressive and fast data manipulations.",Usage Practice
+pandas,"So if we had a mostly zero ``Series``, we could
+ convert it to sparse with ``fill_value=0``:
+ 
+ .. ipython:: python
+ 
+    ts.fillna(0).to_sparse(fill_value=0)
+ 
+ The sparse objects exist for memory efficiency reasons.",Purpose & Rationale
+pandas,"We
+ recommend using ``block`` as it's more memory efficient.",Usage Practice
+pandas,"the number of unique elements in the ``Series`` is a lot smaller than the length of the
+     ``Series``), it can be faster to convert the original ``Series`` to one of type
+     ``category`` and then use ``.str.<method>`` or ``.dt.<property>`` on that.",Usage Practice
+pandas,"The performance difference comes from the fact that, for ``Series`` of type ``category``, the
+     string operations are done on the ``.categories`` and not on each element of the
+     ``Series``.",Purpose & Rationale
+pandas,This could also potentially speed up the conversion considerably.,Functionality & Behavior
+pandas,"The ``DatetimeIndex`` class contains many time series related optimizations:
+ 
+ * A large range of dates for various offsets are pre-computed and cached
+   under the hood in order to make generating subsequent date ranges very fast
+   (just have to grab a slice).",Implementation Details
+pandas,* Fast shifting using the ``shift`` and ``tshift`` method on pandas objects.,Implementation Details
+pandas,"* Unioning of overlapping ``DatetimeIndex`` objects with the same frequency is
+   very fast (important for fast data alignment).",Performance Attribute
+pandas,* Regularization functions like ``snap`` and very fast ``asof`` logic.,Implementation Details
+pandas,"They can still be used but may
+ calculate significantly slower and will show a ``PerformanceWarning``
+ 
+ .. ipython:: python
+    :okwarning:
+ 
+    rng + pd.offsets.BQuarterEnd()
+ 
+ 
+ .. _timeseries.custombusinessdays:
+ 
+ Custom Business Days
+ ~~~~~~~~~~~~~~~~~~~~
+ 
+ The ``CDay`` or ``CustomBusinessDay`` class provides a parametric
+ ``BusinessDay`` class which can be used to create customized business day
+ calendars which account for local holidays and local weekend conventions.",Usage Practice
+scipy,"Using
+ compiled callback functions can improve performance somewhat by
+ avoiding wrapping data in Python objects.",Implementation Details 
+scipy,"In particular, using ``which = 'SM'``
+ may lead to slow execution time and/or anomalous results.",Functionality & Behavior
+scipy,"First
+ compute a standard eigenvalue decomposition using ``eigh``:
+ 
+     >>> evals_all, evecs_all = eigh(X)
+ 
+ As the dimension of ``X`` grows, this routine becomes very slow.","Functionality & Behavior,Performance Attribute"
+scipy,"We could increase the tolerance (``tol``) to lead to faster
+ convergence:
+ 
+     >>> evals_small, evecs_small = eigsh(X, 3, which='SM', tol=1E-2)
+     >>> evals_all[:3]
+     array([0.0003783, 0.00122714, 0.00715878])
+     >>> evals_small
+     array([0.00037831, 0.00122714, 0.00715881])
+     >>> np.dot(evecs_small.T, evecs_all[:,:3])
+     array([[ 0.99999999  0.00000024 -0.00000049],    # may vary (signs)
+            [-0.00000023  0.99999999  0.00000056],
+            [ 0.00000031 -0.00000037  0.99999852]])
+ 
+ This works, but we lose the precision in the results.",Usage Practice
+scipy,"The shift-invert mode provides more than just a fast way to obtain a few
+ small eigenvalues.",Functionality & Behavior
+scipy,"Index Tricks
+ ^^^^^^^^^^^^
+ 
+ There are some class instances that make special use of the slicing
+ functionality to provide efficient means for array construction.",Purpose & Rationale
+scipy,"Cache Destruction
+ -----------------
+ 
+ To accelerate repeat transforms on arrays of the same shape and dtype,
+ scipy.fftpack keeps a cache of the prime factorization of length of the array
+ and pre-computed trigonometric functions.","Implementation Details, Purpose & Rationale"
+scipy,".. _quad-callbacks:
+ 
+ Faster integration using low-level callback functions
+ -----------------------------------------------------
+ 
+ A user desiring reduced integration times may pass a C function
+ pointer through `scipy.LowLevelCallable` to `quad`, `dblquad`,
+ `tplquad` or `nquad` and it will be integrated and return a result in
+ Python.","Implementation Details, Usage Practice"
+scipy,The performance increase here arises from two factors.,Purpose & Rationale
+scipy,"The
+ primary improvement is faster function evaluation, which is provided
+ by compilation of the function itself.",Implementation Details
+scipy,"Additionally we have a speedup
+ provided by the removal of function calls between C and Python in
+ :obj:`quad`.",Implementation Details
+scipy,"For a large
+ system of differential equations that are known to be stiff, this
+ can improve performance significantly.",Purpose & Rationale
+scipy,"For a large
+ system, this improves the performance significantly, as demonstrated in the
+ following ipython session.","Implementation Details, Purpose & Rationale"
+scipy,"First, we define the required inputs::
+ 
+     In [31]: y0 = np.random.randn(5000)
+ 
+     In [32]: t = np.linspace(0, 50, 11)
+ 
+     In [33]: f = 0.024
+ 
+     In [34]: k = 0.055
+ 
+     In [35]: Du = 0.01
+ 
+     In [36]: Dv = 0.005
+ 
+     In [37]: dx = 0.025
+ 
+ Time the computation without taking advantage of the banded structure
+ of the Jacobian matrix::
+ 
+     In [38]: %timeit sola = odeint(grayscott1d, y0, t, args=(f, k, Du, Dv, dx))
+     1 loop, best of 3: 25.2 s per loop
+ 
+ Now set ``ml=2`` and ``mu=2``, so `odeint` knows that the Jacobian matrix
+ is banded::
+ 
+     In [39]: %timeit solb = odeint(grayscott1d, y0, t, args=(f, k, Du, Dv, dx), ml=2, mu=2)
+     10 loops, best of 3: 191 ms per loop
+ 
+ That is quite a bit faster!",Usage Practice
+scipy,"An
+ option for entering a symmetric matrix is offered which can speed up
+ the processing when applicable.",Purpose & Rationale
+scipy,"However, it is better to use the linalg.solve command which can be
+ faster and more numerically stable.",Usage Practice
+scipy,"In this case it however gives the
+ same answer as shown in the following example:
+ 
+     >>> import numpy as np
+     >>> from scipy import linalg
+     >>> A = np.array([[1, 2], [3, 4]])
+     >>> A
+     array([[1, 2],
+           [3, 4]])
+     >>> b = np.array([[5], [6]])
+     >>> b
+     array([[5],
+           [6]])
+     >>> linalg.inv(A).dot(b)  # slow
+     array([[-4.",Performance Attribute
+scipy,"],
+           [ 4.5]])
+     >>> A.dot(linalg.inv(A).dot(b)) - b  # check
+     array([[  8.88178420e-16],
+           [  2.66453526e-15]])
+     >>> np.linalg.solve(A, b)  # fast
+     array([[-4.",Performance Attribute
+scipy,"Usually, using the *output* argument is
+ more efficient, since an existing array is used to store the
+ result.","Implementation Details,Usage Practice"
+scipy,"A good example is the calculation
+ of backward and forward differences:
+ 
+ .. code:: python
+ 
+     >>> a = [0, 0, 1, 1, 1, 0, 0]
+     >>> correlate1d(a, [-1, 1])               # backward difference
+     array([ 0,  0,  1,  0,  0, -1,  0])
+     >>> correlate1d(a, [-1, 1], origin = -1)  # forward difference
+     array([ 0,  1,  0,  0, -1,  0,  0])
+ 
+ We could also have calculated the forward difference as follows:
+ 
+ .. code:: python
+ 
+     >>> correlate1d(a, [0, -1, 1])
+     array([ 0,  1,  0,  0, -1,  0,  0])
+ 
+ However, using the origin parameter instead of a larger kernel is
+ more efficient.",Usage Practice
+scipy,"In this
+ case it is more efficient to do the pre-filtering only once and use a
+ prefiltered array as the input of the interpolation functions.",Usage Practice
+scipy,"A more efficient interpolation algorithm is then applied
+   that exploits the separability of the problem.",Implementation Details
+scipy,".. note::
+ 
+      This function uses a slow brute-force algorithm, the function
+      :func:`distance_transform_cdt` can be used to more efficiently
+      calculate cityblock and chessboard distance transforms.",Usage Practice
+scipy,"Say we want
+ to find the sum of the intensities of an object in image:
+ 
+ .. code:: python
+ 
+    >>> image = np.arange(4 * 6).reshape(4, 6)
+    >>> mask = np.array([[0,1,1,0,0,0],[0,1,1,0,1,0],[0,0,0,1,1,1],[0,0,0,0,1,0]])
+    >>> labels = label(mask)[0]
+    >>> slices = find_objects(labels)
+ 
+ Then we can calculate the sum of the elements in the second object:
+ 
+ .. code:: python
+ 
+    >>> np.where(labels[slices[1]] == 2, image[slices[1]], 0).sum()
+    80
+ 
+ That is however not particularly efficient, and may also be more
+ complicated for other types of measurements.",Performance Attribute
+scipy,"For instance
+ calculating the sum of the intensities can be done by:
+ 
+ .. code:: python
+ 
+    >>> from scipy.ndimage import sum as ndi_sum
+    >>> ndi_sum(image, labels, 2)
+    80
+ 
+ For large arrays and small objects it is more efficient to call the
+ measurement functions after slicing the array:
+ 
+ .. code:: python
+ 
+    >>> ndi_sum(image[slices[1]], labels[slices[1]], 2)
+    80
+ 
+ Alternatively, we can do the measurements for a number of labels with
+ a single function call, returning a list of results.",Usage Practice
+scipy,"If possible, using
+ Newton-CG with the Hessian product option is probably the fastest way to
+ minimize the function.",Usage Practice
+scipy,">>> from scipy.sparse.linalg import LinearOperator
+     >>> def cons_H_linear_operator(x, v):
+     ...     def matvec(p):
+     ...         return np.array([p[0]*2*(v[0]+v[1]), 0])
+     ...     return LinearOperator((2, 2), matvec=matvec)
+     >>> nonlinear_constraint = NonlinearConstraint(cons_f, -np.inf, 1,
+     ...                                           jac=cons_J, hess=cons_H_linear_operator)
+ 
+ When the evaluation of the Hessian :math:`H(x, v)`
+ is difficult to implement or computationally infeasible, one may use :class:`HessianUpdateStrategy`.",Usage Practice
+scipy,"In these circumstances, other
+ optimization techniques have been developed that can work faster.",Comparison w/ Alternatives
+scipy,"The problem we have can now be solved as follows:
+ 
+ .. plot::
+ 
+     import numpy as np
+     from scipy.optimize import root
+     from numpy import cosh, zeros_like, mgrid, zeros
+ 
+     # parameters
+     nx, ny = 75, 75
+     hx, hy = 1./(nx-1), 1./(ny-1)
+ 
+     P_left, P_right = 0, 0
+     P_top, P_bottom = 1, 0
+ 
+     def residual(P):
+        d2x = zeros_like(P)
+        d2y = zeros_like(P)
+ 
+        d2x[1:-1] = (P[2:]   - 2*P[1:-1] + P[:-2]) / hx/hx
+        d2x[0]    = (P[1]    - 2*P[0]    + P_left)/hx/hx
+        d2x[-1]   = (P_right - 2*P[-1]   + P[-2])/hx/hx
+ 
+        d2y[:,1:-1] = (P[:,2:] - 2*P[:,1:-1] + P[:,:-2])/hy/hy
+        d2y[:,0]    = (P[:,1]  - 2*P[:,0]    + P_bottom)/hy/hy
+        d2y[:,-1]   = (P_top   - 2*P[:,-1]   + P[:,-2])/hy/hy
+ 
+        return d2x + d2y + 5*cosh(P).mean()**2
+ 
+     # solve
+     guess = zeros((nx, ny), float)
+     sol = root(residual, guess, method='krylov', options={'disp': True})
+     #sol = root(residual, guess, method='broyden2', options={'disp': True, 'max_rank': 50})
+     #sol = root(residual, guess, method='anderson', options={'disp': True, 'M': 10})
+     print('Residual: %g' % abs(residual(sol.x)).max())
+ 
+     # visualize
+     import matplotlib.pyplot as plt
+     x, y = mgrid[0:1:(nx*1j), 0:1:(ny*1j)]
+     plt.pcolor(x, y, sol.x)
+     plt.colorbar()
+     plt.show()
+ 
+ 
+ Still too slow?",Performance Attribute
+scipy,"For problems where the
+ residual is expensive to compute, good preconditioning can be crucial
+ --- it can even decide whether the problem is solvable in practice or
+ not.",Usage Practice
+scipy,"According to [NW]_ p. 170 the ``Newton-CG`` algorithm can be inefficient
+when the Hessian is ill-condiotioned because of the poor quality search directions
+provided by the method in those situations.",Concept
+scipy,"This becomes rather inefficient
+when *N* grows.",Performance Attribute
+scipy,"This function is ideally suited for reconstructing samples from spline
+ coefficients and is faster than :func:`convolve2d` which convolves arbitrary
+ two-dimensional filters and allows for choosing mirror-symmetric boundary
+ conditions.",Comparison w/ Alternatives
+scipy,"By default, it selects the expected faster method.",Functionality & Behavior
+scipy,"Depending on the big O constant and the value
+ of :math:`N`, one of these two methods may be faster.",Comparison w/ Alternatives
+scipy,"The default value 'auto'
+ performs a rough calculation and chooses the expected faster method, while the
+ values 'direct' and 'fft' force computation with the other two methods.",Functionality & Behavior
+scipy,"By default,
+ :func:`convolve` estimates the fastest method using :func:`choose_conv_method`.",Implementation Details
+scipy,"Obviously this example is contrived: one could just call
+ ``special.jv(np.arange(100), 1)`` and get results just as fast as in
+ ``cython_tight_loop``.",Comparison w/ Alternatives
+scipy,"These are usually relatively fast
+ calculations.",Functionality & Behavior
+scipy,"However, these indirect
+ methods can be `very` slow.",Performance Attribute
+scipy,"Interestingly,  the ``pdf`` is now computed automatically:
+ 
+     >>> deterministic.pdf(np.arange(-3, 3, 0.5))
+     array([  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+              0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+              5.83333333e+04,   4.16333634e-12,   4.16333634e-12,
+              4.16333634e-12,   4.16333634e-12,   4.16333634e-12])
+ 
+ 
+ Be aware of the performance issues mentions in
+ :ref:`performance_issues_label`.",Ref
+scipy,"The computation of unspecified
+ common methods can become very slow, since only general methods are
+ called which, by their very nature, cannot use any specific
+ information about the distribution.","Performance Attribute,Purpose & Rationale"
+scipy,"Kernel
+ density estimation (KDE) is a more efficient tool for the same task.",Functionality & Behavior
+sklearn,"``fit_transform`` may be more
+ convenient and efficient for modelling and transforming the training data
+ simultaneously.",Functionality & Behavior
+sklearn,"This algorithm finds the exact truncated singular values decomposition
+   using randomization to speed up the computations.","Functionality & Behavior, Purpose & Rationale"
+sklearn,"It is particularly
+   fast on large matrices on which you wish to extract only a small
+   number of components.",Usage Practice
+sklearn,"If this is ever needed again, it would be far faster to use a single
+   iteration of Dijkstra's algorithm from ``graph_shortest_path``.",Usage Practice
+sklearn,"The algorithm is most efficient when the
+   connectivity matrix is a ``scipy.sparse.csr_matrix``.",Usage Practice
+sklearn,"This hash
+   function is suitable for implementing lookup tables, Bloom filters,
+   Count Min Sketch, feature hashing and implicitly defined sparse
+   random projections::
+ 
+     >>> from sklearn.utils import murmurhash3_32
+     >>> murmurhash3_32(""some feature"", seed=0) == -384616559
+     True
+ 
+     >>> murmurhash3_32(""some feature"", seed=0, positive=True) == 3910350737
+     True
+ 
+   The ``sklearn.utils.murmurhash`` module can also be ""cimported"" from
+   other cython modules so as to benefit from the high performance of
+   MurmurHash while skipping the overhead of the Python interpreter.",Usage Practice
+sklearn,"Note that for most distance metrics, we rely on implementations from
+         :mod:`scipy.spatial.distance`, but may reimplement for efficiency in
+         our context.",Usage Practice
+sklearn,"An exception is the
+         :class:`RidgeCV <linear_model.RidgeCV>` class, which can instead
+         perform efficient Leave-One-Out CV.",Functionality & Behavior
+sklearn,"One reason to implement ``fit_transform`` is that performing ``fit``
+         and ``transform`` separately would be less efficient than together.",Purpose & Rationale
+sklearn,"*It can be highly detrimental to performance to run multiple
+           copies of some estimators or functions in parallel.",Usage Practice
+sklearn,"Overview of clustering methods
+ ===============================
+ 
+ .. figure:: ../auto_examples/cluster/images/sphx_glr_plot_cluster_comparison_001.png
+    :target: ../auto_examples/cluster/plot_cluster_comparison.html
+    :align: center
+    :scale: 50
+ 
+    A comparison of the clustering algorithms in scikit-learn
+ 
+ 
+ .. list-table::
+    :header-rows: 1
+    :widths: 14 15 19 25 20
+ 
+    * - Method name
+      - Parameters
+      - Scalability
+      - Usecase
+      - Geometry (metric used)
+ 
+    * - :ref:`K-Means <k_means>`
+      - number of clusters
+      - Very large ``n_samples``, medium ``n_clusters`` with
+        :ref:`MiniBatch code <mini_batch_kmeans>`
+      - General-purpose, even cluster size, flat geometry, not too many clusters
+      - Distances between points
+ 
+    * - :ref:`Affinity propagation <affinity_propagation>`
+      - damping, sample preference
+      - Not scalable with n_samples
+      - Many clusters, uneven cluster size, non-flat geometry
+      - Graph distance (e.g.",Functionality & Behavior
+sklearn,"nearest-neighbor graph)
+ 
+    * - :ref:`Mean-shift <mean_shift>`
+      - bandwidth
+      - Not scalable with ``n_samples``
+      - Many clusters, uneven cluster size, non-flat geometry
+      - Distances between points
+ 
+    * - :ref:`Spectral clustering <spectral_clustering>`
+      - number of clusters
+      - Medium ``n_samples``, small ``n_clusters``
+      - Few clusters, even cluster size, non-flat geometry
+      - Graph distance (e.g.",Performance Attribute
+sklearn,     - Not scalable,Performance Attribute
+sklearn,"Running a dimensionality reduction algorithm such as :ref:`PCA` prior to
+   k-means clustering can alleviate this problem and speed up the
+   computations.",Usage Practice
+sklearn,":class:`MiniBatchKMeans` converges faster than :class:`KMeans`, but the quality
+ of the results is reduced.",Comparison w/ Alternatives
+sklearn,"The algorithm is not highly scalable, as it requires multiple nearest neighbor
+ searches during the execution of the algorithm.","Performance Attribute,Implementation Details"
+sklearn,"It is especially efficient if the affinity matrix is
+ sparse and the `pyamg <https://github.com/pyamg/pyamg>`_ module is installed.",Usage Practice
+sklearn,":class:`AgglomerativeClustering` can also scale to large number of samples
+ when it is used jointly with a connectivity matrix, but is computationally
+ expensive when no connectivity constraints are added between samples: it
+ considers at each step all the possible merges.","Performance Attribute,Usage Practice"
+sklearn,".. |unstructured| image:: ../auto_examples/cluster/images/sphx_glr_plot_ward_structured_vs_unstructured_001.png
+         :target: ../auto_examples/cluster/plot_ward_structured_vs_unstructured.html
+         :scale: 49
+ 
+ .. |structured| image:: ../auto_examples/cluster/images/sphx_glr_plot_ward_structured_vs_unstructured_002.png
+         :target: ../auto_examples/cluster/plot_ward_structured_vs_unstructured.html
+         :scale: 49
+ 
+ .. centered:: |unstructured| |structured|
+ 
+ These constraint are useful to impose a certain local structure, but they
+ also make the algorithm faster, especially when the number of the samples
+ is high.",Purpose & Rationale
+sklearn,".. topic:: Memory consumption for large sample sizes
+ 
+     This implementation is by default not memory efficient because it constructs
+     a full pairwise similarity matrix in the case where kd-trees or ball-trees cannot
+     be used (e.g., with sparse matrices).",Implementation Details
+sklearn,"- A sparse radius neighborhood graph (where missing entries are presumed to
+       be out of eps) can be precomputed in a memory-efficient way and dbscan
+       can be run over this with ``metric='precomputed'``.",Usage Practice
+sklearn,".. _pipeline_cache:
+ 
+ Caching transformers: avoid repeated computation
+ -------------------------------------------------
+ 
+ .. currentmodule:: sklearn.pipeline
+ 
+ Fitting transformers may be computationally expensive.",Performance Attribute
+sklearn,"From the different
+ algorithms, ``MultinomialNB`` is the most expensive, but its overhead can be
+ mitigated by increasing the size of the mini-batches (exercise: change
+ ``minibatch_size`` to 100 and 10000 in the program and compare).","Usage Practice,Comparison w/ Alternatives"
+sklearn,"Using sparse input on a dense (or sparse) linear model can speedup prediction
+ by quite a bit as only the non zero valued features impact the dot product
+ and thus the model predictions.","Usage Practice,Purpose & Rationale"
+sklearn,"So the sparsity should typically be quite high (10% non-zeros
+ max, to be checked depending on the hardware) for the sparse input
+ representation to be faster than the dense input representation on a machine
+ with many CPUs and an optimized BLAS implementation.",Usage Practice
+sklearn,".. |en_model_complexity| image::  ../auto_examples/applications/images/sphx_glr_plot_model_complexity_influence_001.png
+     :target: ../auto_examples/applications/plot_model_complexity_influence.html
+     :scale: 80
+ 
+ .. centered:: |en_model_complexity|
+ 
+ For the :mod:`sklearn.svm` family of algorithms with a non-linear kernel,
+ the latency is tied to the number of support vectors (the fewer the faster).",Performance Attribute
+sklearn,"Configuration switches
+ -----------------------
+ 
+ Python runtime
+ ..............
+ 
+ :func:`sklearn.set_config` controls the following behaviors:
+ 
+ :assume_finite:
+ 
+     used to skip validation, which enables faster computations but may
+     lead to segmentation faults if the data contains NaNs.",Functionality & Behavior
+sklearn,"This approach can be computationally expensive,
+ but does not waste too much data
+ (as is the case when fixing an arbitrary validation set),
+ which is a major advantage in problems such as inverse inference
+ where the number of samples is very small.","Performance Attribute,Usage Practice"
+sklearn,"In both ways, assuming :math:`k` is not too large
+ and :math:`k < n`, LOO is more computationally expensive than :math:`k`-fold
+ cross validation.",Comparison w/ Alternatives
+sklearn,".. figure:: ../auto_examples/model_selection/images/sphx_glr_plot_cv_indices_008.png
+    :target: ../auto_examples/model_selection/plot_cv_indices.html
+    :align: center
+    :scale: 75%
+ 
+ This class is useful when the behavior of :class:`LeavePGroupsOut` is
+ desired, but the number of groups is large enough that generating all
+ possible partitions with :math:`P` groups withheld would be prohibitively
+ expensive.","Performance Attribute,Usage Practice"
+sklearn,"The class :class:`PCA` used with the optional parameter
+ ``svd_solver='randomized'`` is very useful in that case: since we are going
+ to drop most of the singular vectors it is much more efficient to limit the
+ computation to an approximated estimate of the singular vectors we will keep
+ to actually perform the transform.",Usage Practice
+sklearn,"Mini-batch sparse PCA (:class:`MiniBatchSparsePCA`) is a variant of
+ :class:`SparsePCA` that is faster but less accurate.",Comparison w/ Alternatives
+sklearn,"All variations of
+ dictionary learning implement the following transform methods, controllable via
+ the ``transform_method`` initialization parameter:
+ 
+ * Orthogonal matching pursuit (:ref:`omp`)
+ 
+ * Least-angle regression (:ref:`least_angle_regression`)
+ 
+ * Lasso computed by least-angle regression
+ 
+ * Lasso using coordinate descent (:ref:`lasso`)
+ 
+ * Thresholding
+ 
+ Thresholding is very fast but it does not yield accurate reconstructions.","Functionality & Behavior,Performance Attribute"
+sklearn,".. figure:: ../auto_examples/decomposition/images/sphx_glr_plot_image_denoising_001.png
+     :target: ../auto_examples/decomposition/plot_image_denoising.html
+     :align: center
+     :scale: 50%
+ 
+ 
+ .. topic:: Examples:
+ 
+   * :ref:`sphx_glr_auto_examples_decomposition_plot_image_denoising.py`
+ 
+ 
+ .. topic:: References:
+ 
+   * `""Online dictionary learning for sparse coding""
+     <https://www.di.ens.fr/sierra/pdfs/icml09.pdf>`_
+     J. Mairal, F. Bach, J. Ponce, G. Sapiro, 2009
+ 
+ .. _MiniBatchDictionaryLearning:
+ 
+ Mini-batch dictionary learning
+ ------------------------------
+ 
+ :class:`MiniBatchDictionaryLearning` implements a faster, but less accurate
+ version of the dictionary learning algorithm that is better suited for large
+ datasets.",Functionality & Behavior
+sklearn,"For instance the :class:`MiniBatchKMeans` estimator is
+    computationally efficient and implements on-line learning with a
+    ``partial_fit`` method.","Functionality & Behavior,Performance Attribute"
+sklearn,"Such additive
+ models are efficient for representing images and text.",Usage Practice
+sklearn,".. |pca_img5| image:: ../auto_examples/decomposition/images/sphx_glr_plot_faces_decomposition_002.png
+     :target: ../auto_examples/decomposition/plot_faces_decomposition.html
+     :scale: 60%
+ 
+ .. |nmf_img5| image:: ../auto_examples/decomposition/images/sphx_glr_plot_faces_decomposition_003.png
+     :target: ../auto_examples/decomposition/plot_faces_decomposition.html
+     :scale: 60%
+ 
+ .. centered:: |pca_img5| |nmf_img5|
+ 
+ 
+ The :attr:`init` attribute determines the initialization method applied, which
+ has a great impact on the performance of the method.","Functionality & Behavior,Performance Attribute"
+sklearn,"Note that for
+ :math:`\beta \in (1; 2)`, the 'mu' solver is significantly faster than for other
+ values of :math:`\beta`.",Comparison w/ Alternatives
+sklearn,".. _kernel_density:
+ 
+ Kernel Density Estimation
+ =========================
+ Kernel density estimation in scikit-learn is implemented in the
+ :class:`sklearn.neighbors.KernelDensity` estimator, which uses the
+ Ball Tree or KD Tree for efficient queries (see :ref:`neighbors` for
+ a discussion of these).",Implementation Details
+sklearn,"Though the above example
+ uses a 1D data set for simplicity, kernel density estimation can be
+ performed in any number of dimensions, though in practice the curse of
+ dimensionality causes its performance to degrade in high dimensions.",Usage Practice
+sklearn,"Note that because of
+ inter-process communication overhead, the speedup might not be linear
+ (i.e., using ``k`` jobs will unfortunately not be ``k`` times as
+ fast).",Implementation Details
+sklearn,"Significant speedup can still be achieved though when building
+ a large number of trees, or when building a single tree requires a fair
+ amount of time (e.g., on large datasets).",Usage Practice
+sklearn,"These fast estimators
+   first bin the input samples ``X`` into integer-valued bins (typically 256
+   bins) which tremendously reduces the number of splitting points to
+   consider, and allow the algorithm to leverage integer-based data
+   structures (histograms) instead of relying on sorted continuous values.",Functionality & Behavior
+sklearn,"The new histogram-based estimators can be orders of magnitude faster than
+   their continuous counterparts when the number of samples is larger than
+   tens of thousands of samples.","Comparison w/ Alternatives, Usage Practice"
+sklearn,"We found that ``max_leaf_nodes=k`` gives comparable results to ``max_depth=k-1``
+ but is significantly faster to train at the expense of a slightly higher
+ training error.","Comparison w/ Alternatives,Usage Practice"
+sklearn,"At each iteration ``n_classes``
+      regression trees have to be constructed which makes GBRT rather
+      inefficient for data sets with a large number of classes.","Implementation Details, Performance Attribute"
+sklearn,"A major difference between the two methods is the time
+ required for fitting and predicting: while fitting KRR is fast in principle,
+ the grid-search for hyperparameter optimization scales exponentially with the
+ number of hyperparameters (""curse of dimensionality"").",Comparison w/ Alternatives
+sklearn,"The gradient-based
+ optimization of the parameters in GPR does not suffer from this exponential
+ scaling and is thus considerable faster on this example with 3-dimensional
+ hyperparameter space.","Implementation Details,Performance Attribute"
+sklearn,"In the case of Gaussian process classification, ""one_vs_one"" might be
+ computationally  cheaper since it has to solve many problems involving only a
+ subset of the whole training set rather than fewer problems on the whole
+ dataset.","Performance Attribute, Purpose & Rationale"
+sklearn,"Since Gaussian process classification scales cubically with the size
+ of the dataset, this might be considerably faster.",Performance Attribute
+sklearn,"The following
+ identity holds true for all kernels k (except for the :class:`WhiteKernel`):
+ ``k(X) == K(X, Y=X)``
+ 
+ If only the diagonal of the auto-covariance is being used, the method ``diag()``
+ of a kernel can be called, which is more computationally efficient than the
+ equivalent call to ``__call__``: ``np.diag(k(X, X)) == k.diag(X)``
+ 
+ Kernels are parameterized by a vector :math:`\theta` of hyperparameters.",Comparison w/ Alternatives
+sklearn,"Note that it is common that a small subset of those parameters can have a large
+ impact on the predictive or computation performance of the model while others
+ can be left to their default values.",Performance Attribute
+sklearn,"This is the best practice for evaluating the performance of a
+       model with grid search.",Usage Practice
+sklearn,* Adding parameters that do not influence the performance does not decrease efficiency.,Purpose & Rationale
+sklearn,":class:`RBFSampler` is cheaper to compute, though, making
+ use of larger feature spaces more efficient.",Performance Attribute
+sklearn,"In
+ contrast to :class:`SVR`, fitting :class:`KernelRidge` can be done in
+ closed-form and is typically faster for medium-sized datasets.",Comparison w/ Alternatives
+sklearn,"On the other
+ hand, the learned model is non-sparse and thus slower than SVR, which learns
+ a sparse model for :math:`\epsilon > 0`, at prediction-time.",Comparison w/ Alternatives
+sklearn,"seven times faster than fitting :class:`SVR`
+ (both with grid-search).",Comparison w/ Alternatives
+sklearn,"However, prediction of 100000 target values is more
+ than three times faster with SVR since it has learned a sparse model using only
+ approx.",Comparison w/ Alternatives
+sklearn,"Fitting :class:`KernelRidge` is faster than :class:`SVR` for medium-sized
+ training sets (less than 1000 samples); however, for larger training sets
+ :class:`SVR` scales better.",Comparison w/ Alternatives
+sklearn,"With regard to prediction time, :class:`SVR` is
+ faster than :class:`KernelRidge` for all sizes of the training set because of
+ the learned sparse solution.",Comparison w/ Alternatives
+sklearn,"Choice of kernel
+ effects both scalability and performance of the algorithms.",Usage Practice
+sklearn,The 'lsqr' solver is an efficient algorithm that only works for classification.,Concept
+sklearn,"The object works in the same way
+ as GridSearchCV except that it defaults to Generalized Cross-Validation
+ (GCV), an efficient form of leave-one-out cross-validation::
+ 
+     >>> import numpy as np
+     >>> from sklearn import linear_model
+     >>> reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
+     >>> reg.fit([[0, 0], [0, 0], [1, 1]], [0, .1, 1])       # doctest: +NORMALIZE_WHITESPACE
+     RidgeCV(alphas=array([1.e-06, 1.e-05, 1.e-04, 1.e-03, 1.e-02, 1.e-01, 1.e+00, 1.e+01,
+           1.e+02, 1.e+03, 1.e+04, 1.e+05, 1.e+06]),
+             cv=None, fit_intercept=True, gcv_mode=None, normalize=False,
+             scoring=None, store_cv_values=False)
+     >>> reg.alpha_
+     0.01
+ 
+ Specifying the value of the `cv` attribute will trigger the use of
+ cross-validation with `GridSearchCV`, for example `cv=10` for 10-fold
+ cross-validation, rather than Generalized Cross-Validation.",Concept
+sklearn,"However, :class:`LassoLarsCV` has
+ the advantage of exploring more relevant values of `alpha` parameter, and
+ if the number of samples is very small compared to the number of
+ features, it is often faster than :class:`LassoCV`.",Comparison w/ Alternatives
+sklearn,"It is a computationally cheaper alternative to find the optimal value of alpha
+ as the regularization path is computed only once instead of k+1 times
+ when using k-fold cross-validation.","Functionality & Behavior,Implementation Details,Performance Attribute"
+sklearn,"It is faster
+ than other solvers for large datasets, when both the number of samples and the
+ number of features are large.","Usage Practice,Comparison w/ Alternatives"
+sklearn,"The ""lbfgs"" solver is recommended for use for
+ small data-sets but for larger datasets its performance suffers.",Usage Practice
+sklearn,"For large datasets
+ the ""saga"" solver is usually faster.",Performance Attribute
+sklearn,"For large dataset, you may also consider using :class:`SGDClassifier`
+ with 'log' loss, which might be even faster but requires more tuning.",Usage Practice
+sklearn,"The ""newton-cg"", ""sag"", ""saga"" and
+ ""lbfgs"" solvers are found to be faster for high-dimensional dense data, due
+ to warm-starting (see :term:`Glossary <warm_start>`).",Performance Attribute
+sklearn,"The last characteristic implies that the Perceptron is slightly faster to
+ train than SGD with the hinge loss and that the resulting models are
+ sparser.",Comparison w/ Alternatives
+sklearn,"* :ref:`HuberRegressor <huber_regression>` should be faster than
+     :ref:`RANSAC <ransac_regression>` and :ref:`Theil Sen <theil_sen_regression>`
+     unless the number of samples are very large, i.e ``n_samples`` >> ``n_features``.",Comparison w/ Alternatives
+sklearn,"* :ref:`RANSAC <ransac_regression>` is faster than :ref:`Theil Sen <theil_sen_regression>`
+     and scales much better with the number of samples.",Comparison w/ Alternatives
+sklearn,"If the estimated model is not
+ needed for identifying degenerate cases, ``is_data_valid`` should be used as it
+ is called prior to fitting the model and thus leading to better computational
+ performance.",Usage Practice
+sklearn,"- :class:`HuberRegressor` should be more efficient to use on data with small number of
+   samples while :class:`SGDRegressor` needs a number of passes on the training data to
+   produce the same robustness.",Comparison w/ Alternatives
+sklearn,"**  Isomap uses
+    :class:`sklearn.neighbors.BallTree` for efficient neighbor search.",Implementation Details
+sklearn,"The disadvantages to using t-SNE are roughly:
+ 
+ * t-SNE is computationally expensive, and can take several hours on million-sample
+   datasets where PCA will finish in seconds or minutes
+ * The Barnes-Hut t-SNE method is limited to two or three dimensional embeddings.",Comparison w/ Alternatives
+sklearn,"The last parameter, angle,
+ is a tradeoff between performance and accuracy.",Functionality & Behavior
+sklearn,"Barnes-Hut t-SNE
+ ----------------
+ 
+ The Barnes-Hut t-SNE that has been implemented here is usually much slower than
+ other manifold learning algorithms.",Comparison w/ Alternatives
+sklearn,"The approximation is
+   parameterized with the angle parameter, therefore the angle parameter is
+   unused when method=""exact""
+ * Barnes-Hut is significantly more scalable.",Performance Attribute
+sklearn,"Barnes-Hut can be used to embed
+   hundred of thousands of data points while the exact method can handle
+   thousands of samples before becoming computationally intractable
+ 
+ For visualization purpose (which is the main use case of t-SNE), using the
+ Barnes-Hut method is strongly recommended.","Functionality & Behavior, Usage Practice"
+sklearn,"(Note that the tf-idf functionality in ``sklearn.feature_extraction.text``
+ can produce normalized vectors, in which case :func:`cosine_similarity`
+ is equivalent to :func:`linear_kernel`, only slower.)",Comparison w/ Alternatives
+sklearn,"Pros and cons of class :class:`GaussianMixture`
+ -----------------------------------------------
+ 
+ Pros
+ ....
+ 
+ :Speed: It is the fastest algorithm for learning mixture models
+ 
+ :Agnostic: As this algorithm maximizes only the likelihood, it
+   will not bias the means towards zero, or bias the cluster sizes to
+   have specific structures that might or might not apply.",Performance Attribute
+sklearn,"Inference is often notably slower, but not usually as
+ much so as to render usage unpractical.",Implementation Details
+sklearn,"Cons
+ .....
+ 
+ :Speed: the extra parametrization necessary for variational inference make
+    inference slower, although not by much.",Implementation Details
+sklearn,"Persistence example
+ -------------------
+ 
+ It is possible to save a model in scikit-learn by using Python's built-in
+ persistence model, namely `pickle <https://docs.python.org/2/library/pickle.html>`_::
+ 
+   >>> from sklearn import svm
+   >>> from sklearn import datasets
+   >>> clf = svm.SVC(gamma='scale')
+   >>> iris = datasets.load_iris()
+   >>> X, y = iris.data, iris.target
+   >>> clf.fit(X, y)  # doctest: +NORMALIZE_WHITESPACE
+   SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+       decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
+       max_iter=-1, probability=False, random_state=None, shrinking=True,
+       tol=0.001, verbose=False)
+ 
+   >>> import pickle
+   >>> s = pickle.dumps(clf)
+   >>> clf2 = pickle.loads(s)
+   >>> clf2.predict(X[0:1])
+   array([0])
+   >>> y[0]
+   0
+ 
+ In the specific case of scikit-learn, it may be better to use joblib's
+ replacement of pickle (``dump`` & ``load``), which is more efficient on
+ objects that carry large numpy arrays internally as is often the case for
+ fitted scikit-learn estimators, but can only pickle to the disk and not to a
+ string::
+ 
+   >>> from joblib import dump, load
+   >>> dump(clf, 'filename.joblib') # doctest: +SKIP
+ 
+ Later you can load back the pickled model (possibly in another Python process)
+ with::
+ 
+   >>> clf = load('filename.joblib') # doctest:+SKIP
+ 
+ .. note::
+ 
+    ``dump`` and ``load`` functions also accept file-like object
+    instead of filenames.","Comparison w/ Alternatives, Usage Practice"
+sklearn,"In addition to its computational efficiency (only `n_classes`
+ classifiers are needed), one advantage of this approach is its
+ interpretability.",Purpose & Rationale
+sklearn,"Since it requires to fit ``n_classes * (n_classes - 1) / 2`` classifiers,
+ this method is usually slower than one-vs-the-rest, due to its
+ O(n_classes^2) complexity.",Comparison w/ Alternatives
+sklearn,"The construction of a KD tree is very fast: because partitioning
+ is performed only along the data axes, no :math:`D`-dimensional distances
+ need to be computed.",Implementation Details
+sklearn,"Though the KD tree approach is very fast for low-dimensional (:math:`D < 20`)
+ neighbors searches, it becomes inefficient as :math:`D` grows very large:
+ this is one manifestation of the so-called ""curse of dimensionality"".",Performance Attribute
+sklearn,"This makes tree construction more costly than that of the
+ KD tree, but results in a data structure which can be very efficient on 
+ highly structured data, even in very high dimensions.",Comparison w/ Alternatives
+sklearn,"Because of the spherical geometry of the ball tree nodes, it can out-perform
+ a *KD-tree* in high dimensions, though the actual performance is highly
+ dependent on the structure of the training data.","Implementation Details,Comparison w/ Alternatives"
+sklearn,"For small :math:`D` (less than 20 or so)
+     the cost is approximately :math:`O[D\log(N)]`, and the KD tree
+     query can be very efficient.",Usage Practice
+sklearn,"For larger :math:`D`, the cost increases to nearly :math:`O[DN]`, and
+     the overhead due to the tree
+     structure can lead to queries which are slower than brute force.",Usage Practice
+sklearn,"For small data sets (:math:`N` less than 30 or so), :math:`\log(N)` is
+   comparable to :math:`N`, and brute force algorithms can be more efficient
+   than a tree-based approach.",Concept
+sklearn,"This allows both
+   algorithms to approach the efficiency of a brute-force computation for small
+   :math:`N`.",Purpose & Rationale
+sklearn,"In general, sparser data with a smaller intrinsic
+     dimensionality leads to faster query times.",Usage Practice
+sklearn,"* *Brute force* query time is largely unaffected by the value of :math:`k`
+   * *Ball tree* and *KD tree* query time will become slower as :math:`k`
+     increases.",Usage Practice
+sklearn,"In this situation, Brute force
+   queries can be more efficient.",Comparison w/ Alternatives
+sklearn,"Effect of ``leaf_size``
+ -----------------------
+ As noted above, for small sample sizes a brute force search can be more
+ efficient than a tree-based query.",Comparison w/ Alternatives
+sklearn,"This parameter choice has many effects:
+ 
+ **construction time**
+   A larger ``leaf_size`` leads to a faster tree construction time, because
+   fewer nodes need to be created
+ 
+ **query time**
+   Both a large or small ``leaf_size`` can lead to suboptimal query cost.",Functionality & Behavior
+sklearn,"For ``leaf_size`` approaching 1, the overhead involved in traversing
+   nodes can significantly slow query times.","Functionality & Behavior,Performance Attribute"
+sklearn,"It can also learn a
+ low-dimensional linear projection of data that can be used for data
+ visualization and fast classification.",Functionality & Behavior
+sklearn,"This method is fast and has
+ low variance, but the samples are far from the model distribution.",Performance Attribute
+sklearn,"This is inefficient and it is difficult to determine whether the
+Markov chain mixes.",Concept
+sklearn,"Local Outlier Factor
+ --------------------
+ Another efficient way to perform outlier detection on moderately high dimensional
+ datasets is to use the Local Outlier Factor (LOF) algorithm.","Usage Practice,Functionality & Behavior"
+sklearn,".. _random_projection:
+ 
+ ==================
+ Random Projection
+ ==================
+ .. currentmodule:: sklearn.random_projection
+ 
+ The :mod:`sklearn.random_projection` module implements a simple and
+ computationally efficient way to reduce the dimensionality of the data by
+ trading a controlled amount of accuracy (as additional variance) for faster
+ processing times and smaller model sizes.",Functionality & Behavior
+sklearn,"Sparse random matrices are an alternative to dense Gaussian random
+ projection matrix that guarantees similar embedding quality while being much
+ more memory efficient and allowing faster computation of the projected data.","Comparison w/ Alternatives, Functionality & Behavior"
+sklearn,".. _sgd:
+ 
+ ===========================
+ Stochastic Gradient Descent
+ ===========================
+ 
+ .. currentmodule:: sklearn.linear_model
+ 
+ **Stochastic Gradient Descent (SGD)** is a simple yet very efficient
+ approach to discriminative learning of linear classifiers under
+ convex loss functions such as (linear) `Support Vector Machines
+ <https://en.wikipedia.org/wiki/Support_vector_machine>`_ and `Logistic
+ Regression <https://en.wikipedia.org/wiki/Logistic_regression>`_.",Concept
+sklearn,"The advantages of Stochastic Gradient Descent are:
+ 
+     + Efficiency.",Concept
+sklearn,"The first two loss functions are lazy, they only update the model
+ parameters if an example violates the margin constraint, which makes
+ training very efficient and may result in sparser models, even when L2 penalty
+ is used.",Functionality & Behavior
+sklearn,"When using ASGD
+ the learning rate can be larger and even constant leading on some
+ datasets to a speed up in training time.",Functionality & Behavior
+sklearn,"For maximum efficiency, however, use the CSR
+ matrix format as defined in `scipy.sparse.csr_matrix
+ <https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html>`_.",Usage Practice
+sklearn,".. topic:: Examples:
+ 
+  - :ref:`sphx_glr_auto_examples_text_plot_document_classification_20newsgroups.py`
+ 
+ Complexity
+ ==========
+ 
+ The major advantage of SGD is its efficiency, which is basically
+ linear in the number of training examples.",Concept
+sklearn,"For optimal performance, use C-ordered ``numpy.ndarray`` (dense) or
+ ``scipy.sparse.csr_matrix`` (sparse) with ``dtype=float64``.",Usage Practice
+sklearn,"Needless to say, the cross-validation involved in Platt scaling
+ is an expensive operation for large datasets.",Performance Attribute
+sklearn,":class:`LinearSVR` 
+ provides a faster implementation than :class:`SVR` but only considers
+ linear kernels, while :class:`NuSVR` implements a slightly different
+ formulation than :class:`SVR` and :class:`LinearSVR`.",Comparison w/ Alternatives
+sklearn,"Also note that for the linear case, the algorithm used in
+ :class:`LinearSVC` by the `liblinear`_ implementation is much more
+ efficient than its `libsvm`_-based :class:`SVC` counterpart and can
+ scale almost linearly to millions of samples and/or features.","Comparison w/ Alternatives,Implementation Details"
+sklearn,Proper choice of ``C`` and ``gamma`` is critical to the SVM's performance.,Usage Practice
+sklearn,"Scikit-learn offers a more efficient implementation for the construction of
+ decision trees.",Implementation Details
+sklearn,"By default it is turned on for gradient boosting,
+ where in general it makes training faster, but turned off for all other algorithms as
+ it tends to slow down training when training deep trees.",Purpose & Rationale
+sklearn,"Training time can be orders of magnitude faster for a sparse
+     matrix input compared to a dense matrix when features have zero values in
+     most of the samples.",Usage Practice
+sklearn,":issue:`10463`
+ 
+ :mod:`sklearn.pipeline`
+ 
+ * Performance issues with `Pipeline.memory`
+ * see ""Everything in Scikit-learn should conform to our API contract"" above",Purpose & Rationale
+sklearn,"Therefore, the nearest neighbor decision rule will be efficient as soon as
+ :math:`1/n` is small compared to the scale of between-class feature variations.",Concept
+sklearn,"For instance the ``Lasso`` object in scikit-learn
+     solves the lasso regression problem using a
+     `coordinate descent <https://en.wikipedia.org/wiki/Coordinate_descent>`_ method,
+     that is efficient on large datasets.",Functionality & Behavior
+sklearn,"However, scikit-learn also
+     provides the :class:`LassoLars` object using the *LARS* algorithm,
+     which is very efficient for problems in which the weight vector estimated
+     is very sparse (i.e.",Usage Practice
+sklearn,"When
+     the number of clusters is large, it is much more computationally efficient
+     than k-means.",Comparison w/ Alternatives
+sklearn,"For estimating large numbers of clusters, this approach is both slow (due
+     to all observations starting as one cluster, which it splits recursively)
+     and statistically ill-posed.",Performance Attribute
+sklearn,"For speed and space efficiency reasons ``scikit-learn`` loads the
+ target attribute as an array of integers that corresponds to the
+ index of the category name in the ``target_names`` list.",Purpose & Rationale
+sklearn,"These two steps can be combined to achieve the same end result faster
+ by skipping redundant processing.","Usage Practice,Comparison w/ Alternatives"
+sklearn,"Let's see if we can do better with a
+ linear :ref:`support vector machine (SVM) <svm>`,
+ which is widely regarded as one of
+ the best text classification algorithms (although it's also a bit slower
+ than na闁肩厧鈧骏 Bayes).",Comparison w/ Alternatives
+sklearn,"We try out all classifiers
+ on either words or bigrams, with or without idf, and with a penalty
+ parameter of either 0.01 or 0.001 for the linear SVM::
+ 
+   >>> from sklearn.model_selection import GridSearchCV
+   >>> parameters = {
+   ...     'vect__ngram_range': [(1, 1), (1, 2)],
+   ...     'tfidf__use_idf': (True, False),
+   ...     'clf__alpha': (1e-2, 1e-3),
+   ... }
+ 
+ 
+ Obviously, such an exhaustive search can be expensive.",Usage Practice
+sklearn,"* Have a look at the :ref:`Hashing Vectorizer <hashing_vectorizer>`
+   as a memory efficient alternative to :class:`CountVectorizer`.",Comparison w/ Alternatives
+tensorflow,Note: In real applications batching is essential for performance.,Purpose & Rationale
+tensorflow,"If making decisions at the individual _example_ level, you must index and batch the examples to maintain performance while applying the control flow logic.",Directives
+tensorflow,"This will cause the intermediate tensors and runtime graphs to be dumped to a
+ shared storage location of your choice when the `Session.run()` call occurs
+ (at the cost of slower performance).",Usage Practice
+tensorflow,* Provide good performance out of the box.,Purpose & Rationale
+tensorflow,Efficient all-reduce algorithms are used to communicate the variable updates across the devices.,Implementation Details
+tensorflow,It鈥檚 a fused algorithm that is very efficient and can reduce the overhead of synchronization significantly.,Implementation Details
+tensorflow,It also implements additional performance optimizations.,Implementation Details
+tensorflow,TPUs are Google's specialized ASICs designed to dramatically accelerate machine learning workloads.,Concept
+tensorflow,"TPUs provide their own implementation of efficient all-reduce and other collective operations across multiple TPU cores, which are used in `TPUStrategy`.",Implementation Details
+tensorflow,Each epoch will then train faster as you add more GPUs.,"Usage Practice, Environment"
+tensorflow,"Performance improvements are ongoing, but please
+[file a bug](https://github.com/tensorflow/tensorflow/issues) if you find a
+problem and share your benchmarks.",Misc
+tensorflow,"`tf.GradientTape` is an opt-in feature to provide maximal performance when
+not tracing.",Functionality & Behavior
+tensorflow,"The implementation below reuses the value for `tf.exp(x)` that is
+computed during the forward pass鈥攎aking it more efficient by eliminating
+redundant calculations:",Usage Practice
+tensorflow,"### Benchmarks
+
+For compute-heavy models, such as
+[ResNet50](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/eager/python/examples/resnet50)
+training on a GPU, eager execution performance is comparable to graph execution.",Comparison w/ Alternatives
+tensorflow,"## Work with graphs
+
+While eager execution makes development and debugging more interactive,
+TensorFlow graph execution has advantages for distributed training, performance
+optimizations, and production deployment.",Comparison w/ Alternatives
+tensorflow,It's faster and easier.,Usage Practice
+tensorflow,"This
+gives you eager's interactive experimentation and debuggability with the
+distributed performance benefits of graph execution.",Usage Practice
+tensorflow,"If your program creates a large number
+   of unconnected subgraphs, it may be more efficient to use a different
+   `tf.Graph` to build each subgraph, so that unrelated state can be garbage
+   collected.",Usage Practice
+tensorflow,"* [Data input pipeline](./performance/datasets.md) describes the `tf.data` API
+   for building efficient data input pipelines for TensorFlow.",Ref
+tensorflow,"It's used for
+fast prototyping, advanced research, and production, with three key advantages:
+
+- *User friendly*<br>
+  Keras has a simple, consistent interface optimized for common use cases.",Functionality & Behavior
+tensorflow,"`tf.keras` makes TensorFlow easier to use without sacrificing flexibility and
+performance.",Functionality & Behavior
+tensorflow,"The
+ `tf.data` API helps to build flexible and efficient input pipelines.",Functionality & Behavior
+tensorflow,"For instance, if the machine executing the example above had 4 cores, it
+ would have been more efficient to set `num_parallel_calls=4`.",Usage Practice
+tensorflow,"On the other hand,
+ setting `num_parallel_calls` to a value much greater than the number of
+ available CPUs can lead to inefficient scheduling, resulting in a slowdown.","Performance Attribute,Usage Practice"
+tensorflow,"As an alternative to prefetching
+ (which may be ineffective in some cases), the `parallel_interleave`
+ transformation also provides an option that can boost performance at the expense
+ of ordering guarantees.",Functionality & Behavior
+tensorflow,"Although many of these transformations are commutative,
+ the ordering of certain transformations has performance implications.",Performance Attribute
+tensorflow,"If the user-defined function passed into the `map`
+ transformation is expensive, apply the cache transformation after the map
+ transformation as long as the resulting dataset can still fit into memory or
+ local storage.",Usage Practice
+tensorflow,"In general, we recommend choosing the order that
+ results in lower memory footprint, unless different ordering is desirable for
+ performance (for example, to enable fusing of the map and batch transformations).",Usage Practice
+tensorflow,"On the other hand, if the `shuffle`
+ transformation is applied before the repeat transformation, then performance
+ might slow down at the beginning of each epoch related to initialization of the
+ internal state of the `shuffle` transformation.","Usage Practice,Implementation Details,Performance Attribute"
+tensorflow,"In other words, the former
+ (`repeat` before `shuffle`) provides better performance, while the latter
+ (`shuffle` before `repeat`) provides stronger ordering guarantees.",Performance Attribute
+tensorflow,"When possible, we recommend using the fused
+ `tf.data.experimental.shuffle_and_repeat` transformation, which combines the best of
+ both worlds (good performance and strong ordering guarantees).","Comparison w/ Alternatives,Usage Practice"
+tensorflow,"The `tf.data` API is
+ designed with flexibility, ease of use, and performance in mind.",Purpose & Rationale
+tensorflow,"For using and
+ maximizing performance with the `tf.data` API, see the
+ [data input pipeline](datasets.md) guide.",Ref
+tensorflow,"While feeding data using a `feed_dict` offers a high level of flexibility, in
+ general, `feed_dict` does not provide a scalable solution.",Usage Practice
+tensorflow,"```python
+ # feed_dict often results in suboptimal performance.",Performance Attribute
+tensorflow,"There
+ shouldn't generally be a performance difference at runtime, but large unroll
+ amounts can increase the graph size of the `tf.nn.static_rnn` and cause long
+ compile times.",Comparison w/ Alternatives
+tensorflow,"Depending on the model and hardware configuration, this can come at
+ a performance cost.",Environment
+tensorflow,"It is often at
+ least an order of magnitude faster than `tf.contrib.rnn.BasicLSTMCell` and
+ `tf.contrib.rnn.LSTMBlockCell` and uses 3-4x less memory than
+ `tf.contrib.rnn.BasicLSTMCell`.",Comparison w/ Alternatives
+tensorflow,"Running one step of the RNN at a time and
+ returning to Python is possible, but it will be slower.",Usage Practice
+tensorflow,"On CPUs, mobile devices, and if `tf.contrib.cudnn_rnn` is not available on
+ your GPU, the fastest and most memory efficient option is
+ `tf.contrib.rnn.LSTMBlockFusedCell`.",Comparison w/ Alternatives
+tensorflow,"For all of the less common cell types like `tf.contrib.rnn.NASCell`,
+ `tf.contrib.rnn.PhasedLSTMCell`, `tf.contrib.rnn.UGRNNCell`,
+ `tf.contrib.rnn.GLSTMCell`, `tf.contrib.rnn.Conv1DLSTMCell`,
+ `tf.contrib.rnn.Conv2DLSTMCell`, `tf.contrib.rnn.LayerNormBasicLSTMCell`,
+ etc., be aware that they are implemented in the graph like
+ `tf.contrib.rnn.BasicLSTMCell` and will suffer from the same poor
+ performance and high memory usage.","Implementation Details, Performance Attribute"
+tensorflow,"Internally, `RaggedTensor` uses these additional schemes to improve
+efficiency in some contexts.",Implementation Details
+tensorflow,"Some of the advantages and disadvantages of the different row-partitioning
+schemes are:
+
++ **Efficient indexing**:
+    The `row_splits`, `row_starts`, and `row_limits` schemes all enable
+    constant-time indexing into ragged tensors.",Functionality & Behavior
+tensorflow,"+ **Small encoding size**:
+    The `value_rowids` scheme is more efficient when storing ragged tensors that
+    have a large number of empty rows, since the size of the tensor depends only
+    on the total number of values.",Usage Practice
+tensorflow,"On the other hand, the other four encodings
+    are more efficient when storing ragged tensors with longer rows, since they
+    require only one scalar value for each row.",Usage Practice
+tensorflow,"+ **Efficient concatenation**:
+   The `row_lengths` scheme is more efficient when concatenating ragged
+    tensors, since row lengths do not change when two tensors are concatenated
+   together (but row splits and row indices do).",Usage Practice
+tensorflow,"## Datasets
+ 
+ Efficient use of the `tf.data.Dataset` API is critical when using a Cloud
+ TPU, as it is impossible to use the Cloud TPU's unless you can feed it data
+ quickly enough.",Usage Practice
+tensorflow,See [Input Pipeline Performance Guide](../performance/datasets_performance.md) for details on dataset performance.,Ref
+tensorflow,"To represent weights in a model, for example, it's often convenient and efficient to use TensorFlow variables.","Usage Practice, Functionality & Behavior"
+tensorflow,"For Variables representing embeddings TensorFlow will do sparse updates by default, which are more computation and memory efficient.",Implementation Details
+tensorflow,These conversions are typically cheap as the array and Tensor share the underlying memory representation if possible.,Implementation Details
+tensorflow,"We recommend using the `Dataset`s API for building performant, complex input pipelines from simple, re-usable pieces that will feed your model's training or evaluation loops.",Usage Practice
+tensorflow,"For performance reasons, when your data fits in memory, it is recommended to use the `boosted_trees_classifier_train_in_memory` function.",Usage Practice
+tensorflow,"For performance reasons, when your data fits in memory, we recommend use the `boosted_trees_classifier_train_in_memory` function.",Usage Practice
+tensorflow,"`tf.losses.sparse_softmax_cross_entropy`, calculates the softmax crossentropy
+(aka: categorical crossentropy, negative log-likelihood) from these two inputs
+in an efficient, numerically stable way.",Functionality & Behavior
+tensorflow,Training CNNs is computationally intensive.,Performance Attribute
+tensorflow,Estimators are TensorFlow's most scalable and production-oriented model type.,Performance Attribute
+tensorflow,But this approach has severly-limited scalability.,Performance Attribute
+tensorflow,"However, it makes the network more computationally expensive and may lead to learning unwanted patterns鈥攑atterns that improve performance on training data but not on the test data.",Usage Practice
+tensorflow,For an in depth guide see [Input Pipeline Performance](https://www.tensorflow.org/guide/performance/datasets).,Ref
+tensorflow,This is especially performant if the dataq fits in memory.,Performance Attribute
+tensorflow,Note how much faster it is the second time:,Performance Attribute
+tensorflow,"By packing multiple examples into the same file, TensorFlow is able to read multiple examples at once, which is especially important for performance when using a remote storage service such as GCS.","Purpose & Rationale, Environment"
+tensorflow,This is slower than the `cache` version because we have not cached the preprocessing.,Usage Practice
+tensorflow,"With the preprocessing cached, data can be loaded from the TFrecord file quite efficiently.",Usage Practice
+tensorflow,See [Data Input Pipeline Performance](https://www.tensorflow.org/guide/performance/datasets) for dataset performance tips.,Ref
+tensorflow,Using `TFRecordDataset`s can be useful for standardizing input data and optimizing performance.,Functionality & Behavior

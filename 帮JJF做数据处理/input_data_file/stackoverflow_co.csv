@@ -1,0 +1,792 @@
+project,desc,knowledge
+numpy,"In this example, compress is ~20% faster, but the time savings varies on the size of a and the number of True values in the boolean array b, but on my machine compress is always faster.","attributes,alternatives"
+gensim,A cleaner and faster way is to load the model directly from S3 through smart_open which is used by gensim.models.KeyedVectors.load() as well as gensim.models.KeyedVectors.load_word2vec_format().,practice
+gensim,"You can do this, but (1) if the new sentences has new words/tags, they'll be skipped as unknown; (2) if the new sentences has a different length, progress reports & learning-rate decay may not be updated properly; (3) it may offer the model a slight 'head start' on useful values, and skips the initial vocabulary-scan, but won't cause the train() itself to go any faster.",practice
+numpy,"That being said, the fastest way will be to use numpy.where",practice
+scipy,My numerical integration of the PDF using scipy.integrate.quad is about 50x slower than integrate_box_1d.,alternatives
+numpy,The function np.vectorize gave a speed up of a factor 100 for my rather complex code with respect to the loop-filled list!,alternatives
+gensim,"While you could save that via plain Python-pickle, at that point you might as well use the KeyedVectors built-in save() and load() - they may be more efficient on large vector sets (by saving large sets of raw vectors as a separate file which should be kept alongside the main file).",practice
+scipy,The performance advantage of using cdist or vectorized numpy solutions typically occurs when the arrays are sufficiently large.,"attributes,practice"
+pandas,"@HernandoCasas if you are worried about performance, you can always just pass df.dtypes.to_dict() as an argument to the function when applying it...",practice
+gensim,Any faster speedups would require making optimizations to the infer_vector() implementation in gensim 閿?which is an open issue on the project that would accept contributed improvements.,impl
+pandas,Try to avoid using .apply() method as it's usually pretty slow.,"attributes,practice"
+gensim,"(Still, any most_similar() checks after the 1st won't need to re-fill the unit-normalized vector cache, so should go faster than the 1st call.","functionality,impl"
+pandas,"Note that iterrows is very slow (it converts every row to a series, potentially messing with your data types).","attributes,impl"
+scipy,"Is it possible to compute the pairwise distance matrix or the distance between each pair of the two input arrays using cdist or pdist, without using a for loop and scipy.spatial.distance.euclidean which is too slow for my problem?",attributes
+numpy,It should also be noted that np.dot could fall back to slower routines if numpy was not compiled to use BLAS.,"functionality,impl"
+tensorflow,On the other hand if efficiency is important it may be better to reshape embed to be a 2D tensor so the multiplication can be done with a single matmul like this:,practice
+pandas,"Do not use apply, which is very slow.","attributes,practice"
+tensorflow,"I know that one can do it with tf.cond, but the problem with it is that both train and val batch ops would be executed when tf.cond is called.
+On github ebrevdo told (link to the comment) that it's possible to use tf.train.maybe_batch for this purpose instead, which is more efficient.",alternatives
+pandas,themes.groupby('code').ffill().bfill() should work (unless every value is NaN inside a group) and should even be faster.,practice
+numpy,This works too but np.transpose seems to be much faster,alternatives
+gensim,"The reasons are simple: first of all, I already have a great deal of vectorized data; second, I prefer the interface and flexibility of scikit-learn vectorizers; third, even though topic modelling with gensim is very fast, computing its dictionaries (Dictionary()) is relatively slow in my experience.",attributes
+numpy,Another test with 1000 test runs for timeit showed that your approach was marginally slower than the concatenate.,alternatives
+tensorflow,"From my previous experience, I found tf.concat is a very slow operation.",attributes
+tensorflow,"It is potentially less efficient in terms of memory since it requires twice the memory to handle the a-like to_update variable, but you could easily modify this last example to get a gradient-preserving operation from the tf.select(...) node.",attributes
+tensorflow,dynamic_rnn is even faster (or equal) so he suggests to use dynamic_rnn anyway.,attributes
+tensorflow,"As a fix until I come up with a solution, I am simply using tf.py_func() but since this operation has to be executed a lot it's very slow and inefficient.",attributes
+pandas,The fastest method would be to set 'Letters' as the index for df_a and then call map:,practice
+gensim,"Taking a look here at the gensim page: radimrehurek.com/gensim/models/word2vec.html#usage-examples It says the Word2Vec model is only used for training the word vectors, as this format is much slower than KeyedVectors.",practice
+numpy,Using transpose should be also quite fast.,attributes
+scipy,"csr_matrix is faster when indexing rows, csc_matric when indexing columns.",practice
+scipy,"Even for a coo matrix with (1,1210) shape, this list iterative version is noticeably faster:",practice
+pandas,"This is faster df[[""14:1F:BA:14:E4:5E"".startswith(x) for x in df.mac.values.tolist()]]",alternatives
+gensim,"You might get a slight speedup from calling infer_vector() from multiple threads, on different subsets of the new data on which you need to infer vectors.",practice
+sklearn,"Edit 2: Actually, often scaling the input variables to [0, 1] or [-1, 1] or to unit variance using StandardScaler can speed up the convergence by quite a bit.",practice
+pandas,"When should I ever want to use pandas apply() in my code? This is highly likely to be slow, whatever you do.","attributes,practice"
+tensorflow,"If you implement the same pipeline using the tf.data.Dataset API and using queues, the performance of the Dataset version should be better than the queue-based version.",alternatives
+pandas,"Or, with replace (also works with Series, though slower, as not vectorised):",alternatives
+scipy,"If you find that he KDTree is really slow, why not call query_ball_point once every five pixels with a slightly larger threshold?",attributes
+tensorflow,"(NOTE: The CuDNNLSTM layer does the same as the LSTM layer in Keras, but it runs much faster on Nvidia GPUs)","alternatives,environment"
+numpy,"You could probably gain some performance for small arrays with np.dot that would also involve some reshaping, like so -
+
+Benchmarking",practice
+sklearn,"I also tried sklearn.feature_extraction.image.extract_patches_2d and found this is faster than code3, but still slower than code1.",alternatives
+numpy,stackoverflow.com/questions/27624678 is another recent discussion of numpy speedup via vectorization.,references
+scipy,"So, in short, ndimage.convolve is always faster, except when the kernel size is very large (as K = 31 in the last test).","alternatives,practice"
+gensim,"But, gensim is saving a model to multiple files for both efficiency, and to be sure of not htting size limitations in Python pickle().",rationale
+gensim,"Normally, you don't want a Word2Vec/Doc2Vec-style training session to use any virtual memory, because any recourse to slower disk IO makes training extremely slow.",practice
+numpy,"That was my thought as well, but in my intial testing showed that einsum was actually faster for any size and dtype.",attributes
+gensim,"(Also note: one of the simple & fast Doc2Vec modes, that's also often a top-performer, especially on shorter texts, is plain PV-DBOW mode: dm=0.","attributes,practice"
+pandas,you can try if pivot_table would be faster:,alternatives
+tensorflow,"I believe the principle of broadcasting is to do exactly what you do with the map there, but do it in a much faster way (numpy does the loop in native code).","functionality,impl"
+tensorflow,"I'm not aware of any concrete plans, although the tf.train.Saver is currently being revised (to use a more efficient checkpoint format), so it might be possible to piggy-back the implementation on that effort.",impl
+scipy,"You can try interp1d() from scipy.interpolate, but again I think there will be no significant performance difference.",alternatives
+gensim,"Specifying a larger min_count before training will discard more low-frequency words 閿?and very-low-frequency words often just hurt the model anyway, so this trimming often improves three things simultaneously: faster training, smaller model, and higher-quality-results on downstream tasks.",functionality
+gensim,"As such, it saves a bit of memory, and performs later corpus-transformations a little faster, but if you only keep the Phraser, you lose the ability to try other thresholds/min_counts below what was used in its creation.",attributes
+gensim,"(Smaller min_count values mean a larger model, slower training, poor-quality vectors for words with just a few examples, and also counterintuitively worse-quality vectors for more-frequent words too, because of interference from the noisy rare words.",functionality
+pandas,"Suprisingly, min seems to be much faster than the lookup",alternatives
+numpy,"Note that if you want None instead of NaN, then you'll need to make angles of dtype object, which is bad for performance... (Also, it is possible to just suppress RuntimeWarnings.",practice
+scipy,"Mapping the sparse matrix onto the index lil directly might be more space efficient, but a lot more work to code.",practice
+scipy,"Keep in mind that as your data grows, it will be much more efficient to find the nearest neighbors using a tree-based method like scipy.spatial.cKDTree:",practice
+numpy,Then using np.unique  You could also probably use tuples instead of bitshifting and adding but that would probably make np.unique run a lot slower...,practice
+numpy,vectorize is really just for convienience as far as I know it doesnt typically provide any speedup (at least any meaningful speedup),"rationale,attributes"
+scipy,"For sure, both of these can be much slower than a single curve_fit, but they do aim at finding ""global minima"".",alternatives
+numpy,"Numpy is another option, a lot of people have suggested it, but based on information found at Poor numpy.cross() performance , Nunpy may not be quite as suitable for the short arrays I'm dealing with, and I don't have much margin for parts of my script slowing down, as some pieces are run several times a second.",attributes
+scipy,"I would have used lil rather than dok, but I'm not sure whether that's faster.",alternatives
+tensorflow,"Regarding efficiency, note that skip(offset) actually iterates on offset examples so a latency is to be expected if offset is large.","functionality,attributes"
+pandas,"For whatever reason, this is ~2x faster than using pivot_table.",alternatives
+gensim,It's available on gensim Word2Vec/KeyedVectors as wmdistance() 閿?but is quite slow to compute pairwise on large datasets.,attributes
+tensorflow,"I have been successfully parsing the files with numpy and converting the features and labels to tf.constants, but it seems like it would be way more memory efficient to load it straight into tensorflow.",practice
+sklearn,"chi2) so that it handles sparse matrices without making them dense.
+It is possible, this is mostly a trade-off between keeping the sparsity of matrices and using efficient array operations.",practice
+tensorflow,"Q2. The claim the ""feed_dict is slow"" can be somewhat misleading, taken as a general truism (I am not blaming you for saying it, I have seen it many times too).",attributes
+pandas,"To read the csv file, this is the code I wrote:
+raw_df = pd.read_csv('testresult.csv', index_col=None, parse_dates=['TIME'], infer_datetime_format=True)
+This code works, but it is extremely slow, and I assume that the infer_datetime_format takes time.",attributes
+numpy,fromiter can be faster than np.array; but the builtin arange is much better.,alternatives
+gensim,"(words is always a list of strings; tags can be a mix of integers and strings, but in the common and most-efficient case, is just a list with a single id integer, starting at 0.",impl
+gensim,The real keys are to choose options that result in a smaller model (like a higher min_count); run on a machine with more RAM; and make sure you're not unnecessarily loading/keeping your full dataset in memory by mistake (by using an efficient streaming iterator as the corpus-of-texts).,practice
+scipy,Very slow interpolation using `scipy.interpolate.griddata`,attributes
+sklearn,"The reason why CountVectorizer will consume much more memory is that the CountVectorizer needs to store a vocabulary dictionary in memory, however, the HashingVectorizer has a better memory performance because it does not need to store the vocabulary dictionary.","impl,alternatives"
+tensorflow,"tf.placeholder and tf.constant), and you should also have room for the gradients, as I believe a bunch of values are cached during the forward pass so that backprop doesn't become too slow.",practice
+gensim,"So if your corpus IO is fast, and you're reading from pre-tokenized text (as with corpus_file), sample may outdo any bespoke corpus-slimming with minimal effort.",practice
+sklearn,"Also MDS is pretty slow, have you tried other methods from manifold?",attributes
+pandas,"@Shreya you don't want to use .apply, that will be essentially as slow as your loop.","attributes,practice"
+numpy,"So first, a small list, the same from the OP's example, we see that numpy is not actually faster, which isn't surprising for small data structures:",attributes
+sklearn,There is also sklearn.datasets.load_svmlight_format which is a fast and robust implementation of your code.,attributes
+sklearn,I do not notice any performance improvements when using GaussianProcessRegressor on a machine which has 8 cores (16 threads) available or a machine which has 4 cores (8 threads).,"attributes,environment"
+sklearn,the drop in the performance is due to the fact that the function train_test_split shuffles the data by default.,functionality
+tensorflow,tf.gather_nd is really slow when used for many times,"attributes,practice"
+scipy,"scipy.optimize.curve_fit), but they'll be slow and aren't guaranteed to converge.","attributes,functionality"
+scipy,"The communication can slow down the computations, especially for short task with big inputs such as fftconvolve.
+",environment
+sklearn,One simple answer is to explore many possible combinations of C and intercept_scaling and choose the parameters that give the best performance.,practice
+tensorflow,We have collected these in a performance guide for tf.data.,references
+sklearn,The RandomForestClassifier works amazingly fast (~140 seconds on dataset of 50000 32X32 RGB images.,attributes
+pandas,"Since this uses apply on string, it might be slow.","attributes,practice"
+tensorflow,"So it would need to be correct_prediction.eval(feed_dict={x: batch_xs, y: batch_ys}) in order to run, be warned however that this is generally RAM intensive, and may cause your system to hang.","functionality,attributes"
+numpy,"But if you the same indexes repeatedly, operating on .flat output array might be faster.",practice
+tensorflow,"Note that, since this uses tf.reshape() and not tf.transpose(), it doesn't need to modify the (potentially large) data in the logits tensor, so it should be fairly efficient.","alternatives,functionality"
+pandas,"You can either use fillna (fast) or you can use apply (slow but flexible)
+Fillna","alternatives,practice"
+pandas,"Using pandas.read_csv for the task, the time is less than other methods, but still slower than the above two methods.","attributes,alternatives"
+sklearn,"For large text datasets, use the hashing trick: replace the TfidfVectorizer by a HashingVectorizer (potentially stacked with a TfidfTransformer in the pipeline): it will be much faster to pickle as you won't have to store the vocabulary dict any more as discussed recently in this question:","alternatives,practice"
+pandas,It is about 1000x faster to use pd.merge:,"alternatives,practice"
+pandas,"To find most frequent value i am using value_counts as suggested here, but facing performance issue(refer bellow snippet code)",attributes
+numpy,genfromtxt is a bit faster than loadtxt:,alternatives
+tensorflow,"This does not mean that dynamic_rnn is less performant, the documentation says that the parameter sequence_length will not affect the performance because the computation is already dynamic.",functionality
+numpy,"As @Divakar mentioned, vectorize is really just a convenient way around writing a for loop, so your code will be slower than numpy's native code.",impl
+tensorflow,"Nevertheless, the performance difference comes from the fact that GradientDescentOptimizer uses a single optimized kernel.",impl
+pandas,is_lexsorted is very fast.,attributes
+scipy,"I have tried using both scipy.sparse.linalg.lsqr and scipy.sparse.linalg.lsmr, but they both require that b be dense, which is computationally very expensive and prohibitive.",attributes
+sklearn,"fit_transform may be more convenient and efficient for modelling and
+  transforming the training data simultaneously.
+",functionality
+pandas,"l=[df.A.eq(1),df.A.isin([2,3,4]),df.A.eq(5)] and then df['B']=np.select(l,['low','mid','high']) ill do it faster.",practice
+pandas,"len is typically slower than 'size', as it's a python built-in instead of numpy under the hood.",alternatives
+gensim,"This model is dedicated for saving pre-trained vectors ""resulting in a much smaller and faster object"" than Word2Vec model.","rationale,functionality"
+numpy,"For the small dimensions that you quote, np.einsum and transposition seem to be faster.",attributes
+gensim,"The lemmatize() function seems to be the main bottleneck, as a gensim function such as simple_preprocess is quite fast.",attributes
+sklearn,"Fortunately, sklearn also contains sklearn.linear_model.ElasticNetCV, which allows very efficient and convenient searching for the values of these penalty terms.",functionality
+pandas,The fastest and easiest way is to use .as_matrix().,practice
+tensorflow,"Instead, the ""simple placer"" (whose implementation can be found in simple_placer.cc) is used, but it requires some explicit annotations (via tf.device()) to make yield an efficient placement.",impl
+sklearn,I'd like to use LinearSVC over SVC because LinearSVC seems to train faster on data with many attributes.,"attributes,practice"
+tensorflow,I am training a CNN and I believe my use of sess.run() is causing my training to be very slow.,attributes
+scipy,"If you want to obtain a sparse matrix as output the fastest way to do row slicing is to have a csr type, and for columns slicing csc, as detailed here.",functionality
+pandas,Using apply is less efficient than np.where since you need a python abstraction.,alternatives
+numpy,"The equivalent using np.where: a[np.where((b==4) & (c==3))[0]] (not needed, probably even worse performance, but just for adding another option).",alternatives
+scipy,"point_tree = spatial.cKDTree(points); point_tree.sparse_distance_matrix(point_tree, thresh).tocsr() is a pithy way to write this, but it doesn't appear to be faster than make_sparse_dm.",practice
+scipy,"For large arrays, scipy.signal.fftconvolve is faster.",attributes
+numpy,"It's worth checking if compression is worth it on total transfer time; it might be faster (and less memory intensive), if you're using a stream-oriented pipe/socket/whatever, to pass it as the argument for numpy.save; depending on implementation, you might manage to begin writing to the socket immediately, without additional memory overhead.",practice
+gensim,"If so, other steps may help:
+
+ensure you're using gensim's Cython-optimized routines 閿?if not, you should be seeing a logged warning (and training will be up to 100X slower)
+consider using a workers=4 or workers=8 optional argument to use more threads, if your machine has at least 4 or 8 CPU cores
+consider using a larger min_count, which speeds training somewhat (and since vectors for words where there are only a few examples typically aren't very good anyway, doesn't lose much and can even improve the quality of the surviving words)
+consider using a smaller window, since training takes longer for larger windows
+consider using a smaller size, since training takes longer for larger-size vectors
+consider using a more-aggressive (smaller) value for the optional sample argument, which randomly skips more of the most-frequent words.",practice
+gensim,"Using the cached unit-normed vectors is much faster, if they're available, especially for an operation like most_similar() which must calculate a value for every vector in the model 閿?and thus also uses bulk array operations on the full vector array, rather than the one-at-a-time calcs relied upon by most_similar_to_given().","practice,functionality"
+numpy,"Yes, the np.empty approach does look faster.",attributes
+gensim,"Not sure where your remarks on Dictionary performance come from, you can't get a mapping much faster than a plain dict in Python.",alternatives
+numpy,"A memory efficient approach would be to convert each row as linear index equivalents and then using np.in1d, like so -","alternatives,practice"
+numpy,I have run the assignment tests multiple time and always get small difference but noticeably faster times for zeros_like arrays.,alternatives
+sklearn,"est.fit_transform(X) is always equivalent to est.fit(X).transform(X), but usually faster.",alternatives
+scipy,"scipy can read a couple of sparse matrix formats (see scipy.io) but not your format, which is essentially the one ""being phased out"" in the Matrix Market because it's not very space efficient.","rationale,functionality"
+sklearn,scikit-learn SVM.SVC() is extremely slow,attributes
+pandas,I thought of using pandas df.iterrows() or df.itertuples() but it is really slow.,practice
+tensorflow,"There are also similar question: Unaggregated gradients / gradients per example in tensorflow , of course, we can do runtime tf.while_loop over batch size, and get single gradient one by one, but that will kill the performance.",practice
+numpy,"array() is trying to pack your values in the most efficient way possible, because you're not specifying dtype, and it has to guess at how to store it.",functionality
+gensim,"(most_similar_to_given() could, and perhaps should, use the same cached values, but wouldn't get as much of a speedup.)",attributes
+pandas,"I agree this process maybe slow but taking str type in consideration, we may serve our purpose.",practice
+tensorflow,So I fixed with keras.backend.clear_session() but it was too slow to recreate the session on each request.,attributes
+sklearn,"For high dimensional sparse data and many samples, LinearSVC, LogisticRegression, PassiveAggressiveClassifier or SGDClassifier can be much faster to train for comparable predictive accuracy.
+","attributes,alternatives"
+scipy,It seems that percentileofscore is a lot slower.,attributes
+gensim,"That also will speed up your solution (and if the document is really big, it shouldn't be a problem anyway).
+What's the problem with summarize:",practice
+pandas,"(Applying drop_duplicates to the entire DataFrame is significantly faster than my
+first answer, which used a custom function to call drop_duplicates on each group.)",practice
+scipy,I would expect the KDTree method to be faster since it doesn't need to consider every possible pair of points.,attributes
+tensorflow,"Ideally, you would only create a single tf.Session as well, because TensorFlow caches information about the graph in the session, and the execution would be more efficient.",functionality
+pandas,"If the apply(f) is called on a dataframe of considerable row size, it will cause tremendous performance problems (time + memory), because function calls in python are horrendous.",attributes
+pandas,@tripleee tail will underperform much faster than RAM limit.,attributes
+scipy,The documentation does mention that coo_matrix is not efficient for arithmetic operations and we need to convert it to csr or csc.,attributes
+scipy,Sparse eigenvalues : scipy.sparse.linalg.eigs is slower than scipy.linalg.eigvals,alternatives
+sklearn,For speedup on LogisticRegression I use LogisticRegressionCV (which at least 2x faster) and plan use GridSearchCV for others.,alternatives
+sklearn,You can use sklearn.externals.joblib.dump for efficient pickling.,functionality
+numpy,"I can do the same thing without a loop: np.sqrt(np.sum( np.square(X-Y[:,None,:]), axis=2)) , but timings are a bit slower.",practice
+numpy,"np.vectorize does not improve performance, and regardless, that is not an array of dataframes, but a list.",attributes
+sklearn,However it is very likely that if you have performance issues with sklearn.svm.SVC should you use a more scalable model instead.,practice
+numpy,Wouldn't np.where be faster for a binary choice?,attributes
+gensim,I am aware of the fact that gensim's Dictionary objects are much more complex (and slower to compute) than scikit's vect.vocabulary_ (a simple Python dict)...,alternatives
+numpy,Worst case performance (arrays equal) is equivalent to np.all and in case of early stopping the compiled function has the potential to outperform np.all a lot.,"alternatives,practice"
+scipy,It solved my problem.. Do you know why this method is far faster than scipy.interpolate.griddata?,alternatives
+scipy,Iteration calling stats.norm.pdf() runs slow,attributes
+pandas,"I tested that comprehension versus df.iloc[:, 1:].values and the comprehension + np.column_stack is much faster.","alternatives,practice"
+scipy,"I ran a test on using Q.getrow(i) vs. Q[i, :], and found the former to be 20x faster.",alternatives
+sklearn,"Between SVC and LinearSVC, one important decision criterion is that LinearSVC tends to be faster to converge the larger the number of samples is.","attributes,alternatives"
+pandas,I want to stick to str.contains because it is so much faster than the other python string matching algorithms.,alternatives
+gensim,"2) This distance function is called by multiple users from different points which repeat this whole process of model.wmdistance(doc1, doc2) for the same other_sentences and it is computationally expensive.","attributes,practice"
+tensorflow,But with tf.random_uniform I see that the GPU is faster (as I had expected).,environment
+gensim,"But, with these sorts of models, you want to avoid relying on any virtual memory, as basic most_similar() operations cycle through the full model, & will be very slow if they're reading from disk each time.)",functionality
+pandas,This is much faster than using Series.str.,"practice,alternatives"
+gensim,"The default is 1e-04, but values of 1e-05 or 1e-06 (especially on larger corpuses) can offer additional speedup, and even often improve the final vectors (by spending relatively less training time on words with an excess o usage examples)
+consider using a lower-than-default (5) value for the optional iter parameter.","attributes,practice"
+gensim,"Models with larger internal vector-arrays can't be saved via Python 'pickle' to a single file, so beyond a certain threshold, the gensim save() method will store subsidiary arrays in separate files, using the more-efficient raw format of numpy arrays (.npy format).","functionality,impl"
+pandas,"We can do something like: df.index.map(lambda x: ContinentDict.get(x)), but your solution should be faster...","alternatives,practice"
+pandas,"Although reindex_axis seems to be slightly faster in micro benchmarks than reindex, I think I prefer the latter for its directness.",alternatives
+sklearn,"You should try it anyhow, because it will probably be a lot faster than PCA for large datasets, even if you compute all components (assuming n_features is not huge).",alternatives
+gensim,"It does things in a reasonable way for that data-format-on-disk, but any other efficient way of getting your data into a repeat-iterable sequence of TaggedDocument-like objects is just as good.",practice
+scipy,"There are two immediate performance improvements (1) do not use a loop, (2) use scipy.linalg.solve_banded().",practice
+scipy,"It's basically moot anyway, as I've found that running interp1d >100k times is prohibitively slow.",attributes
+pandas,"I have already used c.itertuples() for efficiency, however since c has millions of rows, this code is still too time consuming.",attributes
+numpy,"This won't be faster, but for cleaner code, you can use np.apply_over_axes: np.apply_over_axes(np.cumsum, X, axes=[0,1])",practice
+numpy,"I tried circumventing the conversion and simply iterate over the np.ndindex object as described here and here but iterating over the whole iterator is slow for ~ 2 billion data points.
+np.random.choice(data.stack(newdim=('latitude','variable','longitude','time')),k,replace=False) returns the desired subset of data points, but does not set them to nan
+",practice
+gensim,"re-inferring all document vectors, at the end of training, perhaps even using parameters different from infer_vector() defaults, such as infer_vector(tokens, steps=50, alpha=0.025) 閿?while quite slow, this means all docs get vectors from the same final model state, rather than what's left-over from bulk training
+",practice
+numpy,"While it's 4x faster, my images are fairly large and I feel like we can come up with fully vectorized solution instead of using np.apply_along_axis or iteration.","practice,alternatives"
+sklearn,"For performance reasons, it is probably better to use TruncatedSVD for sparse matrices instead of densifying the data and applying PCA.",alternatives
+sklearn,In practice SGDClassifier is even faster for fitting linear SVM models in scikit-learn.,practice
+pandas,"To illustrate performance issues with pd.Series.str, you can see for larger dataframes how the more operations you pass to Pandas, the more performance deteriorates:
+list as elements in pd.Series is also anti-Pandas",attributes
+tensorflow,Tensorflow tf.constant_initializer is very slow,attributes
+scipy,"On a side note, this is a good candidate for scipy.ndimage.generic_filter, though that's likely to be slower than your strided approach.",alternatives
+scipy,"lil_matrix((uniqueUsers, uniqueItems)) should be fast since it doesn't have to do anything; just make an empty matrix.","attributes,functionality"
+gensim,"As I say above, if you do not need the (topic_id, probability) pairs then it's going to be faster to call .inference yourself.",practice
+pandas,"I read recently that the former is much slower if there are string columns (object dtype), 'cause Pandas cannot know in advance the underlying data type (which may as well be a python numeric type; non-numpy though) and then it tries to calculate the mean anyway for object columns, and ends up concatenating string columns only to find out it cannot be divided by n and only then discards the column",functionality
+pandas,There is a fast way to keep only the unique rows: df3 = df1.reindex(set(index)).,practice
+gensim,The model file is a Python pickle of the main model; the other files are some of the over-large numpy arrays stored separately for efficiency.,"functionality,rationale"
+numpy,"You can pass it a ctypes function for increased performance, but normal Python functions will be very slow.
+The simps function and related sampling methods can be passed a vector of (typically evenly-spaced) samples, but aren't adaptive.
+",attributes
+tensorflow,"Slightly besides the point, but I wanted to mention that this does seem to slow down severely if there are more than a few calls to concatenate.",attributes
+scipy,If you want an optimiser which is usually faster than scipy.optimize I suggest you to have a look at Pyomo fyi.,alternatives
+pandas,"You can use reindex or reindex_axis, what is faster as loc:",alternatives
+tensorflow,[ I read at tensorflow docs that feed_dict is slow and should use only for dev propose.,"attributes,practice"
+numpy,"It's working when I use np.hstack instead of np.append, but I would like to make this faster, so use append.
+",alternatives
+sklearn,"On a 1000x800 random matrix, your answer is faster than even the sklearn.preprocessing.normalize.","alternatives,practice"
+numpy,"If I use numpy.array, np.linalg.norm will be faster.",attributes
+numpy,The nested einsum is about twice as fast as cross for the largest n tested.,alternatives
+sklearn,"An example is stop_words_ for a TfidfVectorizer (see the docs).
+If the steps are storing large numpy arrays, joblib.dump (from sklearn.externals import joblib) can be a more memory-efficient alternative to pickle.
+Training many binary classifiers",alternatives
+pandas,"As a slight improvement to your solution, I would recommend a simple rsplit閳ユ攧f.FileName.str.rsplit('.', 1).str[-1]... this splits only once from the right, so should be more efficient.",practice
+tensorflow,"So far I was using keras with a tensorflow backend, but I noticed the fft was kinda slow (cf this issue on Github).",attributes
+tensorflow,@martianwars in my pc with re-run sess.run() time is not fast,attributes
+gensim,"When internal arrays of a gensim model outgrow a certain threshold, they'll be save()d as separate files, for both efficiency and to avoid limitation of plain-pickle()ing.","functionality,impl"
+pandas,apparently pandas concat function is smart enough that it's faster to append to the list (pandas.pydata.org/pandas-docs/stable/閿?,"practice,references"
+pandas,It should be more efficient than DataFrame.append.,practice
+pandas,For improve performance use map:,practice
+pandas,"If you remove this answer, and then make your final loads(df.to_json()) your answer, I'll give you an upvote because it's the second fastest solution to the problem.",alternatives
+numpy,"On my system, for a vector with 10000 elements repeated 1000 times, the tile method is 19.5 times faster than the method in the currently accepted answer (using the multiplication-operator-method).",alternatives
+pandas,Most answers use apply() which is known to be slower than built-in vector function solutions.,attributes
+tensorflow,"Right now I'm output_seq = output_seq + tf.pad(chunk, [[start, length - end]]) but that's really slow on long sequences.",practice
+pandas,"One solution that gives me around 8x speedup is to roll over a pd.Series of indices, and using the resulting indices with Rolling.apply:",practice
+tensorflow,This is likely to change in the future since generating the GraphDef directly is both more error prone and less performant (since the GraphDef has to be serialized and deserialized before the Graph is understood by the runtime).,attributes
+tensorflow,"To optimize performance when using GCS add prefetch(AUTOTUNE) to your tf.data pipeline, and for small (<50GB) datasets use cache().",practice
+pandas,I think converting to Series and then back is not good idea - reshaping is very slow.,"attributes,practice"
+scipy,UPDATE: Using scipy.stats.spearmanr is 20x faster,alternatives
+sklearn,If you want to do vanilla PCA on sparse data you should use sklearn.decomposition.RandomizedPCA that implements an scalable approximate method that works on both sparse and dense data.,functionality
+numpy,"However, based on my timings, using np.unique doesn't add enough overhead to make any of the other solutions faster than this one.",alternatives
+gensim,"(But, you'd still not have them all in memory, which can be crucial for adequately-fast scans for most_similar() or other full-corpus comparisons).",functionality
+numpy,"It tends to be much faster if idx is already an ndarray and not a list, even though it'll work either way:",practice
+tensorflow,It works and much more efficient than tf.scan.,practice
+pandas,"(Although I'd recommend either fillna(0) or leaving it as nan; if you fill with an empty string to look like your desired output, the column has to have object dtype and those are much slower than int or float.",practice
+sklearn,"If you train a model with L1 penalty, you can call sparsify on the trained model to convert its weight matrix to a more space-efficient format.",functionality
+pandas,"Also, the best way to speed up an apply call is to not use apply.",practice
+tensorflow,I thought that this will be more efficient than the feed_dict method.,practice
+scipy,"If you are worried about performance, using a linear regression will be much faster than an iterative curve_fit().",alternatives
+pandas,"I think something like df.loc[slice, another_slice] should be less memory intensive than df.loc[slice].loc[:, another_slice].",practice
+scipy,I already use numpy and scipy to create things like diffusion maps for which scipy.convolve2d has been extraordinary helpful and fast.,attributes
+numpy,You could also experiment with numpy.memmap to see if it improves performance:,alternatives
+pandas,"But better is used vectorized faster solution with div:
+",practice
+tensorflow,"The fastest way to increment a single element is likely to be scatter_nd_add, as in (modifying your example):",functionality
+numpy,I'm not sure if this is the fastest way but you can consider to use np.where,alternatives
+pandas,"Very nice :) I always thought that merge is preferred technique, also I recall reading merge should be very fast but timings have the last word.",attributes
+tensorflow,"Yes: in fact, you should use tf.where() when the computation on either side of the condition is inexpensive, and use tf.cond() where the computation is expensive enough that you'd prefer to do it only when necessary.",practice
+sklearn,"The Dask-ML has scalable implementations  GridSearchCV and RandomSearchCV that are, I believe, drop in replacements for Scikit-Learn.",alternatives
+pandas,"IIUC, you can use pd.get_dummies, after you drop duplicates, which will be faster and result in cleaner code than doing it iteratively:",practice
+scipy,"On my trials, this runs about 300 times faster than scipy.stats.randint, which is part of a system designed more for generality than speed.",alternatives
+numpy,"Why the performance difference between numpy.zeros and numpy.zeros_like? explores how empty, zeros and zeros_like are implemented.
+","alternatives,references"
+numpy,"But, filling a new allocated memory with numpy.zeros is nearly twice as fast, as filling an existing array with numpy.fill, and three times faster than item setting x[:] = 0.",alternatives
+tensorflow,"For another, an operation may have a side effect and produce a large output閳ユ敃ee tf.assign() for an example閳ユ攣nd it is often more efficient to pass the tf.Operation to sess.run() so that the value is not copied back into the Python program.","functionality,practice"
+tensorflow,"However, tf.gradients() reduces performance greatly by tenfold or more.",attributes
+tensorflow,The code becomes even more slower when I add an extra session.run() statement to print some values during the training process.,attributes
+tensorflow,Too slow for converting to tf.constant when list contains 1000000 elems,attributes
+numpy,@tel yeah it's bit slower than your answer as there's condition check in np.where,"functionality,alternatives"
+pandas,"for performance, it's often beneficial to store all of the DFs in a list and postpone calling concat until the end.",practice
+scipy,"And since the csr constructor is compiled, it will to that summation faster than anything you could code in Python.","attributes,impl"
+pandas,I've also tried df.query() but it's 66% slower than the Pythonic filter and does not change the complexity.,"alternatives,attributes"
+tensorflow,"You may think the tf.nn.static_rnn is faster than its dynamic counterpart because it pre-builds the graph.
+",alternatives
+sklearn,GridSearchCV doesn't just spawn 2 jobs for 2 CPUs because the process of spawing jobs on-demand is expensive.,functionality
+pandas,"You could just do df['my_col'] = df['my_col'].astype(str).str.lower() to force everything to str, is there a reason to have mixed dtype as this is non-performant",attributes
+scipy,"That's better than the lil indexing approach, though still much slower than the direct coo matrix construction.",alternatives
+sklearn,"You can also just use Lasso, LassoLars or SGDClassifier to do same thing without the benefit of resampling but faster.",practice
+scipy,"Some testing:
+
+scipy.interpolate.RectBivariateSpline is about twice as slow...
+scipy.ndimage.filters.gaussian is about twice as fast it seems!",attributes
+tensorflow,Calling tf.session.run gets slower,attributes
+scipy,Both fast and very slow scipy.signal.resample with the same input size,attributes
+scipy,"This may or may not be fast enough, but you can try taking pmf calls out of the loop.",attributes
+scipy,"For me, the most efficient way to do this would be to rewrite the function scipy.optimize.fmin_l_bfgs_b.",attributes
+numpy,"@WarrenWeckesser the new einsum('ii->i', mat) which I suppose does the same under the hood appears to be quite a bit faster.",alternatives
+sklearn,It's orders of magnitude faster than vanilla KMeans and often just as good.,attributes
+sklearn,I think it would be slow because I would be making a copy the probabilities for every call to predict_proba().,practice
+pandas,transform is fast:,attributes
+pandas,"This might be a bit slower but here's how you can do this using apply:
+
+",practice
+tensorflow,"Note that the tf.contrib.data.unbatch() transformation implements the same functionality, and has a slightly more efficient implementation in the current master branch of TensorFlow (will be included in the 1.9 release):",impl
+numpy,One way to speed up operations over numpy data is to use vectorize.,functionality
+scipy,"As tree construction from scratch is fairly fast (something like O(n log n)), popular implementations such as the KDtree in scipy.spatial don't support addition of nodes after the initial construction (at some point the implementation in sklearn was just a wrapper around the one in scipy, not sure if that is still the case).","functionality,rationale"
+numpy,Note that this would be pretty slow for large arrays because np.where looks through the whole thing.,attributes
+tensorflow,tf.linalg.eigh extremely slow on GPU - normal?,"attributes,environment"
+scipy,"My impression is that scipy.sparse is best for linear algebra problems, and slow for indexing and iteration.","functionality,attributes"
+pandas,"Idea is use list comprehension with split for improve performance, then not assign output to new column count but filtering and last sorting with extracted integers:",practice
+scipy,I'm not sure what I am doing wrong but it seems that row indexing a scipy csr_matrix is approximately 2 folds slower compared to numpy arrays (see code below).,alternatives
+sklearn,"The PCA class will always compute the full SVD, though, so you wont get a speedup.",functionality
+pandas,"Another solution with groupby with concat and last set values in column condition to 1, but it is slower:",practice
+tensorflow,But the gather operation seems to be a very expensive one.,attributes
+numpy,"Also, be sure to use numpy.sum on arrays instead of the much slower Python sum.",alternatives
+numpy,"The einsum suggested by @DSM intuitively seems like it would be the fastest way, as it would only calculate the required terms.","attributes,functionality"
+tensorflow,"You could potentially make this even more efficient by using a TensorFlow loop and making fewer calls to sess.run(), but the general principle is the same: reuse same the graph multiple times to get the benefit of TensorFlow.",practice
+tensorflow,"Using a loop of estimator.train() and estimator.evaluate() was too expensive as it rebuilt the graph every epoch, rather than trying to reuse it (as referenced in this issue: https://github.com/tensorflow/tensorflow/issues/13895).","attributes,functionality"
+pandas,"The following is what I put together (which works), but it seems like a groupby() or np.where might be faster.",attributes
+tensorflow,I閳ユ獫e heard that TensorFlow has something called the 閳ユ涪f.data閿?pipeline which is supposed to make it easier and faster to feed data to GPUs etc.,functionality
+tensorflow,Loading SavedModel is a lot slower than loading a tf.train.Saver checkpoint,attributes
+scipy,The csr matrix multiplication is one its most efficient operations.,"functionality,attributes"
+scipy,"I didn't try the Cython implementation (I can't use it for this project), but comparing my results to the other answer that did, it looks like scipy.spatial.distance.pdist is roughly a third slower than the Cython implementation (taking into account the different machines by benchmarking on the np.abs solution).",alternatives
+tensorflow,The tf.nn.softmax_cross_entropy_with_logits() operator offers a numerically stable (and more efficient) version of your loss calculation.,functionality
+tensorflow,"I don't know how to do pairwise addition
+tf.transpose and tf.segment_sum might be great
+but after research I found transpose is expensive
+further more, after tf.segment_sum I only have half size of tensor,
+I don't know how to double it
+oh and I am thinking how to produce segment_ids   ",attributes
+pandas,"Piggybacking off of @Dark's solution, Index.get_loc just calls Index.get_indexer under the hood, so it might be more efficient to call the underlying method when you don't have additional parameters and red tape.",impl
+scipy,"It has nothing to do with how they are calculated - that is, it won't speed up your minimize calls.",practice
+tensorflow,Having to call run to get the data into python just to feed it back to tensorflow seems silly and is definitely slow.,practice
+tensorflow,"I do not want to introduce individual performance-hitting calls tf.pad(), preferably.
+",attributes
+sklearn,"For large scale learning (say n_samples > 10k),  MiniBatchKMeans is probably much faster than the default batch implementation.","attributes,alternatives"
+scipy,The fastest way should be by converting to a coo_matrix:,practice
+pandas,It is faster as iterrows solution:,alternatives
+numpy,np.dot() is the fastest (for dense arrays; uses BLAS) if you need a real matrix-multiplication.,"attributes,practice"
+numpy,"Compared to a method using np.argpartition, this seems to be faster as long as k < 0.4 * n",alternatives
+scipy,My usual method for extracting the min/max of a variable's data values from a NetCDF file is a magnitude of order slower when switching to the netCDF4 Python module compared to scipy.io.netcdf.,alternatives
+numpy,"Specifically, if a large fraction of entries fulfil the condition then np.sum(cond) is significantly faster but if a small fraction (maybe less than a tenth) do then np.size(np.where(cond)) wins.",alternatives
+sklearn,"Using a OneHotEncoder is the only current valid way, but is computationally expensive.",attributes
+scipy,In other SO questions I've found that adding values to a plain dictionary is faster than adding them to a dok matrix - even though a dok is a dictionary subclass.,alternatives
+scipy,Here's what I've come up with and it is faster than scipy.signal.argrelmax - but I'm missing a fast solution to the last step which deletes peaks within some window.,alternatives
+tensorflow,"ImageDataGenerator can be a good option for a quick prototyping, but TFRecords and corresponding TF infrastructure for them (queues/runners/readers) are really optimized for fast reading.",functionality
+numpy,"np.count_nonzero(np.in1d(df.values, [0, -1])) is the fastest of all the solutions provided.",practice
+tensorflow,"Actually, tf.stack is very slow.",attributes
+scipy,"csr will give you an efficiency warning, and coo does not allow indexing.",functionality
+numpy,"there is a specific numpy function to do this, np.searchsorted, which is much faster than bisect.",alternatives
+scipy,"I thought of using scipy.spatial.distance.cdist() which is fast, but then I'd have to reproject the data to UTM, and I'd like to avoid reprojection.",attributes
+tensorflow,"Note that using different tf.Graph objects will be slow since it will serialize/deserialize the Graph every time you ""switch"" graphs, it's faster to use a single tf.Graph, with subsets of nodes representing your ""graphs""",practice
+pandas,The fastest method I found so far is extending the DataFrame with .iloc and assigning back the flattened target column.,practice
+sklearn,Scikit-learn Dev Team improved a lot both memory management & performance on .ensemble methods,attributes
+pandas,"When trying to replace np.nan values with zeros in a (relatively) large dataframe, pd.fillna(0, inplace=True) performs unexpectedly slow.",attributes
+scipy,scipy.optimize.minimize is too slow.,attributes
+pandas,"@yguw, you may want to try np.setdiff1d(df.index.values, example_ix_list.values) instead of df.index.difference(example_ix_list) - this might work slightly faster...","alternatives,practice"
+pandas,Although using groupby() should definitely be faster.,alternatives
+gensim,"But, with these sorts of models, you want to avoid using any virtual memory, as basic most_similar() ops cycle through the full model, & will be very slow.)",attributes
+sklearn,"clf.fit(X,y) is fast in my case.",attributes
+scipy,I'm applying harmonic mean from scipy.stats for aggfunc parameter in Pandas pivot_table but it is much slower than a simple mean by orders of magnitude.,alternatives
+tensorflow,"WARNING: This op expects unscaled logits, since it performs a softmax
+  on logits internally for efficiency.","functionality,impl,rationale"
+scipy,"The defaults for ndimage are set up to work with images, and it's more efficient for limited-precision integer data, which is the norm for images.
+",impl
+pandas,"And it should be slowier, because list.append with pd.concatis faster like in each iteration call DataFrame.append.",practice
+scipy,scipy.sparse dot extremely slow in Python,attributes
+pandas,Then the fastest is set index first by df = df.set_index('col') and then use loc,practice
+pandas,pandas.merge inexplicably slow,attributes
+tensorflow,Keras model.predict() slower on first iteration then gets faster,attributes
+tensorflow,If you want faster feedback you will have to use train_on_batch instead of fit and write your own output with this method.,practice
+scipy,It is noteworthy to say that if you are planning to do column-wise operations the csc_matrix type is much faster.,practice
+numpy,"And maybe there is some faster function for matrix multiplication in python, because I still use numpy.dot for small block matrix multiplication.",attributes
+numpy,"x = np.array(x, dtype=float) should enable you to get rid of slow list comprehension.",practice
+sklearn,The sklearn.utils.extmath.cartesian is really fast and good but it provides repetitions which I do not want!,attributes
+scipy,Because the scipy.integrate.nquad function is slow I am currently trying to speed things up by defining the integrand as a scipy.LowLevelCallable with Numba.,attributes
+gensim,"(There shouldn't be any essential difference, but given that: you'll likely want to use the most_similar() results, because they're known non-buggy, and use efficient bulk array library operations that are probably faster than whatever loop you've authored.","functionality,impl"
+tensorflow,"Note that there might be a more efficient solution: since nn does not depend on either of the loop variables, you can define it outside the loop, and reuse the same instance inside the loop.",practice
+scipy,"Although solve_ivp doesn't try values outside of [tmin, tmax], it makes the calculation much slower for my code.",attributes
+pandas,"Using query also works but is slower
+",attributes
+pandas,"Keep in mind that this approach might be slow for large dataframes, since apply doesn't take advantage of vectorization.",attributes
+numpy,I used np.random.permutation but found it was very slow.,attributes
+scipy,I just tried using scipy.optimize.basinhopping and as I expected the actual calculation of the traces is computationally too expensive for a normal fitting algorithm.,attributes
+tensorflow,Tensorflow prediction using tf.estimator.Estimator too slow,attributes
+sklearn,When using LinearRegression model I can easily achieve 40x speedup.,alternatives
+numpy,"If speed matters, and format isn't that important, just try np.polynomial.polynomial.polyfit with some reasonable degree, and scipy.interpolate.UnivariateSpline, and see which is faster.",alternatives
+numpy,It will be faster (and the files will be more compact) if you save/load binary files using np.save() and np.load().,practice
+pandas,So they are slower when compared to astype,alternatives
+sklearn,This seems like it would be slow compared to having predict_proba() return what I want automatically.,attributes
+numpy,Note: I have tried using nditer on numpy arrays with no significant performance increase.,attributes
+scipy,A faster algorithm (using FFTs) is available in SciPy: scipy.signal.fftconvolve.,attributes
+tensorflow,"Alternatively, a more efficient version involves using tf.nn.softmax_cross_entropy_with_logits() to replace the softmax and cross-entropy calculations.",alternatives
+scipy,It seems that my variation is much slower than pdist of scipy and I guess it is due to the looping through the pair list.,practice
+numpy,"Either way, it's more efficient to use np.tile or np.repeat to get there in one call.",practice
+numpy,"arr[alist].copy() is simpler, and probably faster.",attributes
+numpy,Using eight shifts (and comparisons) is much faster than looping over each cell in data and comparing it against its neighbors:,practice
+sklearn,But I have noticed that predictions are a lot slower (approximately 10 times slower) - this is probably because I am using .predict() on an observation-by-observation basis.,attributes
+scipy,I reduced number of points to 100 and rbf on vps is still ~180x slower.,attributes
+numpy,"If performance is really critical, you might what to create your own ptp and save np.min to a temporary variable so you don't calculate it twice.",practice
+sklearn,"You can also set the verbose parameter in your cross_val_score as well to watch the progress (though, heads up, it isn't fast).",attributes
+numpy,A.ravel()[:len(B)] = B is about 7x faster than A.flat[:len(B)] = B on my machine,alternatives
+sklearn,"It suppose to give very similar results to svm.SVC(kernel='linear'), but training process will be faster(at least when d<m, when d-feature dimension and m- size of train sample).",functionality
+tensorflow,"The main performance implication is that any code running in a tf.py_func() is subject to the Global Interpreter Lock, so I would generally recommend trying to find a native TensorFlow implementation for anything that is performance critical.","practice,impl"
+numpy,"@PaulPanzer, yeah I checked speed and it seems to be faster than argpartition as long as k < .4n",alternatives
+sklearn,"I suggest you to try sklearn.cluster.DBSCAN - it has similar behaviour for some data (sklearn examples), also, it runs a way faster and consumes much less memory:
+",attributes
+sklearn,But I find it is very fast if I use sklearn.linear_model.LogisticRegression.,attributes
+scipy,"I'm still testing my code, but early indications are that using scipy.spatial.cKDTree is around 100 times faster than my naive approach.",attributes
+tensorflow,"Furthermore, if there are colocation constraints on ops (ie, op=tf.assign(var,...) will add colocation constraint between op and var for efficiency), it will force all ops with colocation constraints to run on same device, so if any op doesn't have GPU impl, the whole group will run on CPU.",functionality
+pandas,"A slightly simpler approach to remove duplicates would be to just use the first method followed by drop_duplicates, but depending on your data this might not be as performant:",practice
+tensorflow,"Instead, it would be more efficient to define your network in terms of a tf.placeholder() to which you can feed individual training examples, or mini-batches of examples.",practice
+tensorflow,"The code until the for loop mimics the example here, but I don't get how I can then employ the placeholders a & b without supplying a feed_dict to every call to sess3.run(c) [which would be expensive].",attributes
+sklearn,You should try to use KNeighborsClassifier in bruteforce mode (instead of balltree) but then prediction times can be too slow.,attributes
+scipy,Here's how you can convert the output of the fast solution based on scipy.spatial.Voronoi that you linked to into a Numpy array of arbitrary width and height.,attributes
+sklearn,My code remains much slower than the function euclidean_distances from sklearn.metrics.pairwise.,practice
+tensorflow,"In the most over post I have found exactly the opposite problem, that Keras was slower then tf.keras.",attributes
+tensorflow,"However, it may be more efficient to just concatenate the indices and values, preserving the IndexedSlices structure, since the dense tensor might be much larger than the IndexedSlices combined.",practice
+pandas,NOTE: value value_counts is much slower than counts(),alternatives
+sklearn,If you want to transform the original matrix to the reduced dimensionality projection offered by PCA you can use the transform function which will run an efficient inner-product on the eigenvectors and the input matrix:,impl
+pandas,Note that time_stamps[0].apply(convert_to_python_datetime).values can probably be achieved faster using pd.to_datetime(time_stamps[0]).,alternatives
+tensorflow,"To my surprise, the exponental log was twice as fast as tf.pow.",alternatives
+scipy,I have no idea why scipy.stats.mode is so slow.,attributes
+scipy,It seems that such a way to build a sparse matrix is quite slow (lil_matrix is the fastest sparse matrix type for that).,practice
+scipy,"The coo_matrix is used as an intermediate format because it ""facilitates fast conversion among sparse formats.",functionality
+pandas,kurt can be highly performant.,attributes
+tensorflow,I'm not an expert at tensorflow but just looking at the code it looks like from_tensor_slices loops over the entire data set (and in a rather slow manner too) which definitely will load all the data.,impl
+tensorflow,"Now, subsequent calls to sess.run(grad[i]) (with the same index i) are really fast, around 100 ms, while running the for loop changing i at every iteration results in around 1.5 seconds per iteration.",practice
+sklearn,"The great thing about CountVectorizer is that it stores data in numpy sparse matrix format, which makes it very memory efficient, and should be able to solve any memory problems you're having.",attributes
+tensorflow,"You can use the Slim API to build these input functions, but we now recommend that you use the tf.data API, which is more flexible and  efficient.",attributes
+scipy,"For solving a banded system, a fast alternative is scipy.linalg.solve_banded.",alternatives
+pandas,"You can use a list comprehension which is faster than using apply() (replace Col with the original column name) :
+",alternatives
+scipy,"I at some point even noticed that when I hstack only one feature to it, the model also becomes slower.",attributes
+numpy,"@Phil Trust me, np.ma is rather clunky and slow and in bad need of improvement, please send ideas and/or request on the numpy mailing list (or drop a message by chat).",attributes
+pandas,"To get around that, convert the dtype to object, which I don't recommend unless it's only for display purposes (you kill efficiency this way).",practice
+numpy,"If you know the size of the matrix (which you can determine from the first line of the file), you can specify the count keyword argument of np.fromiter so that the function will pre-allocate exactly the right amount of memory, which will be faster.",functionality
+pandas,"This avoids to_dict, but apply could be slow too:
+",attributes
+gensim,(Any swapping at all during full-array most_similar() lookups will make operations very slow.,"impl,environment"
+numpy,"You definitely need to make use of all of numpy's tools to get the most performant code, of course, like using ndarrays in place of lists of lists of lists, for example.","functionality,practice"
+scipy,"As you suggested, ndimage.convolve tends to be faster in general.",attributes
+scipy,For larger datasets it may be faster to go with scipy.signal.fftconvolve:,attributes
+numpy,"If it's a ""big"" dataframe and performance is an issue, you want to vectorize this operation with numpy.where and numpy.select:",practice
+pandas,But about the performance and applying the regex to a Pandas Series using a list comprehension is the best way to go:,practice
+sklearn,"clf = RandomForestClassifier(n_jobs=10)
+granularity and effect is hard to read out the docs: for RandomForest's you can gain near-linear speedup if n_jobs <= n_estimators (because each single estimator can be touched independent on others!","practice,impl"
+scipy,"solve_triangular with destructive computation (overwrite_b=True) gives you no speedup on top of check_finite=False (and actually hurts slightly for the array X case).
+",functionality
+pandas,Here's a pretty efficient solution using map + groupby + unique:,practice
+numpy,"In my very limited tests, my above code with np.place is running 2X slower than accepted answer's method of direct indexing.",alternatives
+numpy,"If it is always slower then this is really interesting, since that means that np.convolution does its (somewhat more general) job really efficiently even in specific cases such as this one.",functionality
+numpy,"A copy will be made regardless, np.delete is the fastest way to produce it.",attributes
+tensorflow,"During training I want to make use of the efficiency of TensorFlow's tf.data.Dataset, but I still want to be able to get the output of the model on a single sample.",functionality
+sklearn,"From what I saw, the parallelization in LogisticRegression is done by multiprocessing, because of GIL issues, unless the solver selected is 'sag' (then it is more efficient to use multithreading).",functionality
+scipy,"Nope, do not use csr_matrix or csc_matrix, as they are going to be even more slower than lil_matrix, if you construct them incrementally.","practice,alternatives"
+pandas,I know I can just writer.save() once in the end but in real program I writer multiple sheets in for loop and it's a lot more efficient and create much smaller xlsx file than just save once in the end.,practice
+pandas,"Not sure what's more efficient, but np.arange(len(df.index)) or np.arange(df.shape[0]) would also work.",alternatives
+numpy,"np.log, np.tan work with arrays, but are slower than the math equivalents when working with scalars.",alternatives
+numpy,Note: I included an np.where approach for comparison; I thought it might have good performance but it turns out to be fairly poor.,alternatives
+pandas,But this is really slow since I have many rows and it sort of defeats the purpose of using pandas.to_datetime.,practice
+pandas,If need add only one column is possible use map by Series what should be faster:,attributes
+pandas,I have read https://jakevdp.github.io/PythonDataScienceHandbook/03.12-performance-eval-and-query.html  that using query() for dataframe filtering is faster than just using conditions with '&' to filter the data.,practice
+numpy,Applying np.apply_along_axis improved performance from original to apply_along_axis.,practice
+tensorflow,"However, the performance guide page and one of the GitHub issues suggest that it's better to use map_and_batch for performance reasons.",attributes
+numpy,"While trying numpy.argmax and numpy.sort  functions to accomplish this task, I was expecting argmax to be faster than sort ideally but they resulted in same running time.",alternatives
+scipy,"Surprisingly, the approach to put all this into one block diagonal matrix and call scipy.linalg.solve once is indeed slower both with dense and sparse matrices.",attributes
+scipy,"Both methods are far faster than the scipy.stats method, too.",alternatives
+pandas,A faster method using RangeIndex:,practice
+tensorflow,Why is tf.zeros slower on GPU?,"attributes,environment"
+numpy,"Inner1d can't take complex numbers, and fft convolutions aren't efficient with this kernel size, so the two methods I've been testing are np.correlate and einsum.",attributes
+sklearn,The (small) remaining difference might come from warm starting in LogisticRegressionCV (which is actually what makes it faster than GridSearchCV).,alternatives
+numpy,EDIT: I have found out that bisect.bisect() is 10 times faster than numpy.searchsorted().,alternatives
+scipy,Sparse lil format is designed to be faster for indexing (and especially for setting).,functionality
+numpy,"np.linalg.eig (for real input) is just a wrapper for dgeev, which according to the docs only accepts a single matrix per call and the computation is fairly expensive, so for matrices that are not small the overhead of a python loop will be negligible.",impl
+numpy,"You could also try np.einsum, of course the division is not possible with it, you would have to multiply the reciprocal (but np.dot alone is faster then einsum with blas).",alternatives
+numpy,"I have also tried to use numpy.sqrt which makes the performance worse, therefore I am using math.sqrt in Python.",attributes
+scipy,"@AndrasDeak, I have attempted to use scipy.signal.lsim, however, this appears to be more robust for my usage, and In most situations still faster.",practice
+tensorflow,As tf.nn.conv2d will let you initialize the filters which will speed up the training time.,functionality
+pandas,Your current use of pd.DataFrame.append is not recommended as the expensive operation is being repeated for each row.,practice
+numpy,"Nevertheless you see its just a line of code, and by throwing away all sanity checks and copying done by linalg.cholesky this could also be more efficient.",practice
+pandas,"However, the function includes I/O call to a remote server and thus it is very slow if I call it simply using .apply() to the dataframe.",practice
+scipy,msgpack on a coordinate format via scipy.sparse.coo_matrix seems to be worth considering but conversion to python.sparse.coo_matrix is slow,"practice,attributes"
+pandas,The benefit of the loc is that you will not create a new dataframe each time so it will be fast.,"functionality,attributes"
+sklearn,LinearSVC is naturally much faster.,attributes
+scipy,"It may not be the fastest, but the method scipy.signal.unit_impulse generalizes the above concept to numpy arrays of any shape.",practice
+numpy,"This is because pickle works on all sorts of Python objects and is written in pure Python, whereas np.save is designed for arrays and saves them in an efficient format.",functionality
+scipy,"@imranal I added an update based on griddata: it's ultimately much slower (due to multiple function evaluations), but the result is much smoother.",practice
+gensim,"So depending on what else you've got running and the machine's RAM, you might be using swap memory by the time the most_similar() calculations are running 閿?which is very slow for the calculate-against-every-vector-and-sort-results similarity ops.","functionality,environment"
+tensorflow,It will be more efficient to use tf.split rather than to slice your tensor inside a for loop.,practice
+scipy,I want to calculate the pairwise distances of all objects (rows) and read that scipy's pdist() function is a good solution due to its computational efficiency.,attributes
+pandas,"Provided that the car_id column is already of type category, then using car_id.cat.codes can be from 20 to 200 times faster than using pd.factorize (the larger the DataFrame the higher the speed gains)","alternatives,practice"
+numpy,"As for bincount, that also works as wanted, but is roughly half as fast as the numba version.",alternatives
+numpy,"But with reshape I can do the same, and faster",practice
+numpy,"using np.append or np.concatenate) is slow, so avoid it whenever you can.",attributes
+tensorflow,tf.fromPixels from video element is super slow on safari,"attributes,environment"
+numpy,"+1 But the OP's calculation is also equivalent to np.dot(A, A.T), and on my system, for a (500, 400) shaped array, it is about 10x faster than np.einsum, which is already 6x faster than the OP's method.",alternatives
+scipy,"Testing the answer given below, it sort of works, with the caveat that at times it can fail super hard compared to dblquad (which is far slower but much more precise).",attributes
+scipy,"The speed is really slow, because one of my pdf is as kdf (scikit-learn.org/stable/modules/generated/閿?, that is the bottelneck.",attributes
+tensorflow,I am trying to use the tf.Data API to accelerate my code and prevent GPU data starvation but there is one thing that is stopping me for being comfortable with it and it's the ability to use the same batch when calling the training op multiple times.,practice
+pandas,sr.values[idx] = 1.2 has performance comparable to vec[idx] = 1.2:,alternatives
+gensim,"The most_similar() op is also faster because it can do a bulk array operation on the full array, which typically uses a native optimized routine rather than a Python-loop.","functionality,impl"
+sklearn,"But in some cases, like PCA, or CountVectorizer etc in scikit-learn, this method is implemented differently to make the processing faster, because:
+
+checking / validating (and conversion) of data to appropriate form is done only once when compared to checking the data in fit() and then checking it again in transform()
+some other repetitive tasks can be streamlined easily
+",impl
+scipy,lil and csr are the 2 fastest formats for that.,attributes
+pandas,"Edit: It looks like, you can increase performance by filtering df1 and df2 using .isin, although I only tested it with mock data.",practice
+tensorflow,This Iterator methods is much longer than the 'slower' feed_dict method significantly.,attributes
+pandas,"You can disable it, but the 'real' way around it is to make a copy of the grouped object using grouped.copy(), but for large dataframes that won't be very performant, so I thought it would be best to make do with the warning.",practice
+numpy,Another faster solution with numpy.intersect1d:,practice
+scipy,"My attempt on Scipy gives me this, but solving Z with scipy.sparse.linalg lsqr & lsmr is a lot slower than Matlab \ as well as not giving a good enough solution.",alternatives
+tensorflow,"In that case, perhaps sess.run([ optimizer ] * N) would be just as efficient.",practice
+numpy,"If you know the shape of your numpy array output beforehand, it is efficient to instantiate via np.zeros(n) and fill it with results later.",practice
+pandas,@JonClements Actually it is the .values part that makes it slightly faster.,practice
+scipy,"A PR has just been merged into numpy master that will make this significantly faster, albeit slower than pdist.",alternatives
+tensorflow,"Problem
+
+training a custom tensorflow 1.11 tf.estimator.Estimator with a tf.data.Dataset runs much more slowly than when using tf.keras with the same model architecture and feeding the data directly
+However, it does run quickly at times (in terms of global_step/sec), but is slow around epoch start and end.
+during the ""fast"" batches, GPU util is around 30%.",attributes
+scipy,Even where interp1d performs best (near N=2**4 or 2**5) InterpolatedUnivariateSpline is around 2.5 orders of magnitude faster.,alternatives
+pandas,Another option is nlargest but probably not faster than James' suggestion as sorting and getting the head or tail should be faster than nlargest:,alternatives
+numpy,So arange is faster because it generates the values directly.,practice
+numpy,"Another similar method would be to use .view(dtype = np.void) tacked on to the strided answer, which would be nearly as efficient.",alternatives
+sklearn,However it should give similar predictive performance as LinearSVC and comparable performance to LogisticRegression that should be both faster and can scale to hundreds of thousands of samples .,alternatives
+sklearn,"Using a OneHotEncoder is the only current valid way, allowing arbitrary splits not dependent on the label ordering, but is computationally expensive.","functionality,attributes"
+scipy,"scipy.spatial.distance.cdist is faster than this, 9 times in my test",practice
+pandas,"While it's tempting to translate your Excel formula to Pandas / NumPy, using GroupBy, pd.DataFrame.merge and np.select will likely be more efficient and readable.",practice
+pandas,"If efficiency is a concern, building a new dataframe is often more efficient than stack:
+",practice
+scipy,"The fastest method is probably scipy.spatial.distance.cdist:
+",practice
+pandas,"Before doing the groupby, it might be faster to do drop_duplicates(subset=['id','environment','request_id']) than just using unique in agg on the full data.",practice
+pandas,"df = df.mask(df.values == 'abc', 0)   Maybe faster.",practice
+sklearn,"If you have scikit-learn installed, sklearn.utils.random.sample_without_replacement offers a much faster method for generating random indices without replacement using Floyd's algorithm:",functionality
+tensorflow,sess.run() is too slow,attributes
+tensorflow,Following this post How to select rows from a 3-D Tensor in TensorFlow? it seems that is possible to solve the problem in an efficient manner with tf.gather and manipulating the indices.,practice
+tensorflow,The only slow part here is tf.map_fn but it is still faster than the other solutions mentioned.,attributes
+scipy,"This is why having a skewed line of input (with interp2d(x,x,z)) is much better computationally: there are both a bunch of x and y values, even though geometrically you're still using a line.",practice
+numpy,"take could be faster than direct 'fancy' indexing, T[ix-1,:][:,iy]",alternatives
+scipy,"I was using scipy.special.expn when I realized I could be using expi instead and it should be much faster, to judge from the Cephes code that I expected it would be based on.",alternatives
+pandas,Or you could use .values attribute as @ajcr suggested in the comment which is faster:,practice
+pandas,Because i have read that the file access for read_hdf should be faster.,attributes
+pandas,I tried set_index but that seems to be not that fast when using with iloc.,practice
+numpy,"In the past I've found np.count_nonzero to be much faster than the sum trick, but here -- probably because of the need to use np.appyly_along_axis -- that version is instead much slower, at least for this a.",alternatives
+tensorflow,"Tensorflow naming is a bit strange: all of the functions below accept logits, not probabilities, and apply the transformation themselves (which is simply more efficient).
+
+Sigmoid functions family
+
+tf.nn.sigmoid_cross_entropy_with_logits
+tf.nn.weighted_cross_entropy_with_logits
+tf.losses.sigmoid_cross_entropy
+tf.contrib.losses.sigmoid_cross_entropy (DEPRECATED)
+","functionality,attributes"
+scipy,"Most of the time is spent in scipy.linalg.toeplitz, making it slower than filling in memory in an array for the small matrices used here, so I'd recommend profiling before using this approach.",practice
+numpy,"you var was a shape like 100000, 5000 then yes, a np.ndarray will be faster.",practice
+scipy,But I've been using cdist precisely because it is fast.,attributes
+pandas,"If [] appear anywhere apart from the start/end of the string, this will remove them as well - which probably isn't desirable... Also - making use of regex here isn't really necessary... - one can just use .str.strip('[]') which'll be more efficient and only concern itself with leading/trailing chars...",practice
+sklearn,"less than 10000 samples or so), SVC(kernel='linear') might be fast enough to converge.","functionality,attributes"
+scipy,Matrix multiplication in the csr and csc formats is the fastest operation.,"functionality,attributes"
+pandas,The .apply() is the slowest.,attributes
+pandas,sparse matrix multiplication efficiently takes advantage of the sparsity of its inputs (but is slower than numpy dot for non-sparse matrices).,practice
+sklearn,I use score_samples() but it is very slow.,attributes
+tensorflow,I am trying to add @tf.function for performance enhancement reasons to my custom training code in Tensorflow 2.0.,practice
+tensorflow,The new tf.contrib.data.Dataset.from_generator() can potentially speed up your input pipeline by overlapping the data preparation with training.,functionality
+scipy,"@EelcoHoogendoorn not certain, but could it be faster if you just hardcode a 3X3 inversion method like you do, but push it in C, and just scipy.weave.blitz on it?",practice
+scipy,"One way to accomplish what you want is to convert things temporarily to a scipy.sparse.dia_matrix, but this isn't going to be memory-efficient for a dense matrix.","practice,attributes"
+pandas,Note there is the built-in method ne which means not equal to which is faster but possibly less readable,"functionality,attributes"
+sklearn,"Ah, we were probably talking about the same thing :) I did not mean to imply that the loop itself is slow, but calling predict repeatedly is.",practice
+sklearn,"You can get an instant 2-3x speedup by switching to 5- or 3-fold CV (i.e., cv=3 in the GridSearchCV call) without any meaningful difference in performance estimation.
+Try fewer parameter options at each round.",practice
+numpy,I once found that np.take() was faster than indexing with [] but I'm not sure if it will matter in your case.,alternatives
+pandas,"Try to avoid using .apply() and especially .apply(..., axis=1) as it's very slow.",attributes
+pandas,"One,  df.values.sum() is a numpy operation and most of the time, numpy is more performant.",practice
+numpy,"With 1000 elements in timestamp only you can get already a speed up of factor 1000 when you avoid unnecessary calcucaltions and when you avoid np.append(pairWiseDiff, diffTime).",practice
+scipy,"For sparse matrices scipy.sparse provides various alternative datatypes which will be much more efficient.
+","functionality,attributes"
+tensorflow,This memory allocation slowdown is offset by a speedup in the requested operation (matmul in this case) if and only if the speedup exceeds the difference in memory allocation times.,attributes
+numpy,"Secondly, in terms of performance, you can do better than np.unique with a hashable type. np.unique will always run in O(n log n) since it does a sort.","attributes,practice,functionality"
+numpy,"If this is not sufficiently fast I believe the best way to continue is likely to create some sort of chunk algorithm that iterates through parts of the array, if chunk[chunk.argmax()]!=1 go to the next chunk else stop.",practice
+numpy,I didn't think any would be that slow for the short arrays though,attributes
+pandas,But I'm worried that select_dtypes() can be slow and this seem to add a middle step that I'm hoping isn't necessary (subsetting the data before pulling back the column names of just the numeric attributes).,attributes
+numpy,"The first uses np.where and leaves the arrays unmodified and another that involves sorting the arrays which should be faster for large I.
+Using np.where",alternatives
+tensorflow,"here is my Speed chart:
+ enter image description here
+we can see that tf.Dataset is slow than tf.FIFOQueue.",alternatives
+tensorflow,"Great, that's what tf.data is intended for :) Be sure to check out the input pipeline performance guide for tips on how to speed things up.",references
+scipy,"The reason I want something like this is to give this function to scipy.integrate.odeint, so it needs to be fast.",practice
+pandas,The calculation of numpy.ndarray should be faster than that of pandas.core.series.Series.,alternatives
+pandas,I believe that adding sort=False will speed up the groupby operation.,attributes
+sklearn,"Typically, if the whole dataset will fit in memory, it is somewhat more performant to just download the whole thing and call fit once (in which case you could actually use the nltk SklearnClassifier).",practice
+scipy,"After going through the net, I found that the efficient way of calculating euclidean distance between pairs of points is by using scipy.spatial distance.cdist.",practice
+numpy,"My results have the loop time as 94.8 ms and the vectorized time as 271 ms, so the version using vectorize is actually slower.",attributes
+tensorflow,"Internally, the LSTMCell class stores the LSTM weights as a one big matrix instead of 8 smaller ones for efficiency purposes.",impl
+pandas,That can be done with .apply but using an arbitrary function means that you won't benefit from pandas/numpy performance however :-/ You should try as much as possible to work directly on arrays.,practice
+pandas,"The lookup that I suggested is the 2nd best, although theoretically, it should be better but for some reason it seems than lookup is slower than min",alternatives
+scipy,This solution is also almost twice as fast as a naive use of scipy.weave  Thanks!,alternatives
+scipy,"scipy.signal.fftconvolve is fast enough, but it does not have boundary option and I cannot make it work in circular convolution mode.",attributes
+scipy,I could get into how the data is stored and why changing csr is less efficient than lil.,alternatives
+pandas,"Although saying that groupby object is just metadata, you'd still be calling calculating sum and then first although I'd expect first to be fast",practice
+scipy,"odeint can be more accurate, but slower and reducing the solver tolerance doesn't make it much faster, esp when using many calls (as I have to) rather than one large call (as in your code)","attributes,practice"
+pandas,It's more efficient than the Series/stack methods.,practice
+pandas,"str.split is a bit slower, because it works with NaN values very nice too.","functionality,attributes"
+pandas,"For larger ones, my versions should be faster because they do not require any iterrows and are fully vectorized.",practice
+scipy,"Not only is your answer ~120x faster than my original code, it's more than 2x faster than calculating the non weighted distances using scipy.spatial.distance.cdist.","alternatives,practice"
+scipy,Why is scipy.interpolate.griddata so slow?,attributes
+numpy,"If i and j are single floats, this is about 5 times faster than np.sqrt(i**2+j**2).",alternatives
+scipy,"In this case, as expected the pure python version is very slow, but the numba version is not any faster than the numba with odeint (again, ymmv).",alternatives
+numpy,"using numpy.asscalar
+this fails when getting native values
+I have tried converting it to a string then back again but that feels very slow and a horrible way to perform this operation.",practice
+sklearn,"Thus, while it may now be possible to speed up LogisticRegression() somewhat by using multiple cores, my guess is that it probably won't be very linear in proportion to the number of cores used, as it sounds like the initial ""fit"" step (the first half of the algorithm) may not lend itself well to parallelization.",practice
+pandas,"The fastest way though, would be to use sum() from numpy on a subset of the data",practice
+numpy,"This won't be as efficient as tensordot one.
+",alternatives
+pandas,"I did some testing and it looks like pd.to_datetime is faster than parse_dates=[],infer_datetime_format=True  CPU times: user 49.4 s, sys: 4.28 s, total: 53.7 s vs CPU times: user 1min 17s, sys: 3.86 s, total: 1min 21s",practice
+numpy,"Selecting a row of A works, though in my experience that tends to be a bit slow, in part because it has to create a new csr matrix.",practice
+tensorflow,"You're probably right, it's an infrequent edge-case, and tf.where introduces negligible slowdown probably.",attributes
+tensorflow,I find tf.sparse_tensor_dense_matmul() is mush faster than tf.nn.embedding_lookup_sparse().,alternatives
+tensorflow,"So while I don't know your exact use case, in most cases tf.data will be a safer, cleaner, easier and more efficient choice.",attributes
+numpy,"If you are looking for performance, using np.einsum could be suggested too -",practice
+scipy,"Because of this, converting to float and default resampling, it can be considerably slower than scipy.io.wavfile.read in many cases.",alternatives
+pandas,"Using a list comprehension and split, which will be faster than pandas string methods:","practice,alternatives"
+numpy,"for example, eigsh is actually ~4x slower than eigh for nonsparse matrices.",alternatives
+numpy,"However, it's worth noting that np.einsum and np.tensordot are usually much more efficient:",attributes
+numpy,I've worked out a kron rewrite that gives 3x speedup compared to the earlier bmat calculation.,practice
+pandas,"Specifically, applying to the whole dataframe is considerably slower than applying to a selected column.",practice
+scipy,"Ah, I was unaware of scipy.special.expit, that will certainly be faster!",attributes
+pandas,Simply doing pd.DataFrame(array) is very slow (testing it on a smaller number of images).,"attributes,practice"
+pandas,"For who might have an interest in speeding, I started with pandas.DataFrame, then I had ~2X better result with pandas.Series, than Numpy version was even ~4X even faster.","practice,alternatives"
+pandas,"Internally, Pandas pd.Timestamp objects are represented by integers and hence enable efficient calculations.",impl
+pandas,"With pandas 0.18.0, there is now an easier and faster way to do this: s.resample('M').sum().fillna(0)",practice
+pandas,Some preliminary testing is showing this to be much faster than isin,alternatives
+scipy,"scipy.sparse.linalg.inv says 'If the inverse of A is expected to be non-sparse, it will likely be faster to convert A to dense and use scipy.linalg.inv.'","practice,references"
+pandas,"I guess you could use df.groupby('A').B.apply(pd.Series.tolist).tolist() but if you really have 1 billion records as you claim, I doubt anything would be fast enough for you",practice
+tensorflow,"In the TensorFlow official web page, about performance of the input pipeline, they recommend doing shuffle before repeat to the Dataset, for instance with the unified method tf.contrib.data.shuffle_and_repeat.",practice
+scipy,"For the step 2, an FFT based approach with scipy.signal.fftconvolve (the kernel would need to be flipped to perform a cross-correlation), might be faster, particularly if the problem size N can be made equal to a power of 2 (e.g.","functionality,attributes"
+numpy,"Rather to find another algorithm, I think creating a numpy.array  with fixed size and then using multiple processing to accelerate calculation is a better solution.",practice
+sklearn,"I've identified the CountVectorizer.transform() call as a huge bottleneck in a bit of software, and can dramatically increase model throughput if we're able to make this part of the pipeline more efficient.",attributes
+tensorflow,"For efficiency, the tf.train.SummaryWriter logs asynchronously to disk.",functionality
+pandas,"As per my knowledge both do same works,Can any one tells what is the main difference between pd.get_dummies and sklearn one hot encoder ,on which  one  is more efficient at present.",alternatives
+tensorflow,"If you have sparse labels instead (indices of 1 in one hot vectors), use tf.gather as shown in this answer to be more efficient.",practice
+pandas,"Try not to use df.apply if you have a big dataframe because it will make your operation really slow.
+",practice
+sklearn,"The sklearn.random_projection module does pretty much the same thing, only faster.","functionality,attributes"
+sklearn,There is also a pull request for 1 hidden layer perceptron on github that should be both faster to to compute than ExtraTreesClassifier and approach 98% test set accuracy on MNIST (and also provide a partial_fit API for out-of-core learning).,alternatives
+scipy,"I am not really sure how I would use scipy.ndimage.map_coordinates and scipy.interpolate.interp2d can be applied, but it is as slow as the loop because it is interpolating in two dimensions but I only need it to interpolate in one dimension.","functionality,attributes"
+scipy,KDTree allows the fast calculation of minimum distances for an array of vectors with no looping hence why I'm using it as an example here.,functionality
+tensorflow,Why is TensorFlow&#39;s tf.data.Dataset.shuffle so slow?,attributes
+tensorflow,"Currently I loop through all the variables in the list and call self.sess.run(var.assign(tf.clip_by_value(var, 0.01, 0.1)))
+The problem is that is very slow.",practice
+pandas,"@AntonProtopopov, i would combine both our solutions into: df.select_dtypes(include=[object]).isin(['action', 'action2']).sum(axis=1) - so it will be fast and flexible ;)",practice
+numpy,A fast solution is to use np.meshgrid to create all the columns.,practice
+tensorflow,"@ahk3 Actually I have updated it to us tf.count_nonzero, which might be a tad faster.",practice
+scipy,"By the way, your implementation of the tiling is very smart and efficient, I don't think you can get any better than that: I tried feeding csr_matrix a view of the vector reshaped with as_strided to have 500000 rows, and it took much longer than your approach, I think internally the array is being copied, breaking the magic.",practice
+pandas,"I think if need output as list, the fastest and better solution is apply list comprehension as stack and unstack, but I didnt test it.",practice
+pandas,"Hence performance is comparable to [str(i) for i in x] / list(map(str, x)).",alternatives
+pandas,"Since it looks like very close to a simple df.fillna(method='ffill'), which is way faster, I was wondering if there is a way to speed this process up.",alternatives
+sklearn,You can also try sklearn.linear_model.LogisticRegression and sklearn.svm.LinearSVC both implemented using liblinear that is more scalable than libsvm albeit less memory efficients than other linear models in scikit-learn.,"impl,attributes"
+pandas,I tested and appears that at is faster than iat.,alternatives
+scipy,"For example, I tested the scipy.ndimage.interpolation.zoom function to resize an image file and it was way slower than Matlab's imresize function.",alternatives
+scipy,"Per the doc string, sparse.coo_matrix.__doc__, COO  has ""very fast conversion to and from CSR/CSC formats"".
+","functionality,references"
+tensorflow,"Basically, each augmentation is applied to each part of data (single element in this case, could be batch if batch() was used before it, it should be faster that way) on the fly and it's returned with or without augmentation (if random).",practice
+numpy,"For performance, you might want to work with NumPy arrays and for euclidean distance computations between corresponding rows, np.einsum would be do it pretty efficiently.",functionality
+numpy,genfromtxt is just way less efficient.,attributes
+numpy,"np.vstack(np.hsplit(a,3)) does exactly what was asked for, is readable, but is less performant than the answer of Divkar.","practice,alternatives"
+numpy,If you want to make this faster remove the sqrt operation and test against max_distance squared.,practice
+pandas,EDIT Faster is use unique in apply:,practice
+numpy,I read here that multi_dot can be more efficient than np.dot because it tries to optimize operation order.,alternatives
+numpy,"I think if you can be confident your array is generally numeric except for NaN and INF then np.isfinite would be faster, so depends on use case.",practice
+numpy,"While the double argsort trick works, it is not very efficient.",practice
+pandas,I can of course filter by index=(df.index.date==a_date) but this turns out to be very slow...,practice
+pandas,"Currently, I am using apply to solve this, however, it is very slow since my dataset is quite huge.",attributes
+pandas,For better performance use dot for matrix multiplication:,practice
+numpy,"Timings in seconds - only about 2 times slower than the super-optimized NumPy :D, much faster than the lil_matrix.sum() method because it converts to csr_matrix() before, as clarified by @hpaulj and confirmed by the results below.",alternatives
+scipy,"Or, in scipy you can run a for-loop over multivariate_normal.pdf with each set of parameters, and do a weighted sum/dot product, but this is slow.",practice
+scipy,"The code looks good, you just need to vectorized a bit the flow_pramB to use numpy arrays instead of loops (if possible), as otherwise this will be very slow when called by quad.",practice
+tensorflow,So that explains why your training gets slower -- running global_step.assign(it) will add a new assign op to the graph each time it gets run,practice
+scipy,"scipy.optimize methods will be slower, unless you don't need precision:",practice
+scipy,getrow is slow).,attributes
+numpy,"Now, on performance, it seems for large datasets, lexsort itself would be the bottleneck.",attributes
+pandas,"Although .replace() is quite slow compared to .map(), it does a better job of keeping the original value if a replacement isn't found.","attributes,alternatives"
+tensorflow,"As the warning states, this implementation is for improving performance, with the caveat that you should not put your own softmax layer as input (which is somewhat convenient, in practice).","directives,functionality"
+sklearn,"For performance, or if you need only a NumPy array, you can use LabelBinarizer from sklearn.preprocessing:",practice
+tensorflow,"Since using tf.feature_column.categorical_column_with_identity is way faster than writing Long vocabulary list, I'd love to know why this Errors occur?",alternatives
+numpy,"In any case, genfromtxt isn't any faster than doing your own line read and parse.",attributes
+numpy,"Considering that you have no explicit loops in your code and that the documentation for asarray says No copy is performed if the input         is already an ndarray., I would think there is no faster way.",functionality
+pandas,"if gr.agg(lambda x : tuple(x)) runs much faster), then you could try some workaround, for example sorting df beforehand by 'ID2' and 'Price' (groupby should preserve the order).",practice
+tensorflow,"During profiling, I found that tf.pow was quite slow, even slower than tf.exp.",alternatives
+pandas,May be it isn't the len or shape that's reletively slow bu the .values step.,attributes
+pandas,"However, there are notable performance differences ( len(DataFrame.index) is fastest):
+",alternatives
+sklearn,I think that the fastest thing to do is what I did with PredefinedSplit and creating your own scoring function simply to set all the training results to 0 by yourself (and leave the validation results untouched to be compared).,practice
+scipy,"Performance tweaking:
+
+Use of scipy.spatial.cKDTree and not scipy.spatial.KDTree because it is really faster.
+Use balanced_tree=False with scipy.spatial.cKDTree: Big speed up in my case, but may not be true for all data.
+Use n_jobs=-1 with cKDTree.query for use multithreading.
+Use p=1 with cKDTree.query for use Manhattan distance in place of Euclidian distance (p=2): Faster but may be less accurate.
+Query the distance for only a random subsample of points: Big speed up with large datasets, but may be less accurate and less repeatable.
+",practice
+numpy,"This is with an intel mkl BLAS and 8 cores, np.correlate will likely be faster for most implementations.","attributes,environment"
+pandas,Could be faster to use subset.str.len() instead of subset.map(len) but probably not a concern given that your homework problem is a  small size.,alternatives
+numpy,"b*data.A is element multiplication and raises an error; np.dot(b,data.A) works but is slower.",attributes
+numpy,"Change all your sympy.sin by numpy.sin etc, that should boost your performance a lot",alternatives
+pandas,"I noticed when thefit() method was called, it computed much faster (about 1 minute) on the dataset using pd.Series.cat.codes, whereas the dataset with the dummy variables crashed on a virtual server I had running that was using 60 GB of RAM.","practice,environment"
+numpy,Saving through numpy.save() gets slower over 1000loops on a Linux system.,"environment,attributes"
+scipy,I read here stackoverflow.com/questions/6519380/閿?that brenqt is much faster than fsolve.,alternatives
+pandas,One way you can avoid ValueError and increase efficiency is to use pd.Series.max instead of Python's built-in max.1 This is will return NaN if the series is empty after Boolean indexing.,alternatives
+tensorflow,"You can see that, while tf.fill([2], 3) was correctly inspected, TensorFlow didn't work out that 2 * tf.fill([2], 3) is [6, 6], presumably because statically keeping track of operations like multiplication, even if operands are known constants, was deemed too expensive.","functionality,impl"
+pandas,so as you can see join is bit faster,alternatives
+pandas,"@StevenG, eval() is screaming fast, if you can squeeze you calc into its model.",attributes
+pandas,"replace accepts a dictionary of key-replacement pairs, and it should be much faster than iterating over each key-replacement at a time.",functionality
+tensorflow,CuDNNLSTM and CuDNNGRU are the fast implementation backed by CuDNN.,impl
+numpy,"np.sum should be equally as fast, if not faster, then np.einsum (of course ignoring the 3-30 us penalty that Jaime showed), but its not.",alternatives
+numpy,So dotis only some 3 times slower.,alternatives
+tensorflow,"Diving into the wrapper, they actually call the sorting function in tensorflow.python.ops.gen_nn_ops.top_kv2, which generated from C++ code to make things faster.",impl
+numpy,If I just use norm function to calculate the distance one by one it seems to be slow.,practice
+sklearn,So I found out that StandardScaler() can make my RFECV inside my GridSearchCV with each on a nested 3-fold cross validation run faster.,practice
+numpy,"More efficient, and readable, is a solution using np.select.",practice
+scipy,Since it uses linear correlation this factor should become even larger if your real window is longer than 3 because correlate will switch to more efficient fft based method.,impl
+scipy,A faster way to construct your dok would be:,practice
+scipy,update: convolve1d is now just scipy.ndimage.convolve1d and it is very fast,attributes
+pandas,"If you need to build a DataFrame up from pieces, it is generally much more efficient to construct a list of the component frames and combine them all in one step using concat.",practice
+pandas,df.word.value_counts()['myword'] is about twice as fast as len(df[df.word == 'myword']).,alternatives
+tensorflow,"I am trying to read a CSV file (in a performant way, like recommended from Google) using the tf.TextLineReader().",attributes
+pandas,"@ChrisBe Here I will recommend mask because you don't have to invert the result of df['B'].isnull() afterward, it's a bit more efficient.",practice
+tensorflow,"In Keras however, the ndarray must be converted into a Tensor (which has to be a ""mathematical"" matrix of some dimension - this is required for the sake of efficient computation).","directives,rationale"
+numpy,itertools.product is a fast C code; np.array is slower general purpose code.,impl
+numpy,"..and a change to linspace(0,2,10) is faster with the same behaviour.",alternatives
+pandas,"If your lookup labels really are contigous integers, you can exploit this and lookup using a take, which should be about as fast as numba.","practice,alternatives"
+scipy,"Scipy's interpn suffers somewhat in terms of speed compared to the very fastest method, but for it's generality and ease of use it's definitely the way to go.",attributes
+pandas,"@debuggingXD ""Thanks buddy, it worked"", perhaps... but please refrain from writing code that uses apply, because of terrible performance..",attributes
+scipy,The scipy version of load/savemat probably isn't as fast as the MATLAB version - not without those big commerical bucks behind it.,alternatives
+numpy,"Your code is a mapping of np.indices, which is slower:",attributes
+scipy,"@Divakar it would be nice to time it (I'll do it if I can get some time), but I think that ndimage,filters.convolve should be slower for large kernel sizes (as it does convolution in the spatial domain whereas signal.convolve does it in the fourier domain",attributes
+numpy,Also np.frompyfunc doesn't really speed up things.,attributes
+pandas,"If you time [pd.date_range(drg[i], timestamp, freq='B').size - 1 for i in range(len(drg))] you'll find it is extremely slow.",practice
+numpy,"@hpaulj, however, if I access the .data via .indptr, it's much much faster, so I'm thinking maybe get data from sparse array that way, and do a elem-wise product and sum it all, instead of doing sparse matrix row indexing and dot product.",practice
+numpy,My times show einsum optimize True is slower.,attributes
+numpy,Using np.cumprod is the fastest method I could find other than using a generator (which requires a generator and a for loop),practice
+scipy,"Note that using griddata is not the most efficient option here, since the grid is always rectangular.",practice
+tensorflow,tf.gather being very slow,attributes
+numpy,"numpy.array([a,a,a]) should be much faster since you're not explicitly iterating over your array.","functionality,attributes"
+tensorflow,"In the meantime, you can improve the performance of the tf.data-based pipeline by switching the order of the dataset.map() and dataset.batch() and rewriting the dataset.map() to work on a vector of strings, like the feeding based version:
+",practice
+scipy,Also note that this method is around 20x faster than using curve_fit for the problem at hand,alternatives
+scipy,Running scipy.integrate.ode in multiprocessing Pool results in huge performance hit,attributes
+tensorflow,The vectorization method will be significantly faster than the tf.map_fn().,"practice,alternatives"
+scipy,"Well... method=nearest should be faster at some costs (precision), but the question is, if interpolate.griddata is the right tool to use?",attributes
+tensorflow,"why is tensorflow.map_fn slow, what is wrong with following code?",attributes
+pandas,"If larger dataframe faster is use numpy for repeat rows by lists with numpy.repeat,  numpy.concatenate and Index.values:",practice
+scipy,"Probably not the most efficient, but possibly the most convenient way of generating this type of matrix is scipy.linalg.toeplitz.",attributes
+numpy,I get a speedup of ~2.5x compared to np.where.,alternatives
+scipy,"If not possible, and if scipy.signal.resample's performance can vary so much with a large factor, it makes it really not handy for real use.",attributes
+numpy,The price we pay for all this power is that calling a Python function once per line will be much much slower than the C code np.genfromtxt uses when parsing files with a simple delimiter or fixed-width columns.,"attributes, alternatives"
+tensorflow,"However, you would get the same effect (and it would be much more efficient and less error prone) to simply add all your input channels together to form a single-channel input then use the higher-level layers API.",practice
+scipy,"For the above smaller dataset, I can get a slight speed up over your method with scipy.spatial.distance.cdist and match it with inner1d, by arranging data differently in memory:",practice
+scipy,"It uses RectBivariateSpline in that case, which is usually considerably slower than map_coordinates.",alternatives
+scipy,If performance is a consideration use scipy.signal.fftconvolve which is a faster implementation of the same logic.,"functionality,attributes"
+sklearn,LinearSVC should be considerably faster than a SVC with a linear kernel as it uses liblinear.,"impl,attributes"
+pandas,I have sneaky feeling that repeated built-in str.replace without regex will be more efficient than pd.Series.replace(regex=True).,alternatives
+tensorflow,The python range with one tf.function is fastest if I run it on cpu.,practice
+scipy,"I think it is faster to convert the array to lil, and construct the dense rows directly from its sublists.",practice
+numpy,"If I understand correctly how this works, the critical step preventing from getting a memory-efficient view is the .reshape() step after as_strided().",practice
+scipy,"although cdist is much more efficient for large arrays (on my machine for your size problem, cdist is faster by a factor of ~35x).",attributes
+numpy,"And I've found that your codes test result on my computer is 298MBps, but after I changed dset_train_bottle() to np.save(), the test result is 2381MBps, it means HDF5 is much slower in my environment than using np.save().","practice,environment"
+pandas,"You could create a temporary pd.Series for your datetime index, but why not just use np.where as it is much faster here:",practice
+pandas,"You don't need to sort in the groupby, as the result is indexed to the dataframe (slightly faster performance).","functionality,attributes"
+scipy,"Because uniform_filter uses a highly efficient linear-time algorithm implemented in straight C (linear only in the size of arr), it should easily outperform any other solutions, especially when win is large.",impl
+pandas,The reason that pd.concat is slower is because it does more.,attributes
+numpy,Why does numpy.sum perform faster when axis=0 for matrix stored in row-major order?,attributes
+scipy,why scipy.spatial.ckdtree runs slower than scipy.spatial.kdtree,alternatives
+numpy,Computing the spectral norms of ~1m Hermitian matrices: `numpy.linalg.norm` is too slow,attributes
+tensorflow,"As an aside, one tip to find performance bugs like this is to call tf.get_default_graph().finalize() before starting your training loop.",practice
+sklearn,"kmcuda, as KNeighborsClassifier, will produce cluster memberships, but at least 10x faster.",alternatives
+sklearn,"Regarding GridSearchCV() vs. RandomizeSearchCV(), I have some papers claiming that random search is always more efficient, with increasing efficiency exponentially if the number of hyperparameters grows.","alternatives,functionality"
+scipy,"Why don't you build a new coo_matrix (look at the constructors; there is an efficient one for those position-based nonzeros), then use sp.hstack (to combine those two matrices).",practice
+tensorflow,"Although the solution with tf.maximum is very efficient, it can't represent a concave function.",practice
+scipy,"Queries on a BallTree will not be as fast as a KDTree since your data is 2D, and BallTrees are slower than KDTrees when d <= 3 (see explanation here).",alternatives
+sklearn,"The scikit people themselves acknowledge that load_svmlight_file is not as efficient as it could be and point to another library written in c++.
+","references,alternatives"
+tensorflow,"Note that the current tf.data pipelines run on the CPU only, and an important aspect of an efficient pipeline is staging your training input to the GPU while the previous step is still running.",practice
+scipy,"If efficiency is a real concern, you can create the csr_matrix internal format (using indptr) directly:",practice
+scipy,"If you want more efficiency, you can do something like ip = interp1d(x, y, bounds_error=False, fill_value=np.nan); yi = interpolator(xi); yi[xi < x[0]] = y[0]; yi[xi > x[-1]] = y[-1].",practice
+pandas,"Fast solution is df = pd.read_excel(""header_with_merged_cells.xlsx"", skiprows=3, header=[0,1])",practice
+pandas,"The general idea is that apply is generally quite slow, as it is essentially a loop behind the scenes.
+","attributes,impl"
+pandas,"@filippo df[['from', 'to']].stack().unique() or just use np.unique(df[['from', 'to']]) for performance",practice
+numpy,"My thinking was that at least one of them can be done in place, and I didn't know if a = a[sort_perm] is as efficient as a.sort().",alternatives
+scipy,"Just wanted to post another answer using coo_matrix, It is a fast format for constructing sparse matrices.",functionality
+scipy,"According to an old answer, Statistics: combinations in Python, this homebrew function is faster than scipy.misc.comb when calculating combinations nCr:","practice,alternatives"
+scipy,Simpler solution and also faster: use SciPy's ndimage.uniform_filter,attributes
