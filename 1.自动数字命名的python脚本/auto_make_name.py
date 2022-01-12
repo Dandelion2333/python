@@ -18,6 +18,7 @@ def rename_file(path):
     file_num = 0
     # 遍历文件夹下所有的文件
     for name in files:
+        # 需要加上绝对路径-否则会把文件夹识别为文件
         name_path = path + "\\" + name
         # 跳过本文件
         if name == "auto_make_name.py":
