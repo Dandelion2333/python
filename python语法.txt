@@ -39,4 +39,4 @@ python模拟curl请求数据
 	2、在python中模拟curl请求，获取相同的数据
 		    tmpres = os.popen('curl %s' % last_build).readlines()
 			print("tmpres:", tmpres)
-		
+			
